@@ -420,6 +420,11 @@ END SIDE NAV BUTTON ACTIONS
   /* 
 =========================MEDIA 791 NAVBAR CSS========================================
 */
+
+  .nav-item:nth-child(3).active {
+    margin: 0;
+    align-self: auto;
+  }
   .nav-item:last-child {
     margin: 0;
     margin-right: 0;
@@ -457,6 +462,10 @@ END SIDE NAV BUTTON ACTIONS
     margin-left: 0px;
     padding-left: 10px;
     padding-right: 10px;
+  }
+
+  section.main.shrink-main {
+    margin-left: 0;
   }
   /* 
 =========================END MEDIA 791 SECTION MAIN CSS========================================
@@ -543,4 +552,8 @@ END SIDE NAV BUTTON ACTIONS
 
 .hidden {
   display: none;
+}
+
+.active {
+  /*empty*/
 }

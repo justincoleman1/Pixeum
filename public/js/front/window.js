@@ -1,42 +1,62 @@
 /*eslint-disable*/
 
 import { addHidden, removeHidden } from './hidden';
-import { turnOffOverlay, turnOnOverlay } from './side-nav';
+import {
+  showSearchBar,
+  hideSearchBar,
+  searchBarHidden,
+  searchHasText,
+  navOptionsHidden,
+  showNavOptions,
+  hideNavOptions,
+  searchIsActive,
+  makeSearchInActive,
+} from './search-bar';
+import {
+  turnOffOverlay,
+  turnOnOverlay,
+  overlayActive,
+  sideNavHidden,
+  sideNavExpanded,
+} from './side-nav';
 
 const aside = document.getElementById('aside');
-const searchBar = document.getElementById('search-bar');
-const searchInput = document.getElementById('search-input');
-const overlay = document.querySelector('.overlay');
 
-const wsmw792 = window.matchMedia('(min-width: 792px)');
+export const ws792 = () => {
+  return window.matchMedia('(min-width: 792px)').matches;
+};
 
-export const windowSizeBelow792px = () => {
+export const windowSize792Changes = () => {
   //if screen equal or greater than threshold size
-  if (wsmw792.matches) {
+  if (ws792()) {
     //if the overlay is active: turn off overlay
-    if (overlay.classList.contains('active')) turnOffOverlay();
+    if (overlayActive()) turnOffOverlay();
     //if sidenav is hidden: remove hidden
-    if (aside.classList.contains('hidden')) removeHidden(aside);
-    if (searchInput.classList.contains('hidden')) {
-      removeHidden(searchInput);
-      removeHidden(searchBar.lastChild);
+    if (sideNavHidden()) removeHidden(aside);
+    if (searchBarHidden()) {
+      showSearchBar();
+    }
+    if (!searchHasText()) {
+      makeSearchInActive();
+    }
+    if (navOptionsHidden()) showNavOptions();
+    if (sideNavExpanded()) {
     }
   } else {
     //screen is less than target threshold
     //If sidenav is active: turn on overlay
-    if (aside.classList.contains('expand-aside')) {
+    if (sideNavExpanded()) {
       turnOnOverlay();
       removeHidden(aside);
     } else {
       addHidden(aside);
     }
     //If search input has text
-    if (searchInput.value) {
-      removeHidden(searchInput);
-      removeHidden(searchBar.lastChild);
+    if (searchHasText() || searchIsActive()) {
+      showSearchBar();
+      hideNavOptions();
     } else {
-      addHidden(searchInput);
-      addHidden(searchBar.lastChild);
+      if (!searchHasText() && !searchIsActive()) hideSearchBar();
     }
   }
 };

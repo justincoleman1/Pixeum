@@ -3,12 +3,25 @@
 import { login, logout } from './back/login';
 import { updateSettings } from './back/updateSettings';
 import { showAlert } from './front/alerts';
-import { expandSideNav, collapseSideNav } from './front/side-nav';
-import { windowSizeBelow792px } from './front/window';
+import {
+  expandSideNav,
+  collapseSideNav,
+  overlayActive,
+  mainCollapsed,
+  sideNavExpanded,
+} from './front/side-nav';
+import { windowSize792Changes, ws792 } from './front/window';
+import {
+  hideNavOptions,
+  makeSearchActive,
+  showSearchBar,
+} from './front/search-bar';
 
 // DOM ELEMENTS
 const main = document.getElementById('main');
 const sideNavBtn = document.querySelector('.btn-side-nav');
+const searchBtn = document.querySelector('.btn-search');
+const searchInput = document.getElementById('search-input');
 const loginForm = document.querySelector('.form');
 const logOutBtn = document.querySelector('.nav__el--logout');
 const userDataForm = document.querySelector('.form-user-data');
@@ -19,26 +32,43 @@ const overlay = document.querySelector('.overlay');
 
 window.addEventListener('load', (e) => {
   e.preventDefault();
-  windowSizeBelow792px();
+  windowSize792Changes();
 });
 
 window.addEventListener('resize', (e) => {
   e.preventDefault();
-  windowSizeBelow792px();
+  windowSize792Changes();
 });
 
 // DELEGATION
 if (sideNavBtn)
   sideNavBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    if (main.classList.contains('shrink-main')) collapseSideNav();
+    if (mainCollapsed()) collapseSideNav();
     else expandSideNav();
   });
 
 if (overlay)
   overlay.addEventListener('click', (e) => {
     e.preventDefault();
-    if (overlay.classList.contains('active')) collapseSideNav();
+    if (overlayActive()) collapseSideNav();
+  });
+
+if (searchBtn)
+  searchBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (!ws792()) {
+      console.log('Search Btn clicked');
+      makeSearchActive();
+      hideNavOptions();
+      showSearchBar();
+      //format search bar
+    }
+  });
+
+if (searchInput)
+  searchInput.addEventListener('click', (e) => {
+    if (!ws792() && sideNavExpanded()) collapseSideNav();
   });
 
 if (loginForm)

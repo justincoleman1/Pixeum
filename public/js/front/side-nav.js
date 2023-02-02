@@ -17,13 +17,28 @@ const el5 = document.getElementById('sidenavitem4');
 const el6 = document.getElementById('sidenavitem5');
 const el7 = document.getElementById('sidenavitem6');
 
+export const sideNavHidden = () => {
+  return aside.classList.contains('hidden') ? true : false;
+};
+
+export const sideNavExpanded = () => {
+  return aside.classList.contains('expand-aside') ? true : false;
+};
+
+export const mainCollapsed = () => {
+  return main.classList.contains('shrink-main') ? true : false;
+};
+
+export const overlayActive = () => {
+  return overlay.classList.contains('active') ? true : false;
+};
+
 export const turnOffOverlay = () => {
-  if (overlay.classList.contains('active')) overlay.classList.remove('active');
+  if (overlayActive()) overlay.classList.remove('active');
 };
 
 export const turnOnOverlay = () => {
-  if (ws791.matches)
-    if (!overlay.classList.contains('active')) overlay.classList.add('active');
+  if (ws791.matches) if (!overlayActive()) overlay.classList.add('active');
 };
 
 const expandSideNavChildren = () => {
