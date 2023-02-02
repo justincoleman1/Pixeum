@@ -1,5 +1,4 @@
 //esversion: 6
-
 export const addHidden = (el) => {
   if (
     !el.classList.contains('hidden') &&

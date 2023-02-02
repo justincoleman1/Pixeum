@@ -138,24 +138,48 @@ h1.nav-header-brand {
   height: 50px;
 }
 
-.search-icon {
-  stroke: #fff;
+.btn-search {
+  border: none;
+  background-color: #212529;
 
   position: absolute;
   top: 50%;
   left: 8px;
   width: 20px;
   transform: translate(0, -50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: default;
 }
 
-.clear-icon {
+.search-icon {
   stroke: #fff;
+  width: 20px;
+}
+
+.btn-search-clear {
+  border: none;
+  background-color: #212529;
+
   position: absolute;
   top: 50%;
   right: 8px;
   width: 20px;
   cursor: pointer;
   transform: translate(0, -50%);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.clear-icon {
+  stroke: #fff;
+  width: 20px;
+
   /*visibility: hidden; */
 }
 
@@ -394,6 +418,30 @@ END SIDE NAV BUTTON ACTIONS
 */
 @media (max-width: 791px) {
   /* 
+=========================MEDIA 791 NAVBAR CSS========================================
+*/
+  .nav-item:last-child {
+    margin: 0;
+    margin-right: 0;
+    padding: 0 24px;
+  }
+
+  .nav-item:last-child:first-child {
+    padding-left: 12px;
+  }
+
+  .btn-search {
+    cursor: pointer;
+  }
+
+  .search-icon:hover,
+  .search-icon:active {
+    stroke: #47b1f5;
+  }
+  /* 
+=========================END MEDIA 791 NAVBAR CSS========================================
+*/
+  /* 
 =========================MEDIA 791 SIDENAVBAR CSS========================================
 */
   aside.side-nav.hidden {
@@ -443,9 +491,9 @@ END SIDE NAV BUTTON ACTIONS
 =========================SCREEM MEDIA 732 CSS========================================
 */
 @media (max-width: 732px) {
-  .wrapper {
+  /* .wrapper {
     display: none;
-  }
+  } */
 }
 /*
 =========================END SCREEM MEDIA 732 CSS========================================

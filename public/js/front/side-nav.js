@@ -4,7 +4,6 @@ import { addHidden, removeHidden } from './hidden';
 const ws791 = window.matchMedia('(max-width: 791px)');
 const el = document.getElementById('main');
 const el1 = document.getElementById('aside');
-const sideNavBtn = document.getElementById('side-nav-btn');
 const overlay = document.querySelector('.overlay');
 
 const el2 = document.getElementById('sidenavitem1');

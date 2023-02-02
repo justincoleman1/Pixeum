@@ -1,20 +1,13 @@
 /*eslint-disable*/
 // import '@babel/polyfill';
-import { login, logout } from './login';
-import { updateSettings } from './updateSettings';
-import { showAlert } from './alerts';
-import {
-  expandSideNav,
-  collapseSideNav,
-  turnOffOverlay,
-  turnOnOverlay,
-} from './side-nav';
-
-import { addHidden, removeHidden } from './hidden';
+import { login, logout } from './back/login';
+import { updateSettings } from './back/updateSettings';
+import { showAlert } from './front/alerts';
+import { expandSideNav, collapseSideNav } from './front/side-nav';
+import { windowSizeBelow792px } from './front/window';
 
 // DOM ELEMENTS
 const main = document.getElementById('main');
-const aside = document.getElementById('aside');
 const sideNavBtn = document.querySelector('.btn-side-nav');
 const loginForm = document.querySelector('.form');
 const logOutBtn = document.querySelector('.nav__el--logout');
@@ -23,7 +16,6 @@ const userPasswordForm = document.querySelector('.form-user-password');
 const overlay = document.querySelector('.overlay');
 
 //WINDOW RESIZES
-const wsmw792 = window.matchMedia('(min-width: 792px)');
 
 window.addEventListener('load', (e) => {
   e.preventDefault();
@@ -91,22 +83,3 @@ if (userPasswordForm)
 
 const alertMessage = document.querySelector('body').dataset.alert;
 if (alertMessage) showAlert('success', alertMessage, 20);
-
-const windowSizeBelow792px = () => {
-  //if screen equal or greater than threshold size
-  if (wsmw792.matches) {
-    //if the overlay is active: turn off overlay
-    if (overlay.classList.contains('active')) turnOffOverlay();
-    //if sidenav is hidden: remove hidden
-    if (aside.classList.contains('hidden')) removeHidden(aside);
-  } else {
-    //screen is less than target threshold
-    //If sidenav is active: turn on overlay
-    if (aside.classList.contains('expand-aside')) {
-      turnOnOverlay();
-      removeHidden(aside);
-    } else {
-      addHidden(aside);
-    }
-  }
-};
