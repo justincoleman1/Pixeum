@@ -1,0 +1,498 @@
+/*
+SPACING SYSTEM (px)
+2 / 4 / 8 / 12 / 16 / 24 / 32 / 48 / 64 / 80 / 96 / 128
+
+FONT SIZE SYSTEM (px)
+10 / 12 / 14 / 16 / 18 / 20 / 24 / 30 / 36 / 44 / 52 / 62 / 74 / 86 / 98
+*/
+
+/* 
+MAIN COLOR: #47b1f5
+GREY COLOR: #212529;
+*/
+
+/* 
+=========================GENERAL CSS========================================
+*/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  font-size: 18px;
+
+  /* display: grid;
+  grid-template-columns: 75px 150px 1fr;
+  grid-template-rows: 75px 1fr; /*3*/
+  /* height: 100vh;  */
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: #fff;
+}
+
+a {
+  cursor: pointer;
+  text-decoration: none;
+  color: #fff;
+}
+
+ul {
+  list-style: none;
+}
+/* 
+=========================END GENERAL CSS========================================
+*/
+
+/* 
+=========================NAVBAR CSS========================================
+*/
+
+header.nav {
+  position: fixed;
+  width: 100%;
+  top: 0;
+  height: 50px;
+
+  color: #fff;
+  background-color: #212529;
+
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+}
+
+.nav-item:first-child {
+  min-width: 75px;
+  justify-content: center;
+}
+
+.nav-item:nth-child(3) {
+  margin-left: auto;
+}
+
+.nav-item:last-child {
+  margin-left: auto;
+  padding: 0 48px;
+}
+
+.btn-side-nav {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-side-nav:hover .nav-side-nav-icon,
+.btn-side-nav:active .nav-side-nav-icon,
+.clear-icon:hover,
+.clear-icon:active {
+  stroke: #47b1f5;
+}
+
+.nav-btn:hover,
+.nav-btn:active {
+  color: #47b1f5;
+}
+
+.nav-side-nav-icon {
+  stroke: #fff;
+
+  width: 24px;
+  height: 24px;
+}
+
+h1.nav-header-brand {
+  color: #47b1f5;
+
+  font-size: 24px;
+  cursor: default;
+}
+
+.wrapper {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  width: 500px;
+  height: 50px;
+}
+
+.search-icon {
+  stroke: #fff;
+
+  position: absolute;
+  top: 50%;
+  left: 8px;
+  width: 20px;
+  transform: translate(0, -50%);
+}
+
+.clear-icon {
+  stroke: #fff;
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  width: 20px;
+  cursor: pointer;
+  transform: translate(0, -50%);
+  /*visibility: hidden; */
+}
+
+.search {
+  border: 1px solid #212529;
+  border-radius: 5px;
+  height: 50px;
+  width: 100%;
+  padding: 2px 28px 2px 35px;
+  outline: 0;
+  font-size: 18px;
+  color: #fff;
+  background-color: #212529;
+}
+
+.search::placeholder {
+  color: #fff;
+}
+
+.search:hover,
+.search:focus {
+  border: 1.5px solid #47b1f5;
+}
+
+a.nav-btn {
+  margin-left: 20px;
+}
+
+/* .btn-join {
+}
+
+.btn-signin {
+} */
+
+/* 
+=========================END NAVBAR CSS========================================
+*/
+
+/* 
+=========================SIDE NAVBAR CSS========================================
+*/
+
+aside.side-nav {
+  background-color: #212529;
+  top: 50px;
+  bottom: 0;
+  position: fixed;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+/* width */
+aside::-webkit-scrollbar {
+  width: 11px;
+}
+
+/* Track */
+/* aside::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey;
+  border-radius: 10px;
+} */
+
+/* Handle */
+aside::-webkit-scrollbar-thumb {
+  background: #868e96;
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+aside::-webkit-scrollbar-thumb:hover {
+  background: #868e96;
+}
+
+.side-nav-item {
+  padding: 24px 26px;
+}
+
+.side-nav-item + .side-nav-item {
+  border-top: solid 0.1px #3c4248;
+}
+
+ul.side-nav-list li {
+  padding: 16px 0;
+
+  display: flex;
+  align-items: center;
+}
+
+.nav__user-img {
+  height: 2rem;
+  width: 2rem;
+  border-radius: 50%;
+  margin-right: 1rem;
+}
+
+h3.side-nav-item-header {
+  font-weight: 400;
+  margin-bottom: 12px;
+}
+
+a.side-nav-link {
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  gap: 18px;
+}
+
+a.side-nav-link:link,
+a.side-nav-link:visited,
+a.side-nav-link:hover,
+a.side-nav-link:active {
+  color: #47b1f5;
+}
+
+.side-nav-item:last-child {
+  padding: 24px 12.5px;
+}
+
+.footer-item {
+  display: flex;
+  gap: 12px;
+  padding: 5px 0;
+
+  font-size: 14px;
+  font-weight: 500;
+}
+
+a.footer-link:link,
+a.footer-link:visited,
+a.footer-link:hover,
+a.footer-link:active {
+  color: #47b1f5;
+}
+
+.side-nav-footer:nth-child(5) {
+  margin-top: 12px;
+}
+
+aside.side-nav.hidden {
+  display: none;
+}
+/* 
+=========================END SIDE NAVBAR CSS========================================
+*/
+
+/* 
+=========================SECTION MAIN CSS========================================
+*/
+
+section.main {
+  background-color: green;
+  margin-top: 50px;
+  margin-left: 75px;
+
+  padding: 35px 75px;
+
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+.container {
+  background-color: red;
+}
+
+.container-grid {
+  background-color: aqua;
+  min-height: 1000px;
+}
+
+/* 
+=========================END SECTION MAIN CSS========================================
+*/
+
+/* 
+=========================SIDENAVBAR BUTTON PRESS CSS========================================
+*/
+section.main.shrink-main {
+  margin-left: 225px;
+}
+
+aside.side-nav.expand-aside {
+  min-width: 225px;
+}
+/* append to .side-nav-item  */
+.shrink-side-nav-item {
+  padding: 24px 0;
+  width: 75px;
+}
+
+/* append to ul.side-nav-list li */
+.center-side-nav-link {
+  display: flex;
+  justify-content: center;
+}
+
+/* append to a.side-nav-link */
+a.shrink-side-nav-link {
+  flex-direction: column;
+  font-size: 12px;
+}
+
+/* 
+END SIDE NAV BUTTON ACTIONS
+*/
+
+/* 
+=========================END SIDENAVBAR BUTTON PRESS CSS========================================
+*/
+
+/*
+=========================SCREEM MEDIA 932 CSS========================================
+*/
+@media (max-width: 932px) {
+  /* 
+=========================MEDIA 932 NAVBAR CSS========================================
+*/
+  .wrapper {
+    width: 100%;
+    max-width: 500px;
+  }
+  /* 
+=========================END MEDIA 932 NAVBAR CSS========================================
+*/
+}
+/*
+=========================END SCREEM MEDIA 932 CSS========================================
+*/
+
+/*
+=========================SCREEM MEDIA 791 CSS========================================
+*/
+@media (max-width: 791px) {
+  /* 
+=========================MEDIA 791 SIDENAVBAR CSS========================================
+*/
+  aside.side-nav.hidden {
+    display: none;
+  }
+  /* 
+=========================END MEDIA 791 SIDENAVBAR CSS========================================
+*/
+  /* 
+=========================MEDIA 791 SECTION MAIN CSS========================================
+*/
+  section.main {
+    margin-left: 0px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  /* 
+=========================END MEDIA 791 SECTION MAIN CSS========================================
+*/
+  .overlay {
+    /* transparent black */
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
+    height: 100vh;
+    opacity: 0;
+    position: fixed;
+    /* animate the transition */
+    transition: all 0.5s ease-in-out;
+    /* full screen */
+    width: 100vw;
+    margin-left: 233px;
+    /* middle layer, i.e. appears below the sidebar */
+    z-index: 2;
+  }
+
+  /* display .overlay when it has the .active class */
+  .overlay.active {
+    display: block;
+    opacity: 1;
+  }
+}
+/*
+=========================END SCREEM MEDIA 791 CSS========================================
+*/
+
+/*
+=========================SCREEM MEDIA 732 CSS========================================
+*/
+@media (max-width: 732px) {
+  .wrapper {
+    display: none;
+  }
+}
+/*
+=========================END SCREEM MEDIA 732 CSS========================================
+*/
+
+/* 
+=========================SVG ICONS CSS========================================
+*/
+
+.side-nav-link-icon {
+  height: 24px;
+  width: 24px;
+}
+
+.side-nav-link-icon.color {
+  stroke: #fff;
+  fill: #212529;
+}
+
+.side-nav-link-icon.color.fill {
+  fill: #fff;
+}
+
+.st0 {
+  fill-rule: evenodd;
+  clip-rule: evenodd;
+  fill: #fff;
+}
+
+.c1 {
+  fill-rule: evenodd;
+  clip-rule: evenodd;
+  fill: #fff;
+}
+.st1 {
+  fill-rule: evenodd;
+  clip-rule: evenodd;
+  fill: #212529;
+}
+.st2 {
+  fill: #fff;
+}
+
+/* 
+=========================END SVG ICONS CSS========================================
+*/
+
+.hidden {
+  display: none;
+}
