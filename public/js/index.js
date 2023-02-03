@@ -13,15 +13,22 @@ import {
 import { windowSize792Changes, ws792 } from './front/window';
 import {
   hideNavOptions,
+  hideRevertBtn,
+  hideSearchBar,
   makeSearchActive,
+  makeSearchInActive,
+  showNavOptions,
+  showRevertBtn,
   showSearchBar,
 } from './front/search-bar';
+import { removeHidden } from './front/hidden';
 
 // DOM ELEMENTS
 const main = document.getElementById('main');
 const sideNavBtn = document.querySelector('.btn-side-nav');
 const searchBtn = document.querySelector('.btn-search');
 const searchInput = document.getElementById('search-input');
+const searchRevert = document.getElementById('search-revert');
 const loginForm = document.querySelector('.form');
 const logOutBtn = document.querySelector('.nav__el--logout');
 const userDataForm = document.querySelector('.form-user-data');
@@ -62,7 +69,19 @@ if (searchBtn)
       makeSearchActive();
       hideNavOptions();
       showSearchBar();
-      //format search bar
+      showRevertBtn();
+    }
+  });
+
+if (searchRevert)
+  searchRevert.addEventListener('click', (e) => {
+    e.preventDefault();
+    if (!ws792()) {
+      console.log('Search revert clicked');
+      makeSearchInActive();
+      showNavOptions();
+      hideSearchBar();
+      hideRevertBtn();
     }
   });
 

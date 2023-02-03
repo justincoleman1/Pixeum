@@ -89,6 +89,7 @@ header.nav {
 
 .nav-item:nth-child(3) {
   margin-left: auto;
+  gap: 48px;
 }
 
 .nav-item:last-child {
@@ -105,7 +106,9 @@ header.nav {
 .btn-side-nav:hover .nav-side-nav-icon,
 .btn-side-nav:active .nav-side-nav-icon,
 .clear-icon:hover,
-.clear-icon:active {
+.clear-icon:active,
+.revert-icon:hover,
+.revert-icon:active {
   stroke: #47b1f5;
 }
 
@@ -136,6 +139,26 @@ h1.nav-header-brand {
 
   width: 500px;
   height: 50px;
+}
+.btn-revert {
+  border: none;
+  background-color: #212529;
+  width: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+}
+
+.revert-icon {
+  stroke: #fff;
+  width: 20px;
+}
+
+button.btn-revert.hidden {
+  display: none;
 }
 
 .btn-search {

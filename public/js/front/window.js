@@ -11,6 +11,9 @@ import {
   hideNavOptions,
   searchIsActive,
   makeSearchInActive,
+  revertBtnHidden,
+  hideRevertBtn,
+  showRevertBtn,
 } from './search-bar';
 import {
   turnOffOverlay,
@@ -40,8 +43,7 @@ export const windowSize792Changes = () => {
       makeSearchInActive();
     }
     if (navOptionsHidden()) showNavOptions();
-    if (sideNavExpanded()) {
-    }
+    hideRevertBtn();
   } else {
     //screen is less than target threshold
     //If sidenav is active: turn on overlay
@@ -55,6 +57,7 @@ export const windowSize792Changes = () => {
     if (searchHasText() || searchIsActive()) {
       showSearchBar();
       hideNavOptions();
+      showRevertBtn();
     } else {
       if (!searchHasText() && !searchIsActive()) hideSearchBar();
     }
