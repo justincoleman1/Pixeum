@@ -59,6 +59,133 @@ ul {
 */
 
 /* 
+=========================Login CSS========================================
+*/
+body.login {
+  line-height: 1.6;
+  font-weight: 300;
+  color: #777;
+  padding: 3rem;
+  min-height: 100vh;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  justify-content: center;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+.heading-secondary {
+  font-size: 3.25rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  line-height: 1.3;
+  display: flex;
+  justify-content: center;
+  color: #47b1f5;
+
+  margin-bottom: 25px;
+}
+.login-form {
+  margin: 0 auto;
+  max-width: 30rem;
+  background-color: #212529;
+  -webkit-box-shadow: 0 2.5rem 8rem 2rem rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2.5rem 8rem 2rem rgba(0, 0, 0, 0.06);
+  padding: 5rem 7rem;
+  border-radius: 35px;
+}
+
+.form__input {
+  display: block;
+  font-family: inherit;
+  font-size: 1rem;
+  color: inherit;
+  padding: 0.25rem 0.75rem;
+  border: none;
+  width: 100%;
+  background-color: #fff;
+  background-color: #f2f2f2;
+  border-top: 3px solid transparent;
+  border-bottom: 3px solid transparent;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+  border-radius: 4px;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  /* Pseudo element (a visible thing that isn't really in the DOM).
+      Also needs -ms- */
+}
+
+.form__input:focus {
+  outline: none;
+  border-bottom: 3px solid #47b1f5;
+}
+.form__input:focus:invalid {
+  border-bottom: 3px solid #212529;
+}
+.form__input::-webkit-input-placeholder {
+  color: #bbb;
+}
+
+.form__group {
+  display: flex;
+  justify-content: center;
+}
+
+.form__group:not(:last-child) {
+  margin-bottom: 0.5rem;
+}
+
+.btn--login,
+.btn--login:link,
+.btn--login:visited {
+  font-size: 1rem;
+  padding: 0.5rem 3rem;
+  width: 100%;
+  border-radius: 10rem;
+  text-transform: uppercase;
+  display: inline-block;
+  text-decoration: none;
+  position: relative;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+  font-weight: 400;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  /*Add later when we use this for the button in form*/
+  border: none;
+  cursor: pointer;
+}
+
+.btn--login:hover {
+  -webkit-transform: translateY(-3px);
+  transform: translateY(-3px);
+  -webkit-box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
+  box-shadow: 0 1rem 2rem rgba(0, 0, 0, 0.15);
+}
+
+.btn--login:active {
+  -webkit-transform: translateY(-1px);
+  transform: translateY(-1px);
+  -webkit-box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.btn--blue {
+  background-color: #47b1f5;
+  color: #fff;
+}
+
+.btn--login:focus {
+  outline: none;
+}
+
+/* 
+=========================ENDLogin CSS========================================
+*/
+/* 
 =========================NAVBAR CSS========================================
 */
 
@@ -355,6 +482,13 @@ aside.side-nav.hidden {
 /* 
 =========================SECTION MAIN CSS========================================
 */
+section.main-login {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: #adb5bd;
+}
 
 section.main {
   background-color: green;
