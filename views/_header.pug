@@ -18,14 +18,19 @@ header#nav.nav
             svg.revert-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
                path(stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3")
     .nav-item
-        a.nav-btn.btn-join(href="#") Join
-        a.nav-btn.btn-signin(href="/login") Sign in
+         if user
+            a.nav-btn(href="/me")
+                img.nav__user-img(src=`/img/users/${user.photo}` alt=`Photo of ${user.name}`)
+            a.nav-btn.nav__el--logout(href="/logout") Logout
+         else
+            a.nav-btn.btn-join(href="/signup") Join
+            a.nav-btn.btn-signin(href="/login") Sign in
 
 aside#aside.side-nav
     #sidenavitem1.side-nav-item.shrink-side-nav-item
         ul.side-nav-list
             li.center-side-nav-link
-               a.side-nav-link.shrink-side-nav-link
+               a.side-nav-link.shrink-side-nav-link(href="/")
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="side-nav-link-icon color fill">
                   <path fill-rule="evenodd" d="M9.293 2.293a1 1 0 011.414 0l7 7A1 1 0 0117 11h-1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-3a1 1 0 00-1-1H9a1 1 0 00-1 1v3a1 1 0 01-1 1H5a1 1 0 01-1-1v-6H3a1 1 0 01-.707-1.707l7-7z" clip-rule="evenodd" />
                   </svg>

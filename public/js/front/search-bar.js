@@ -7,6 +7,14 @@ const searchInput = document.getElementById('search-input');
 const searchRevert = document.getElementById('search-revert');
 const nav = document.getElementById('nav');
 
+export const navDisappear = () => {
+  nav.classList.add('disappear');
+};
+
+export const hideNav = () => {
+  nav.classList.add('hidden');
+};
+
 export const searchHasText = () => {
   return searchInput.value ? true : false;
 };

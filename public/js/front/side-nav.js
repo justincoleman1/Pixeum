@@ -2,31 +2,38 @@
 import { addHidden, removeHidden } from './hidden';
 
 const ws791 = window.matchMedia('(max-width: 791px)');
+const overlay = document.querySelector('.overlay');
 const el = document.getElementById('main');
 const el1 = document.getElementById('aside');
-const overlay = document.querySelector('.overlay');
-
 const el2 = document.getElementById('sidenavitem1');
 const el3 = document.getElementById('sidenavitem2');
-
-const el2c = document.getElementById('sidenavitem1').firstChild;
-const el3c = document.getElementById('sidenavitem2').firstChild;
-
 const el4 = document.getElementById('sidenavitem3');
 const el5 = document.getElementById('sidenavitem4');
 const el6 = document.getElementById('sidenavitem5');
 const el7 = document.getElementById('sidenavitem6');
 
+export const asideDisappear = () => {
+  el1.classList.add('disappear');
+};
+
+export const mainDisappear = () => {
+  el.classList.add('disappear');
+};
+
+export const hideAside = () => {
+  el1.classList.add('hidden');
+};
+
 export const sideNavHidden = () => {
-  return aside.classList.contains('hidden') ? true : false;
+  return el1.classList.contains('hidden') ? true : false;
 };
 
 export const sideNavExpanded = () => {
-  return aside.classList.contains('expand-aside') ? true : false;
+  return el1.classList.contains('expand-aside') ? true : false;
 };
 
 export const mainCollapsed = () => {
-  return main.classList.contains('shrink-main') ? true : false;
+  return el.classList.contains('shrink-main') ? true : false;
 };
 
 export const overlayActive = () => {
@@ -53,11 +60,23 @@ const expandSideNavChildren = () => {
 
   for (let i = 0; i < 4; i++) {
     if (i < 3) {
-      el2c.children[i].classList.remove('center-side-nav-link');
-      el2c.children[i].firstChild.classList.remove('shrink-side-nav-link');
+      document
+        .getElementById('sidenavitem1')
+        .firstChild.children[i].classList.remove('center-side-nav-link');
+      document
+        .getElementById('sidenavitem1')
+        .firstChild.children[i].firstChild.classList.remove(
+          'shrink-side-nav-link'
+        );
     }
-    el3c.children[i].classList.remove('center-side-nav-link');
-    el3c.children[i].firstChild.classList.remove('shrink-side-nav-link');
+    document
+      .getElementById('sidenavitem2')
+      .firstChild.children[i].classList.remove('center-side-nav-link');
+    document
+      .getElementById('sidenavitem2')
+      .firstChild.children[i].firstChild.classList.remove(
+        'shrink-side-nav-link'
+      );
   }
 };
 
@@ -73,11 +92,21 @@ const collapseSideNavChildren = () => {
 
   for (let i = 0; i < 4; i++) {
     if (i < 3) {
-      el2c.children[i].classList.add('center-side-nav-link');
-      el2c.children[i].firstChild.classList.add('shrink-side-nav-link');
+      document
+        .getElementById('sidenavitem1')
+        .firstChild.children[i].classList.add('center-side-nav-link');
+      document
+        .getElementById('sidenavitem1')
+        .firstChild.children[i].firstChild.classList.add(
+          'shrink-side-nav-link'
+        );
     }
-    el3c.children[i].classList.add('center-side-nav-link');
-    el3c.children[i].firstChild.classList.add('shrink-side-nav-link');
+    document
+      .getElementById('sidenavitem2')
+      .firstChild.children[i].classList.add('center-side-nav-link');
+    document
+      .getElementById('sidenavitem2')
+      .firstChild.children[i].firstChild.classList.add('shrink-side-nav-link');
   }
 };
 

@@ -61,12 +61,14 @@ ul {
 /* 
 =========================Login CSS========================================
 */
-body.login {
+.login,
+.signup {
+  margin: 0;
+  height: 100%;
   line-height: 1.6;
   font-weight: 300;
   color: #777;
-  padding: 3rem;
-  min-height: 100vh;
+
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -76,6 +78,19 @@ body.login {
   -ms-flex-direction: column;
   flex-direction: column;
 }
+
+.login-form,
+.signup-form {
+  margin: 0 auto;
+  align-self: flex-end;
+  max-width: 30rem;
+  background-color: #212529;
+  -webkit-box-shadow: 0 2.5rem 8rem 2rem rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2.5rem 8rem 2rem rgba(0, 0, 0, 0.06);
+  padding: 4rem;
+  /* border-radius: 35px; */
+}
+
 .heading-secondary {
   font-size: 3.25rem;
   text-transform: uppercase;
@@ -86,15 +101,6 @@ body.login {
   color: #47b1f5;
 
   margin-bottom: 25px;
-}
-.login-form {
-  margin: 0 auto;
-  max-width: 30rem;
-  background-color: #212529;
-  -webkit-box-shadow: 0 2.5rem 8rem 2rem rgba(0, 0, 0, 0.06);
-  box-shadow: 0 2.5rem 8rem 2rem rgba(0, 0, 0, 0.06);
-  padding: 5rem 7rem;
-  border-radius: 35px;
 }
 
 .form__input {
@@ -142,10 +148,10 @@ body.login {
 .btn--login:link,
 .btn--login:visited {
   font-size: 1rem;
-  padding: 0.5rem 3rem;
+  padding: 0.85rem 5rem;
   width: 100%;
   border-radius: 10rem;
-  text-transform: uppercase;
+  /* text-transform: uppercase; */
   display: inline-block;
   text-decoration: none;
   position: relative;
@@ -157,6 +163,8 @@ body.login {
   /*Add later when we use this for the button in form*/
   border: none;
   cursor: pointer;
+
+  position: relative;
 }
 
 .btn--login:hover {
@@ -176,6 +184,49 @@ body.login {
 .btn--blue {
   background-color: #47b1f5;
   color: #fff;
+  margin-top: 1rem;
+}
+
+.btn--grey {
+  background-color: #212529;
+  color: #fff;
+}
+
+.btn-otln {
+  border: 1px solid #343a40;
+}
+.btn--company {
+  margin-top: 2rem;
+  color: #fff;
+  background-color: black;
+}
+
+.icon--company {
+  position: absolute;
+  top: 50%;
+  left: 7.5%;
+  width: 20px;
+  transform: translate(0, -50%);
+}
+
+.form__password {
+  position: relative;
+}
+
+.icon--password {
+  position: absolute;
+  top: 50%;
+  right: 2.5%;
+  width: 30px;
+  transform: translate(0, -50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
 }
 
 .btn--login:focus {
@@ -202,6 +253,10 @@ header.nav {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+header.nav.disappear {
+  display: none;
 }
 
 .nav-item {
@@ -475,6 +530,10 @@ a.footer-link:active {
 aside.side-nav.hidden {
   display: none;
 }
+
+aside.side-nav.disappear {
+  display: none;
+}
 /* 
 =========================END SIDE NAVBAR CSS========================================
 */
@@ -501,6 +560,10 @@ section.main {
   display: flex;
   justify-content: center;
   flex-direction: column;
+}
+
+section.main.disappear {
+  display: none;
 }
 .container {
   background-color: red;
@@ -708,6 +771,10 @@ END SIDE NAV BUTTON ACTIONS
 */
 
 .hidden {
+  display: none;
+}
+
+.disappear {
   display: none;
 }
 
