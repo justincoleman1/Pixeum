@@ -27,9 +27,10 @@ import {
 
 import { togglePasswordVisibillity } from './front/passwordVisibility';
 import {
-  closeOnClickOutside,
+  profileDropDownClosed,
+  closeProfileDropDown,
   closeOnEscape,
-  openCloseMenu,
+  openCloseProfileDropDownMenu,
 } from './front/navbar';
 
 // DOM ELEMENTS
@@ -47,7 +48,7 @@ const passHideBtn = document.getElementById('pass-hide');
 
 const profileBtn = document.getElementById('profile-menu-trigger');
 
-const logOutBtn = document.querySelector('.nav__el--logout');
+const logOutBtn = document.getElementById('logoutBtn');
 
 const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
@@ -157,12 +158,13 @@ if (logOutBtn) logOutBtn.addEventListener('click', logout);
 if (profileBtn) {
   profileBtn.addEventListener('click', (e) => {
     e.preventDefault;
-    openCloseMenu();
+    openCloseProfileDropDownMenu();
   });
-  // document.addEventListener('click', (e) => {
-  //   e.preventDefault;
-  //   closeOnClickOutside(e);
-  // });
+
+  document.addEventListener('click', (e) => {
+    e.preventDefault;
+    if (!profileDropDownClosed()) closeProfileDropDown(e);
+  });
   // document.addEventListener('keydown', (e) => {
   //   e.preventDefault;
   //   closeOnEscape(e);

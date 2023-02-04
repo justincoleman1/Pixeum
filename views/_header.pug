@@ -24,11 +24,11 @@ header#nav.nav
                   img.nav__user-img(src=`/img/users/${user.photo}` alt=`Photo of ${user.name}`)
                #profile-menu.closed
                   .profile-menu-item
-                     .proile-menu-item__col-l
+                     .profile-menu-item__col-l
                         img.profile-menu__user-img(src=`/img/users/${user.photo}` alt=`Photo of ${user.name}`)
                      .profile-menu-item__col-r
-                        h3= user.name
-                        h3=`@${user.username}`
+                        h3.profile-menu__header-name= user.name
+                        h3.profile-menu__header-username=`@${user.username}`
                         a.profile__account-link(href='/me') Manage your Account
                   .profile-menu-item
                      ul.profile-item-list
@@ -39,7 +39,7 @@ header#nav.nav
                               </svg>
                               | Your Profile
                         li
-                           a.profile-menu__list-link(href="/logout")
+                           a#logoutBtn.profile-menu__list-link
                               <svg class="profile-menu__list__link-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
                               <rect width="256" height="256" fill="none"/>
                               <polyline fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16" points="174.011 86 216 128 174.011 170"/>
