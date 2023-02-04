@@ -26,6 +26,11 @@ import {
 } from './front/search-bar';
 
 import { togglePasswordVisibillity } from './front/passwordVisibility';
+import {
+  closeOnClickOutside,
+  closeOnEscape,
+  openCloseMenu,
+} from './front/navbar';
 
 // DOM ELEMENTS
 const sideNavBtn = document.querySelector('.btn-side-nav');
@@ -40,10 +45,13 @@ const signupForm = document.getElementById('signup-form');
 const passShowBtn = document.getElementById('pass-show');
 const passHideBtn = document.getElementById('pass-hide');
 
+const profileBtn = document.getElementById('profile-menu-trigger');
+
 const logOutBtn = document.querySelector('.nav__el--logout');
 
 const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
+
 const overlay = document.querySelector('.overlay');
 
 //WINDOW RESIZES
@@ -145,6 +153,21 @@ if (loginForm) {
 }
 
 if (logOutBtn) logOutBtn.addEventListener('click', logout);
+
+if (profileBtn) {
+  profileBtn.addEventListener('click', (e) => {
+    e.preventDefault;
+    openCloseMenu();
+  });
+  // document.addEventListener('click', (e) => {
+  //   e.preventDefault;
+  //   closeOnClickOutside(e);
+  // });
+  // document.addEventListener('keydown', (e) => {
+  //   e.preventDefault;
+  //   closeOnEscape(e);
+  // });
+}
 
 if (userDataForm)
   userDataForm.addEventListener('submit', (e) => {
