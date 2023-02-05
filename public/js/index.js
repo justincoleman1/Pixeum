@@ -26,6 +26,7 @@ import {
   showSearchBar,
   showSearchClearBtn,
   hideSearchClearBtn,
+  searchHasText,
 } from './front/search-bar';
 
 import { togglePasswordVisibillity } from './front/passwordVisibility';
@@ -114,7 +115,8 @@ if (searchInput) {
     if (!ws792() && sideNavExpanded()) collapseSideNav();
   });
   searchInput.addEventListener('input', (e) => {
-    showSearchClearBtn();
+    if (searchHasText()) showSearchClearBtn();
+    else hideSearchClearBtn();
   });
   searchClearBtn.addEventListener('click', (e) => {
     clearSearchText();

@@ -8,7 +8,7 @@ FONT SIZE SYSTEM (px)
 
 /* 
 MAIN COLOR: #47b1f5
-GREY COLOR: #212529;
+GREY COLOR: #2e2d2d;;
 */
 
 /* 
@@ -84,7 +84,7 @@ ul {
   margin: 0 auto;
   align-self: flex-end;
   max-width: 30rem;
-  background-color: #212529;
+  background-color: #2e2d2d;
   -webkit-box-shadow: 0 2.5rem 8rem 2rem rgba(0, 0, 0, 0.06);
   box-shadow: 0 2.5rem 8rem 2rem rgba(0, 0, 0, 0.06);
   padding: 4rem;
@@ -129,7 +129,7 @@ ul {
   border-bottom: 3px solid #47b1f5;
 }
 .form__input:focus:invalid {
-  border-bottom: 3px solid #212529;
+  border-bottom: 3px solid #2e2d2d;
 }
 .form__input::-webkit-input-placeholder {
   color: #bbb;
@@ -188,7 +188,7 @@ ul {
 }
 
 .btn--grey {
-  background-color: #212529;
+  background-color: #2e2d2d;
   color: #fff;
 }
 
@@ -247,7 +247,7 @@ header.nav {
   height: 50px;
 
   color: #fff;
-  background-color: #212529;
+  background-color: #2e2d2d;
 
   z-index: 2;
   display: flex;
@@ -320,7 +320,7 @@ h1.nav-header-brand {
 }
 .btn-revert {
   border: none;
-  background-color: #212529;
+  background-color: #2e2d2d;
   width: 20px;
 
   display: flex;
@@ -341,7 +341,7 @@ button.btn-revert.hidden {
 
 .btn-search {
   border: none;
-  background-color: #212529;
+  background-color: #2e2d2d;
 
   position: absolute;
   top: 50%;
@@ -363,7 +363,7 @@ button.btn-revert.hidden {
 
 .btn-search-clear {
   border: none;
-  background-color: #212529;
+  background-color: #2e2d2d;
 
   position: absolute;
   top: 50%;
@@ -389,7 +389,7 @@ button.btn-revert.hidden {
 }
 
 .search {
-  border: 1px solid #212529;
+  border: 1px solid #2e2d2d;
   border-radius: 5px;
   height: 50px;
   width: 100%;
@@ -397,7 +397,7 @@ button.btn-revert.hidden {
   outline: 0;
   font-size: 18px;
   color: #fff;
-  background-color: #212529;
+  background-color: #2e2d2d;
 }
 
 .search::placeholder {
@@ -551,7 +551,7 @@ ul.profile-item-list li > a:hover,
 */
 
 aside.side-nav {
-  background-color: #212529;
+  background-color: #2e2d2d;
   top: 50px;
   bottom: 0;
   position: fixed;
@@ -753,7 +753,7 @@ END SIDE NAV BUTTON ACTIONS
 }
 
 .personal-info__container-item {
-  background-color: #212529;
+  background-color: #2e2d2d;
   border: solid 0.1px #595b5d;
   border-radius: 10px;
   padding: 32px 32px 8px 32px;
@@ -792,6 +792,10 @@ ul.personal-info__container-item__list li > a {
   align-items: center;
 
   gap: 50px;
+}
+ul.personal-info__container-item__list li > a:hover,
+ul.personal-info__container-item__list li > a:active {
+  background-color: #3e3d3d;
 }
 
 a.presonal-info__container-item__list-link {
@@ -966,7 +970,7 @@ ul.personal-info__container-item__list li:last-child {
 
 .side-nav-link-icon.color {
   stroke: #fff;
-  fill: #212529;
+  fill: #2e2d2d;
 }
 
 .side-nav-link-icon.color.fill {
@@ -987,7 +991,7 @@ ul.personal-info__container-item__list li:last-child {
 .st1 {
   fill-rule: evenodd;
   clip-rule: evenodd;
-  fill: #212529;
+  fill: #2e2d2d;
 }
 .st2 {
   fill: #fff;
