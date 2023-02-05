@@ -159,6 +159,9 @@ if (profileBtn) {
   profileBtn.addEventListener('click', (e) => {
     e.preventDefault;
     openCloseProfileDropDownMenu();
+    if (!ws792() && sideNavExpanded()) {
+      collapseSideNav();
+    }
   });
 
   document.addEventListener('click', (e) => {

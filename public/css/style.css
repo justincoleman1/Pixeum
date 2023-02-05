@@ -413,6 +413,20 @@ a.nav-btn,
 button.nav-btn {
   margin-left: 20px;
 }
+
+a.nav-btn {
+  padding: 6px 12px;
+  border-radius: 10px;
+}
+
+.btn-join {
+  background-color: #495057;
+  border: none;
+}
+
+.btn-signin {
+  border: 1px solid #47b1f5;
+}
 /*-----------------------ProfileButtonCSS---------------------------*/
 
 .bx {

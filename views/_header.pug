@@ -39,6 +39,13 @@ header#nav.nav
                               </svg>
                               | Your Profile
                         li
+                           a.profile-menu__list-link(href="#") 
+                              <svg class="profile-menu__list__link-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" />
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" />
+                              </svg>
+                              | Dashboard
+                        li
                            a#logoutBtn.profile-menu__list-link
                               <svg class="profile-menu__list__link-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
                               <rect width="256" height="256" fill="none"/>
@@ -46,7 +53,7 @@ header#nav.nav
                               <line x1="104" x2="215.971" y1="128" y2="128" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16"/>
                               <path fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="16" d="M104,216H48a8,8,0,0,1-8-8V48a8,8,0,0,1,8-8h56"/>
                               </svg> 
-                              | Logout
+                              | Sign out
                   
                   .profile-menu-item
                      ul.profile-item-list
@@ -88,32 +95,33 @@ aside#aside.side-nav
                   | Home
             li.center-side-nav-link
                a.side-nav-link.shrink-side-nav-link
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="side-nav-link-icon color">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 7.5h-.75A2.25 2.25 0 004.5 9.75v7.5a2.25 2.25 0 002.25 2.25h7.5a2.25 2.25 0 002.25-2.25v-7.5a2.25 2.25 0 00-2.25-2.25h-.75m0-3l-3-3m0 0l-3 3m3-3v11.25m6-2.25h.75a2.25 2.25 0 012.25 2.25v7.5a2.25 2.25 0 01-2.25 2.25h-7.5a2.25 2.25 0 01-2.25-2.25v-.75" />
+                  <svg class="side-nav-link-icon" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"viewBox="0 0 24 24" style="enable-background:new 0 0 24 24;" xml:space="preserve">
+                  <path fill="#fff" d="M13.3,3C8.2,2.9,4,6.9,4,12H2.2c-0.5,0-0.7,0.5-0.4,0.9l2.8,2.8c0.2,0.2,0.5,0.2,0.7,0l2.8-2.8C8.5,12.5,8.2,12,7.8,12H6c0-3.9,3.2-7.1,7.1-7c3.7,0.1,6.9,3.2,6.9,6.9c0,3.9-3.1,7.1-7,7.1c-1.6,0-3.1-0.5-4.3-1.5c-0.4-0.3-1-0.3-1.3,0.1C7,18,7,18.7,7.5,19.1C9,20.3,10.9,21,13,21c5,0,9.1-4.2,9-9.3C21.9,7,18,3.1,13.3,3z"/>
+                  <path fill="#fff" d="M10.7,11.3l1.7-1.7v7c0,0.4,0.3,0.7,0.7,0.7c0.4,0,0.7-0.3,0.7-0.7v-7l1.7,1.7c0.3,0.3,0.7,0.3,1,0l0,0c0.3-0.3,0.3-0.7,0-1c0,0,0,0,0,0l-2.9-2.9c-0.1-0.1-0.2-0.1-0.2-0.2c-0.2-0.1-0.4-0.1-0.6,0c-0.1,0-0.2,0.1-0.2,0.2l-2.9,2.9c-0.3,0.3-0.3,0.8,0,1S10.4,11.6,10.7,11.3z"/>
                   </svg>
                   | Recent
             li.center-side-nav-link
                a.side-nav-link.shrink-side-nav-link
-                  <svg version="1.1" id="subscriptions-catalogs" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 20 20" style="enable-background:new 0 0 20 20;" xml:space="preserve" class="side-nav-link-icon">
-                  <path id="Icon" class="st0" d="M12.1,12.5l-2.9,3.1l-2.1-2.1l-2.9,3.1h11.7L12.1,12.5z M12.1,12.5l-2.9,3.1l-2.1-2.1l-2.9,3.1h11.7L12.1,12.5z M17.5,7.1h-15c-0.8,0-1.7,0.7-1.7,1.4V18c0,0.8,0.8,1.4,1.7,1.4h15c0.8,0,1.7-0.7,1.7-1.4V8.4C19.2,7.7,18.3,7.1,17.5,7.1z M17.5,18C17.5,18,17.5,18,17.5,18L2.5,18V8.5c0.1-0.1,14.9-0.1,15,0V18z M9.2,15.6l-2.1-2.1l-2.9,3.1h11.7l-3.8-4.1L9.2,15.6z M12.1,12.5l-2.9,3.1l-2.1-2.1l-2.9,3.1h11.7L12.1,12.5z M12.1,12.5l-2.9,3.1l-2.1-2.1l-2.9,3.1h11.7L12.1,12.5z"/>
-                  <path class="st1" d="M17.4,8.4H2.6L2.5,8.5V18h14.9c0,0,0,0,0.1-0.1L17.4,8.4C17.5,8.5,17.5,8.4,17.4,8.4z M4.2,16.7l2.9-3.1l2.1,2.1l2.9-3.1l3.8,4.1H4.2z"/>
-                  <circle class="c1" cx="9.6" cy="12.5" r="1.5"/>
-                  <path class="st2" d="M3,5.9h14c0.5,0,1-0.2,1-0.4c0-0.2-0.5-0.4-1-0.4H3c-0.5,0-1,0.2-1,0.4C2,5.8,2.5,5.9,3,5.9z"/>
-                  <path class="st2" d="M5,4h10c0.5,0,1-0.2,1-0.4s-0.5-0.4-1-0.4H5c-0.5,0-1,0.2-1,0.4S4.5,4,5,4z"/>
-                  </svg>          
+                  <svg class="side-nav-link-icon" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 32 32" style="enable-background:new 0 0 32 32;" xml:space="preserve">
+                  <path fill="#fff" d="M18,26.7h-7.4c-0.4,0-0.7-0.3-0.7-0.7v-0.7c0-3.3,2.7-6,6-6c1.6,0,3.1,0.6,4.2,1.8c0.3,0.2,0.7,0.2,0.9-0.1c0.2-0.3,0.2-0.6,0-0.9c-0.7-0.7-1.6-1.3-2.5-1.7c2.1-1.5,2.6-4.4,1.2-6.5c-1.5-2.1-4.4-2.6-6.5-1.2s-2.6,4.4-1.2,6.5c0.3,0.5,0.7,0.8,1.2,1.2c-2.8,1.1-4.7,3.8-4.7,6.9V26c0,1.1,0.9,2,2,2H18c0.4,0,0.7-0.3,0.7-0.7S18.4,26.7,18,26.7z M12.6,14.7c0-1.8,1.5-3.3,3.3-3.3s3.3,1.5,3.3,3.3S17.8,18,16,18S12.6,16.6,12.6,14.7z"/>
+                  <path fill="#fff" d="M24.1,22.9c-0.4-0.5-0.9-0.8-1.5-0.8c-0.4,0-0.9,0.1-1.3,0.3c-0.4-0.2-0.8-0.3-1.3-0.3c-0.6,0-1.1,0.3-1.5,0.8c-0.8,1-0.7,2.4,0.1,3.4l1.9,2.1c0.4,0.4,1.1,0.5,1.5,0.1l0.1-0.1l1.9-2.1C24.8,25.3,24.9,23.9,24.1,22.9z M23,25.4l-1.7,1.9l-1.7-1.9c-0.4-0.5-0.4-1.2-0.1-1.7c0.1-0.2,0.4-0.3,0.6-0.3h0.1c0.2,0,0.4,0.1,0.5,0.2c0.3,0.3,0.8,0.3,1.2,0c0.2-0.2,0.4-0.2,0.6-0.2s0.4,0.1,0.6,0.3C23.4,24.3,23.4,24.9,23,25.4z"/>
+                  <path fill="#fff" d="M30.5,9.3v20.1h-29V9.3H30.5 M31.6,8.2H0.4v22.4h31.3L31.6,8.2L31.6,8.2z M3.1,6h25.7v1.1H3.1V6z M5.4,3.7h21.2v1.1H5.4V3.7z"/>
+                  </svg>         
                   |Subscriptions
     #sidenavitem2.side-nav-item.shrink-side-nav-item
         ul.side-nav-list
             li.center-side-nav-link
                a.side-nav-link.shrink-side-nav-link
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="side-nav-link-icon">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                  <svg class="side-nav-link-icon" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 55 55" viewBox="0 0 55 55">
+                  <path fill="#fff" d="M48.76,12.98h-1.5v-1.5c0-1.93-1.57-3.5-3.5-3.5H6.24c-1.93,0-3.5,1.57-3.5,3.5v27.03c0,1.93,1.57,3.5,3.5,3.5h1.5v1.5c0,1.93,1.57,3.5,3.5,3.5h37.52c1.93,0,3.5-1.57,3.5-3.5V16.48C52.26,14.56,50.69,12.98,48.76,12.98z M38.22,40.02l-6.57-6.57l5.85-5.85l7.76,7.76v3.16c0,0.83-0.67,1.5-1.5,1.5H38.22z M6.24,9.98h37.52c0.83,0,1.5,0.67,1.5,1.5v21.05l-7.05-7.05c-0.39-0.39-1.02-0.39-1.41,0l-6.55,6.55L18.39,20.18c-0.39-0.39-1.02-0.39-1.41,0L4.74,32.41V11.48C4.74,10.66,5.41,9.98,6.24,9.98z M4.74,38.52v-3.28L17.68,22.3L35.4,40.02H6.24C5.41,40.02,4.74,39.34,4.74,38.52z M50.26,43.52c0,0.83-0.67,1.5-1.5,1.5H11.24c-0.83,0-1.5-0.67-1.5-1.5v-1.5h34.02c1.93,0,3.5-1.57,3.5-3.5V14.98h1.5c0.83,0,1.5,0.67,1.5,1.5V43.52z"/>
+                  <path fill="#fff" d="M33.66,21.25c2.4,0,4.36-1.96,4.36-4.36s-1.96-4.36-4.36-4.36c-2.4,0-4.36,1.96-4.36,4.36S31.26,21.25,33.66,21.25zM33.66,14.52c1.3,0,2.36,1.06,2.36,2.36s-1.06,2.36-2.36,2.36c-1.3,0-2.36-1.06-2.36-2.36S32.36,14.52,33.66,14.52z"/>
                   </svg>
-                  | Galleries 
+                  | Gallery
             li.center-side-nav-link
                a.side-nav-link.shrink-side-nav-link
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="side-nav-link-icon">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <svg class="side-nav-link-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                  <path fill="none" d="M0 0h24v24H0V0z"/>
+                  <path fill= "#fff" d="M13.26 3C8.17 2.86 4 6.95 4 12H2.21c-.45 0-.67.54-.35.85l2.79 2.8c.2.2.51.2.71 0l2.79-2.8c.31-.31.09-.85-.36-.85H6c0-3.9 3.18-7.05 7.1-7 3.72.05 6.85 3.18 6.9 6.9.05 3.91-3.1 7.1-7 7.1-1.61 0-3.1-.55-4.28-1.48-.4-.31-.96-.28-1.32.08-.42.42-.39 1.13.08 1.49C9 20.29 10.91 21 13 21c5.05 0 9.14-4.17 9-9.26-.13-4.69-4.05-8.61-8.74-8.74zm-.51 5c-.41 0-.75.34-.75.75v3.68c0 .35.19.68.49.86l3.12 1.85c.36.21.82.09 1.03-.26.21-.36.09-.82-.26-1.03l-2.88-1.71v-3.4c0-.4-.34-.74-.75-.74z"/>
                   </svg>
                   | History
             li.center-side-nav-link
@@ -128,43 +136,44 @@ aside#aside.side-nav
                   <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                   </svg>
                   | Favorites
-    #sidenavitem3.side-nav-item.hidden
-        h3.side-nav-item-header Subscriptions
-        ul.side-nav-list
-            li
-               a.side-nav-link
-                  img.nav__user-img(src=`/img/users/default.jpg` alt=`default`)
-                  | User 1
-            li
-               a.side-nav-link
-                  img.nav__user-img(src=`/img/users/default.jpg` alt=`default`)
-                  | User 2
-            li
-               a.side-nav-link
-                  img.nav__user-img(src=`/img/users/default.jpg` alt=`default`)
-                  | User 3
-            li
-               a.side-nav-link
-                  img.nav__user-img(src=`/img/users/default.jpg` alt=`default`)
-                  | User 4
-            li
-               a.side-nav-link
-                  img.nav__user-img(src=`/img/users/default.jpg` alt=`default`)
-                  | User 5
-            li
-               a.side-nav-link
-                  img.nav__user-img(src=`/img/users/default.jpg` alt=`default`)
-                  | User 6
-            li
-               a.side-nav-link
-                  img.nav__user-img(src=`/img/users/default.jpg` alt=`default`)
-                  | User 7
-            li
-               a.side-nav-link
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="side-nav-link-icon">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                  </svg>
-                  | Show 84 more
+    if user
+      #sidenavitem3.side-nav-item.hidden
+         h3.side-nav-item-header Subscriptions
+         ul.side-nav-list
+               li
+                  a.side-nav-link
+                     img.nav__user-img(src=`/img/users/default.jpg` alt=`default`)
+                     | User 1
+               li
+                  a.side-nav-link
+                     img.nav__user-img(src=`/img/users/default.jpg` alt=`default`)
+                     | User 2
+               li
+                  a.side-nav-link
+                     img.nav__user-img(src=`/img/users/default.jpg` alt=`default`)
+                     | User 3
+               li
+                  a.side-nav-link
+                     img.nav__user-img(src=`/img/users/default.jpg` alt=`default`)
+                     | User 4
+               li
+                  a.side-nav-link
+                     img.nav__user-img(src=`/img/users/default.jpg` alt=`default`)
+                     | User 5
+               li
+                  a.side-nav-link
+                     img.nav__user-img(src=`/img/users/default.jpg` alt=`default`)
+                     | User 6
+               li
+                  a.side-nav-link
+                     img.nav__user-img(src=`/img/users/default.jpg` alt=`default`)
+                     | User 7
+               li
+                  a.side-nav-link
+                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="side-nav-link-icon">
+                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                     </svg>
+                     | Show 84 more
     #sidenavitem4.side-nav-item.hidden
         h3.side-nav-item-header Explore
         ul.side-nav-list

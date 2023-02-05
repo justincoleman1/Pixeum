@@ -5,6 +5,7 @@ const ws791 = window.matchMedia('(max-width: 791px)');
 const overlay = document.querySelector('.overlay');
 const el = document.getElementById('main');
 const el1 = document.getElementById('aside');
+
 const el2 = document.getElementById('sidenavitem1');
 const el3 = document.getElementById('sidenavitem2');
 const el4 = document.getElementById('sidenavitem3');
@@ -51,12 +52,13 @@ export const turnOnOverlay = () => {
 const expandSideNavChildren = () => {
   el.classList.add('shrink-main');
   el1.classList.add('expand-aside');
-  el4.classList.remove('hidden');
+
+  el2.classList.remove('shrink-side-nav-item');
+  el3.classList.remove('shrink-side-nav-item');
+  if (el4) el4.classList.remove('hidden');
   el5.classList.remove('hidden');
   el6.classList.remove('hidden');
   el7.classList.remove('hidden');
-  el2.classList.remove('shrink-side-nav-item');
-  el3.classList.remove('shrink-side-nav-item');
 
   for (let i = 0; i < 4; i++) {
     if (i < 3) {
@@ -83,12 +85,13 @@ const expandSideNavChildren = () => {
 const collapseSideNavChildren = () => {
   el.classList.remove('shrink-main');
   el1.classList.remove('expand-aside');
-  el4.classList.add('hidden');
+
+  el2.classList.add('shrink-side-nav-item');
+  el3.classList.add('shrink-side-nav-item');
+  if (el4) el4.classList.add('hidden');
   el5.classList.add('hidden');
   el6.classList.add('hidden');
   el7.classList.add('hidden');
-  el2.classList.add('shrink-side-nav-item');
-  el3.classList.add('shrink-side-nav-item');
 
   for (let i = 0; i < 4; i++) {
     if (i < 3) {
