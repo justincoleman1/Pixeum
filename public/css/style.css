@@ -252,7 +252,7 @@ header.nav {
   z-index: 2;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 24px;
 }
 
 header.nav.disappear {
@@ -265,8 +265,6 @@ header.nav.disappear {
 }
 
 .nav-item:first-child {
-  min-width: 75px;
-  justify-content: center;
 }
 
 .nav-item:nth-child(3) {
@@ -283,6 +281,7 @@ header.nav.disappear {
   background: none;
   border: none;
   cursor: pointer;
+  margin-left: 26px;
 }
 
 .btn-side-nav:hover .nav-side-nav-icon,
@@ -302,8 +301,8 @@ header.nav.disappear {
 .nav-side-nav-icon {
   stroke: #fff;
 
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
 }
 
 h1.nav-header-brand {
@@ -379,6 +378,10 @@ button.btn-revert.hidden {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.btn-search-clear.hidden {
+  display: none;
 }
 
 .clear-icon {
@@ -494,7 +497,7 @@ a.profile__account-link {
 }
 
 .profile-menu-item + .profile-menu-item {
-  border-top: solid 0.1px #868e96;
+  border-top: solid 0.1px #595b5d;
 }
 
 ul.profile-item-list li {
@@ -508,7 +511,7 @@ ul.profile-item-list li:last-child {
 ul.profile-item-list li > a {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 24px;
   /* color: #fff; */
   text-decoration: none;
   cursor: pointer;
@@ -517,8 +520,8 @@ ul.profile-item-list li > a {
 
 .profile-menu__list__link-icon {
   margin-left: 16px;
-  height: 24px;
-  width: 24px;
+  height: 30px;
+  width: 30px;
 }
 
 ul.profile-item-list li > a:focus-visible,
@@ -556,7 +559,7 @@ aside.side-nav {
   position: fixed;
   overflow-y: auto;
   overflow-x: hidden;
-
+  width: 80px;
   z-index: 2;
   display: flex;
   flex-direction: column;
@@ -575,13 +578,13 @@ aside::-webkit-scrollbar {
 
 /* Handle */
 aside::-webkit-scrollbar-thumb {
-  background: #868e96;
+  background: #595b5d;
   border-radius: 10px;
 }
 
 /* Handle on hover */
 aside::-webkit-scrollbar-thumb:hover {
-  background: #868e96;
+  background: #595b5d;
 }
 
 .side-nav-item {
@@ -589,7 +592,7 @@ aside::-webkit-scrollbar-thumb:hover {
 }
 
 .side-nav-item + .side-nav-item {
-  border-top: solid 0.1px #3c4248;
+  border-top: solid 0.1px #2b3035;
 }
 
 ul.side-nav-list li {
@@ -603,7 +606,7 @@ ul.side-nav-list li:last-child {
 ul.side-nav-list li > a {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 24px;
   /* color: #fff; */
   text-decoration: none;
   cursor: pointer;
@@ -611,8 +614,8 @@ ul.side-nav-list li > a {
 }
 
 .side-nav__user-img {
-  height: 24px;
-  width: 24px;
+  height: 30px;
+  width: 30px;
   border-radius: 50%;
 }
 
@@ -716,16 +719,15 @@ section.main.disappear {
 =========================SIDENAVBAR BUTTON PRESS CSS========================================
 */
 section.main.shrink-main {
-  margin-left: 225px;
+  margin-left: 300px;
 }
 
 aside.side-nav.expand-aside {
-  min-width: 225px;
+  min-width: 300px;
 }
 /* append to .side-nav-item  */
 .shrink-side-nav-item {
-  padding: 24px 0;
-  width: 75px;
+  margin-left: 2px;
 }
 
 /* append to ul.side-nav-list li */
@@ -836,7 +838,7 @@ END SIDE NAV BUTTON ACTIONS
     transition: all 0.5s ease-in-out;
     /* full screen */
     width: 100vw;
-    margin-left: 244px;
+    margin-left: 300px;
     /* middle layer, i.e. appears below the sidebar */
     z-index: 2;
   }
@@ -871,8 +873,8 @@ END SIDE NAV BUTTON ACTIONS
 }
 
 .side-nav-link-icon {
-  height: 24px;
-  width: 24px;
+  height: 30px;
+  width: 30px;
 }
 
 .side-nav-link-icon.color {

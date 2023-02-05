@@ -5,6 +5,7 @@ import { addHidden, removeHidden } from './hidden';
 const searchBar = document.getElementById('search-bar');
 const searchInput = document.getElementById('search-input');
 const searchRevert = document.getElementById('search-revert');
+const searchClearBtn = document.getElementById('search-clear');
 const nav = document.getElementById('nav');
 
 export const navDisappear = () => {
@@ -17,6 +18,18 @@ export const hideNav = () => {
 
 export const searchHasText = () => {
   return searchInput.value ? true : false;
+};
+
+export const clearSearchText = () => {
+  searchInput.value = '';
+};
+
+export const showSearchClearBtn = () => {
+  searchClearBtn.classList.remove('hidden');
+};
+
+export const hideSearchClearBtn = () => {
+  searchClearBtn.classList.add('hidden');
 };
 
 export const searchIsActive = () => {

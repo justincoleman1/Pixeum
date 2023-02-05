@@ -14,6 +14,7 @@ import {
 } from './front/side-nav';
 import { windowSize792Changes, ws792 } from './front/window';
 import {
+  clearSearchText,
   hideNavOptions,
   hideRevertBtn,
   hideSearchBar,
@@ -23,6 +24,8 @@ import {
   showNavOptions,
   showRevertBtn,
   showSearchBar,
+  showSearchClearBtn,
+  hideSearchClearBtn,
 } from './front/search-bar';
 
 import { togglePasswordVisibillity } from './front/passwordVisibility';
@@ -38,6 +41,7 @@ const sideNavBtn = document.querySelector('.btn-side-nav');
 
 const searchBtn = document.querySelector('.btn-search');
 const searchInput = document.getElementById('search-input');
+const searchClearBtn = document.getElementById('search-clear');
 const searchRevert = document.getElementById('search-revert');
 
 const loginForm = document.getElementById('login-form');
@@ -105,10 +109,18 @@ if (searchRevert)
     }
   });
 
-if (searchInput)
+if (searchInput) {
   searchInput.addEventListener('click', (e) => {
     if (!ws792() && sideNavExpanded()) collapseSideNav();
   });
+  searchInput.addEventListener('input', (e) => {
+    showSearchClearBtn();
+  });
+  searchClearBtn.addEventListener('click', (e) => {
+    clearSearchText();
+    hideSearchClearBtn();
+  });
+}
 
 if (passShowBtn)
   passShowBtn.addEventListener('click', (e) => {
