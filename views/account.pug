@@ -1,65 +1,60 @@
 extends base
 
-mixin navItem(link, text, icon, active)
-    li(class=`${active ? 'side-nav--active' : ''}`)
-        a(href=`${link}`)
-            svg
-                use(xlink:href=`/img/icons.svg#icon-${icon}`)
-            |    #{text}
-
 block content
     section#main.main
-        .user-view
-            //- nav.user-view__menu
-            //-     ul.side-nav
-            //-         +navItem('#', 'Settings', 'settings')
-            //-         +navItem('/my-tours', 'My Bookings', 'briefcase')
-            //-         +navItem('#', 'My reviews', 'star')
-            //-         +navItem('#', 'Billing', 'credit-card')
-            
-            //-     - if(user.role === 'admin')
-            //-         admin-nav
-            //-             h5.admin-nav__heading Admin
-            //-             ul.side-nav
-            //-                 +navItem('#', 'Manage tours', 'map')
-            //-                 +navItem('#', 'Manage users', 'users')
-            //-                 +navItem('#', 'Mangage reviews', 'star')
-            //-                 +navItem('#', 'Manage bookings', 'briefcase')
-                        
-            .user-view__content
-                .user-view__form-container
-                    h2.heading-secondary.ma-bt-md Your account settings
-                    //- WITHOUT API
-                    //- form.form.form-user-data(action='/submit-user-data' method='POST' enctype='multipart/form-data')
-                    
-                    //- WITH API
-                    form.form.form-user-data
-                        .form__group
-                            label.form__label(for='name') Name
-                            input#name.form__input(type='text', value=`${user.name}`, required, name='name')
-                        .form__group.ma-bt-md
-                            label.form__label(for='email') Email address
-                            input#email.form__input(type='email', value=`${user.email}`, required, name='email')
-                        .form__group.form__photo-upload
-                            img.form__user-photo(src=`/img/users/${user.photo}`, alt=`${user.name} photo`)
-                            input#photo.form__upload(type='file', accept='image/*', name='photo')
-                            label(for='photo') Choose new photo 
-                            
-                        .form__group.right
-                            button.btn.btn--small.btn--green Save settings
-                            
-                .line &nbsp;
-                .user-view__form-container
-                    h2.heading-secondary.ma-bt-md Password change
-                    form.form.form-user-password
-                        .form__group
-                            label.form__label(for='password-current') Current password
-                            input#password-current.form__input(type='password', placeholder='••••••••', required, minlength='8')
-                        .form__group
-                            label.form__label(for='password') New password
-                            input#password.form__input(type='password', placeholder='••••••••', required, minlength='8')
-                        .form__group.ma-bt-lg
-                            label.form__label(for='password-confirm') Confirm password
-                            input#password-confirm.form__input(type='password', placeholder='••••••••', required, minlength='8')
-                        .form__group.right
-                            button.btn.btn--small.btn--green.btn--save-password Save password
+        .personal-info__container    
+            .personal-info__container-item
+                h1.personal-info__header Personal info
+            .personal-info__container-item 
+                h2.personal-info__container-item__header Basic info
+                p.personal-info__container-item__description Some info may be visible to other users on our website.                      
+                ul.personal-info__container-item__list
+                    li
+                        a.presonal-info__container-item__list-link(href="#") Add a personalized photo
+                            span.personal-info__span Photo
+                            img.personal-info__user-img(src=`/img/users/${user.photo}`, alt=`${user.name} photo`) 
+                    li  
+                        a.presonal-info__container-item__list-link(href="#")=`${user.name}`
+                            span.personal-info__span Name
+                            <svg class="personal-info__link-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                            </svg>
+                    li  
+                        a.presonal-info__container-item__list-link(href="#")=`${user.username}`
+                            span.personal-info__span Username
+                            <svg class="personal-info__link-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                            </svg>
+                    li  
+                        a.presonal-info__container-item__list-link(href="#")=`${user.birthday}`
+                            span.personal-info__span Birthday
+                            <svg class="personal-info__link-icon"  xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                            </svg>
+                    li  
+                        a.presonal-info__container-item__list-link(href="#")=`${user.gender}`
+                            span.personal-info__span Gender
+                            <svg class="personal-info__link-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                            </svg>
+
+            .personal-info__container-item 
+                h2.personal-info__container-item__header Contact info                       
+                ul.personal-info__container-item__list
+                    li
+                        a.presonal-info__container-item__list-link(href="#")=`${user.email}`
+                            span.personal-info__span Email
+                            <svg class="personal-info__link-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                            </svg>
+
+            .personal-info__container-item 
+                h2.personal-info__container-item__header Password
+                p.personal-info__container-item__description A secure password helps protect your account.                      
+                ul.personal-info__container-item__list
+                    li
+                        a.presonal-info__container-item__list-link(href="#")=`${user.passwordChangedAt}`
+                            span.personal-info__span **********
+                            <svg class="personal-info__link-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                            </svg>

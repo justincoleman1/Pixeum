@@ -264,9 +264,6 @@ header.nav.disappear {
   align-items: center;
 }
 
-.nav-item:first-child {
-}
-
 .nav-item:nth-child(3) {
   margin-left: auto;
   gap: 48px;
@@ -522,6 +519,7 @@ ul.profile-item-list li > a {
   margin-left: 16px;
   height: 30px;
   width: 30px;
+  stroke-width: 1.5;
 }
 
 ul.profile-item-list li > a:focus-visible,
@@ -633,10 +631,10 @@ h3.side-nav-item-header {
   gap: 18px;
 } */
 
-a.side-nav-link:link,
-a.side-nav-link:visited,
-a.side-nav-link:hover,
-a.side-nav-link:active {
+a.footer-link:link,
+a.footer-link:visited,
+a.footer-link:hover,
+a.footer-link:active {
   color: #47b1f5;
 }
 
@@ -651,13 +649,6 @@ a.side-nav-link:active {
   margin-left: 16px;
   font-size: 14px;
   font-weight: 500;
-}
-
-a.footer-link:link,
-a.footer-link:visited,
-a.footer-link:hover,
-a.footer-link:active {
-  color: #47b1f5;
 }
 
 .side-nav-footer:nth-child(5) {
@@ -748,6 +739,101 @@ END SIDE NAV BUTTON ACTIONS
 
 /* 
 =========================END SIDENAVBAR BUTTON PRESS CSS========================================
+*/
+
+/* 
+=========================USER VIEW ACCOUNT PAGE CSS========================================
+*/
+.personal-info__container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 24px;
+  margin-top: -12px;
+}
+
+.personal-info__container-item {
+  background-color: #212529;
+  border: solid 0.1px #595b5d;
+  border-radius: 10px;
+  padding: 32px 32px 8px 32px;
+}
+
+.personal-info__container-item:first-child {
+  padding: 32px 32px;
+}
+
+.personal-info__header {
+  font-weight: 500;
+  text-align: center;
+}
+
+.personal-info__container-item__header {
+  font-weight: 400;
+  margin-bottom: 8px;
+}
+.personal-info__container-item__description {
+  font-weight: 300;
+  margin-bottom: 8px;
+  color: #adb5bd;
+}
+
+ul.personal-info__container-item__list li {
+  border-top: 0.1px solid #595b5d;
+}
+
+ul.personal-info__container-item__list li:first-child {
+  border-top: none;
+}
+
+ul.personal-info__container-item__list li > a {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  gap: 50px;
+}
+
+a.presonal-info__container-item__list-link {
+  padding: 16px 0;
+}
+
+ul.personal-info__container-item__list li:last-child {
+  padding-bottom: 0;
+}
+
+.personal-info__span {
+  /* position: absolute;
+  top: 50%;
+  left: 0;
+  transform: translate(0, -50%); */
+  order: -1;
+  font-weight: 300;
+  width: 100px;
+  font-size: 16px;
+  color: #adb5bd;
+}
+
+.personal-info__link-icon {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  transform: translate(0, -50%);
+
+  stroke-width: 1.5;
+  height: 30px;
+  width: 30px;
+}
+
+.personal-info__user-img {
+  margin-left: auto;
+  height: 5rem;
+  width: 5rem;
+  border-radius: 50%;
+}
+
+/* 
+=========================END USER VIEW ACCOUNT PAGE CSS========================================
 */
 
 /*
@@ -873,6 +959,7 @@ END SIDE NAV BUTTON ACTIONS
 }
 
 .side-nav-link-icon {
+  stroke-width: 1.5;
   height: 30px;
   width: 30px;
 }
