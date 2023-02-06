@@ -69,13 +69,17 @@ const updateGenderModal = document.getElementById('update-gender__modal');
 const updateEmailModal = document.getElementById('update-email__modal');
 const updatePasswordModal = document.getElementById('update-password__modal');
 // Get the button that opens the modal
-var updatePhotoBtn = document.getElementById('update-photo-btn');
-var updateNameBtn = document.getElementById('update-name-btn');
-var updateUsernameBtn = document.getElementById('update-username-btn');
-var updateBirthdayBtn = document.getElementById('update-birthday-btn');
-var updateGenderBtn = document.getElementById('update-gender-btn');
-var updateEmailBtn = document.getElementById('update-email-btn');
-var updatePasswordBtn = document.getElementById('update-password-btn');
+const updatePhotoBtn = document.getElementById('update-photo-btn');
+const updateNameBtn = document.getElementById('update-name-btn');
+const updateUsernameBtn = document.getElementById('update-username-btn');
+const updateBirthdayBtn = document.getElementById('update-birthday-btn');
+const updateGenderBtn = document.getElementById('update-gender-btn');
+const updateEmailBtn = document.getElementById('update-email-btn');
+const updatePasswordBtn = document.getElementById('update-password-btn');
+//Get the modal forms
+const updatePhotoForm = document.getElementById('form__profile-photo');
+//Get the modal form inputs
+const updatePhotoInput = document.getElementById('input__photo');
 
 //WINDOW RESIZES
 
@@ -254,6 +258,21 @@ window.addEventListener('click', (e) => {
   }
 });
 /*----------------------END UPDATE INFO -----------------------*/
+
+if (updatePhotoForm) {
+  updatePhotoInput.addEventListener('change', (e) => {
+    e.preventDefault();
+    let image = document.getElementById('img__profile-photo');
+    image.src = URL.createObjectURL(e.target.files[0]);
+  });
+
+  updatePhotoForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const form = new FormData();
+    form.append('photo', updatePhotoInput.files[0]);
+    updateSettings(form, 'data');
+  });
+}
 
 if (userDataForm)
   userDataForm.addEventListener('submit', (e) => {

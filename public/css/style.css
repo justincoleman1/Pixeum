@@ -865,6 +865,8 @@ ul.personal-info__container-item__list li:last-child {
   height: 100%;
   display: flex;
   flex-direction: column;
+
+  position: relative;
 }
 
 /* .update-profile__header {
@@ -930,6 +932,41 @@ span.pp-sp {
   padding: 0.2em;
   height: 2em;
   padding: 0 8px;
+}
+
+button.btn-escape__update-profile {
+  border: none;
+  background-color: #2e2d2d;
+
+  position: absolute;
+  right: 0;
+  width: 24px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+button.btn-submit__photo {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 48px;
+  color: #fff;
+  font-size: 18px;
+  padding: 8px;
+  background-color: #47b1f5;
+  border: 1px solid #47b1f5;
+  border-radius: 10px;
+}
+
+.btn-submit__photo-icon {
+  position: absolute;
+  left: 24px;
+  top: 50%;
+  transform: translate(0, -55%);
 }
 
 input.form__upload {
@@ -1057,6 +1094,11 @@ input.form__upload {
 /* 
 =========================SVG ICONS CSS========================================
 */
+
+.s24 {
+  height: 24px;
+  width: 24px;
+}
 .ml-16 {
   margin-left: 16px;
 }

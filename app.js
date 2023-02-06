@@ -58,7 +58,7 @@ const connectSources = [
 ];
 const fontSources = ["'self'", 'fonts.gstatic.com'];
 const workerSources = ["'self'", 'unsafe-inline', 'blob:'];
-
+const imageSources = ["'self'", 'data:', 'blob:'];
 //Set security http headers
 app.use(
   helmet({
@@ -70,6 +70,7 @@ app.use(
         connectSrc: connectSources,
         fontSrc: fontSources,
         workerSrc: workerSources,
+        imgSrc: imageSources,
       },
     },
     frameguard: {
