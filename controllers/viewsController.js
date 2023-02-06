@@ -48,24 +48,21 @@ exports.getAccount = (req, res) => {
 };
 
 exports.getMyUploads = catchAsync(async (req, res, next) => {
-  //1) Find all bookings
-  const bookings = await Booking.find({ user: req.user._id }).populate(
-    'uploads'
-  );
-  if (!bookings) {
-    res.status(200).render('overview', {
-      title: 'My uploads',
-      uploads: [],
-    });
-  }
-  //2) Find uploads with the returned IDs
-  const uploadIDs = bookings.map((el) => el.upload);
-  const uploads = await Upload.find({ _id: { $in: uploadIDs } });
-
-  res.status(200).render('overview', {
-    title: 'My uploads',
-    uploads,
-  });
+  // //1) Find all uploads
+  // const uploads = await Upload.find({ user: req.user._id }).populate('uploads');
+  // if (!uploads) {
+  //   res.status(200).render('overview', {
+  //     title: 'My uploads',
+  //     uploads: [],
+  //   });
+  // }
+  // //2) Find uploads with the returned IDs
+  // const uploadIDs = bookings.map((el) => el.upload);
+  // const uploads = await Upload.find({ _id: { $in: uploadIDs } });
+  // res.status(200).render('overview', {
+  //   title: 'My uploads',
+  //   uploads,
+  // });
 });
 
 exports.updateUserData = catchAsync(async (req, res, next) => {
