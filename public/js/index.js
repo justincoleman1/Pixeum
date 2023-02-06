@@ -60,6 +60,23 @@ const userPasswordForm = document.querySelector('.form-user-password');
 
 const overlay = document.querySelector('.overlay');
 
+// Get the modal
+const updatePhotoModal = document.getElementById('update-photo__modal');
+const updateNameModal = document.getElementById('update-name__modal');
+const updateUsernameModal = document.getElementById('update-username__modal');
+const updateBirthdayModal = document.getElementById('update-birthday__modal');
+const updateGenderModal = document.getElementById('update-gender__modal');
+const updateEmailModal = document.getElementById('update-email__modal');
+const updatePasswordModal = document.getElementById('update-password__modal');
+// Get the button that opens the modal
+var updatePhotoBtn = document.getElementById('update-photo-btn');
+var updateNameBtn = document.getElementById('update-name-btn');
+var updateUsernameBtn = document.getElementById('update-username-btn');
+var updateBirthdayBtn = document.getElementById('update-birthday-btn');
+var updateGenderBtn = document.getElementById('update-gender-btn');
+var updateEmailBtn = document.getElementById('update-email-btn');
+var updatePasswordBtn = document.getElementById('update-password-btn');
+
 //WINDOW RESIZES
 
 window.addEventListener('load', (e) => {
@@ -187,6 +204,56 @@ if (profileBtn) {
   //   closeOnEscape(e);
   // });
 }
+
+/*----------------------UPDATE INFO -----------------------*/
+if (updateNameBtn) {
+  updatePhotoBtn.addEventListener('click', (e) => {
+    updatePhotoModal.style.display = 'block';
+  });
+  updateNameBtn.addEventListener('click', (e) => {
+    updateNameModal.style.display = 'block';
+  });
+  updateUsernameBtn.addEventListener('click', (e) => {
+    updateUsernameModal.style.display = 'block';
+  });
+  updateBirthdayBtn.addEventListener('click', (e) => {
+    updateBirthdayModal.style.display = 'block';
+  });
+  updateGenderBtn.addEventListener('click', (e) => {
+    updateGenderModal.style.display = 'block';
+  });
+  updateEmailBtn.addEventListener('click', (e) => {
+    updateEmailModal.style.display = 'block';
+  });
+  updatePasswordBtn.addEventListener('click', (e) => {
+    updatePasswordModal.style.display = 'block';
+  });
+}
+
+window.addEventListener('click', (e) => {
+  if (e.target == updatePhotoModal) {
+    updatePhotoModal.style.display = 'none';
+  }
+  if (e.target == updateNameModal) {
+    updateNameModal.style.display = 'none';
+  }
+  if (e.target == updateUsernameModal) {
+    updateUsernameModal.style.display = 'none';
+  }
+  if (e.target == updateBirthdayModal) {
+    updateBirthdayModal.style.display = 'none';
+  }
+  if (e.target == updateGenderModal) {
+    updateGenderModal.style.display = 'none';
+  }
+  if (e.target == updateEmailModal) {
+    updateEmailModal.style.display = 'none';
+  }
+  if (e.target == updatePasswordModal) {
+    updatePasswordModal.style.display = 'none';
+  }
+});
+/*----------------------END UPDATE INFO -----------------------*/
 
 if (userDataForm)
   userDataForm.addEventListener('submit', (e) => {

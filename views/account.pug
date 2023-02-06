@@ -10,51 +10,86 @@ block content
                 p.personal-info__container-item__description Some info may be visible to other users on our website.                      
                 ul.personal-info__container-item__list
                     li
-                        a.presonal-info__container-item__list-link(href="#") Add a personalized photo
+                        a#update-photo-btn.presonal-info__container-item__list-link Add a personalized photo
                             span.personal-info__span Photo
-                            img.personal-info__user-img(src=`/img/users/${user.photo}`, alt=`${user.name} photo`) 
+                            img.personal-info__user-img(src=`/img/users/${user.photo}`, alt=`${user.name} photo`)
+                        #update-photo__modal.update-info__modal
+                            .update-info__modal-content
+                                form.form__update
+                                    h3.update-profile__header Profile picture
+                                    p.update-profile__description A picture helps people recognize you and lets you know when you're signed in to your account
+                                    .update-profile-pic__container
+                                        img.profile-pic(src=`/img/users/${user.photo}`, alt=`${user.name} photo`)
+                                        label.profile-pic__label(for='photo')
+                                            span.pp-sp Change Image
+                                            span.pp-sp
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 32 32">
+                                                <path fill="#fff" d="M30 10h-4s-1.156 0-2-2c-.43-1.018-.896-2-2-2h-8c-1.104 0-1.584.976-2 2-.812 2-2 2-2 2H8a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2 2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h28a2 2 0 0 0 2-2V12a2 2 0 0 0-2-2zm0 18H2v-8h9.1c.49 3.388 3.376 6 6.9 6 3.61 0 6.546-2.742 6.924-6.25H30V28zm-17-9c0-2.758 2.244-5 5-5s5 2.242 5 5c0 2.756-2.244 5-5 5s-5-2.244-5-5zm11.9-1c-.49-3.388-3.376-6-6.9-6s-6.41 2.612-6.9 6H2v-6h8c1.168 0 2.88-.85 3.852-3.248.166-.406.278-.63.352-.752h7.584c.134.22.306.626.37.778C23.452 11.844 25.586 12 26 12h4v6h-5.1zM4 15.02a1 1 1080 1 0 2 0 1 1 1080 1 0-2 0z"/>
+                                                </svg>
+                                        input#photo.form__upload(type='file', accept='image/*', name='photo')
+                                    
+                                    //- .form__group.right
+                                    //-     button.btn.btn--small.btn--green Save settings
                     li  
-                        a.presonal-info__container-item__list-link(href="/name_change")=`${user.name}`
+                        a#update-name-btn.presonal-info__container-item__list-link=`${user.name}`
                             span.personal-info__span Name
                             <svg class="personal-info__link-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                             </svg>
+                        #update-name__modal.update-info__modal
+                            .update-info__modal-content
+                                p Some Modal Text
                     li  
-                        a.presonal-info__container-item__list-link(href="#")=`${user.username}`
+                        a#update-username-btn.presonal-info__container-item__list-link=`${user.username}`
                             span.personal-info__span Username
                             <svg class="personal-info__link-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                             </svg>
+                        #update-username__modal.update-info__modal
+                            .update-info__modal-content
+                                p Some Modal Text                            
                     li  
-                        a.presonal-info__container-item__list-link(href="#")=`${user.birthday}`
+                        a#update-birthday-btn.presonal-info__container-item__list-link=`${user.birthday}`
                             span.personal-info__span Birthday
                             <svg class="personal-info__link-icon"  xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                             </svg>
+                        #update-birthday__modal.update-info__modal
+                            .update-info__modal-content
+                                p Some Modal Text                                
                     li  
-                        a.presonal-info__container-item__list-link(href="#")=`${user.gender}`
+                        a#update-gender-btn.presonal-info__container-item__list-link=`${user.gender}`
                             span.personal-info__span Gender
                             <svg class="personal-info__link-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                             </svg>
+                        #update-gender__modal.update-info__modal
+                            .update-info__modal-content
+                                p Some Modal Text
 
             .personal-info__container-item 
                 h2.personal-info__container-item__header Contact info                       
                 ul.personal-info__container-item__list
                     li
-                        a.presonal-info__container-item__list-link(href="#")=`${user.email}`
+                        a#update-email-btn.presonal-info__container-item__list-link=`${user.email}`
                             span.personal-info__span Email
                             <svg class="personal-info__link-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                             </svg>
+                        #update-email__modal.update-info__modal
+                            .update-info__modal-content
+                                p Some Modal Text
 
             .personal-info__container-item 
                 h2.personal-info__container-item__header Password
                 p.personal-info__container-item__description A secure password helps protect your account.                      
                 ul.personal-info__container-item__list
                     li
-                        a.presonal-info__container-item__list-link(href="#")=`${user.passwordChangedAt}`
+                        a#update-password-btn.presonal-info__container-item__list-link=`${user.passwordChangedAt}`
                             span.personal-info__span **********
                             <svg class="personal-info__link-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                             </svg>
+                        #update-password__modal.update-info__modal
+                            .update-info__modal-content
+                                p Some Modal Text
