@@ -1,5 +1,7 @@
 /*eslint-disable*/
 // import '@babel/polyfill';
+import Cropper from 'cropperjs';
+
 import { login, logout } from './back/login';
 import { signup } from './back/signup';
 import { updateSettings } from './back/updateSettings';
@@ -60,8 +62,8 @@ const userPasswordForm = document.querySelector('.form-user-password');
 
 const overlay = document.querySelector('.overlay');
 
-// Get the modal
 const updatePhotoModal = document.getElementById('update-photo__modal');
+const cropPhotoModal = document.getElementById('crop-photo__modal');
 const updateNameModal = document.getElementById('update-name__modal');
 const updateUsernameModal = document.getElementById('update-username__modal');
 const updateBirthdayModal = document.getElementById('update-birthday__modal');
@@ -70,6 +72,10 @@ const updateEmailModal = document.getElementById('update-email__modal');
 const updatePasswordModal = document.getElementById('update-password__modal');
 // Get the button that opens the modal
 const updatePhotoBtn = document.getElementById('update-photo-btn');
+const escapePhotoBtn = document.getElementById('btn__escape__update-photo');
+const escapeCropBtn = document.getElementById('btn__escape__crop-photo');
+const cropPhotoBtn = document.getElementById('crop-photo-btn');
+const saveCropBtn = document.getElementById('save__crop');
 const updateNameBtn = document.getElementById('update-name-btn');
 const updateUsernameBtn = document.getElementById('update-username-btn');
 const updateBirthdayBtn = document.getElementById('update-birthday-btn');
@@ -80,9 +86,9 @@ const updatePasswordBtn = document.getElementById('update-password-btn');
 const updatePhotoForm = document.getElementById('form__profile-photo');
 //Get the modal form inputs
 const updatePhotoInput = document.getElementById('input__photo');
+const originalProfileImage = document.getElementById('img__profile-photo');
 
 //WINDOW RESIZES
-
 window.addEventListener('load', (e) => {
   e.preventDefault();
   windowSize792Changes();
@@ -209,10 +215,35 @@ if (profileBtn) {
   // });
 }
 
-/*----------------------UPDATE INFO -----------------------*/
 if (updateNameBtn) {
+  let image = document.getElementById('img__profile-photo');
+  let crop_image = document.getElementById('img__crop-profile-photo');
+
+  let cropper = new Cropper(crop_image, {
+    dragMode: 'none',
+    aspectRatio: 4 / 4,
+    viewMode: 0,
+    minCropBoxWidth: 300,
+    minCropBoxHeight: 300,
+    minContainerWidth: 358,
+    minContainerHeight: 400,
+  });
+
   updatePhotoBtn.addEventListener('click', (e) => {
     updatePhotoModal.style.display = 'block';
+  });
+  escapePhotoBtn.addEventListener('click', (e) => {
+    updatePhotoModal.style.display = 'none';
+
+    image.src = originalProfileImage.src;
+    crop_image.src = originalProfileImage.src;
+    cropper.replace(originalProfileImage.src);
+  });
+  cropPhotoBtn.addEventListener('click', (e) => {
+    cropPhotoModal.style.display = 'block';
+  });
+  escapeCropBtn.addEventListener('click', (e) => {
+    cropPhotoModal.style.display = 'none';
   });
   updateNameBtn.addEventListener('click', (e) => {
     updateNameModal.style.display = 'block';
@@ -232,48 +263,78 @@ if (updateNameBtn) {
   updatePasswordBtn.addEventListener('click', (e) => {
     updatePasswordModal.style.display = 'block';
   });
-}
 
-window.addEventListener('click', (e) => {
-  if (e.target == updatePhotoModal) {
-    updatePhotoModal.style.display = 'none';
-  }
-  if (e.target == updateNameModal) {
-    updateNameModal.style.display = 'none';
-  }
-  if (e.target == updateUsernameModal) {
-    updateUsernameModal.style.display = 'none';
-  }
-  if (e.target == updateBirthdayModal) {
-    updateBirthdayModal.style.display = 'none';
-  }
-  if (e.target == updateGenderModal) {
-    updateGenderModal.style.display = 'none';
-  }
-  if (e.target == updateEmailModal) {
-    updateEmailModal.style.display = 'none';
-  }
-  if (e.target == updatePasswordModal) {
-    updatePasswordModal.style.display = 'none';
-  }
-});
-/*----------------------END UPDATE INFO -----------------------*/
+  window.addEventListener('click', (e) => {
+    if (e.target == updatePhotoModal) {
+      updatePhotoModal.style.display = 'none';
 
-if (updatePhotoForm) {
+      image.src = originalProfileImage.src;
+      crop_image.src = originalProfileImage.src;
+      cropper.replace(originalProfileImage.src);
+    }
+
+    if (e.target == cropPhotoModal) {
+      cropPhotoModal.style.display = 'none';
+    }
+
+    if (e.target == updateNameModal) {
+      updateNameModal.style.display = 'none';
+    }
+    if (e.target == updateUsernameModal) {
+      updateUsernameModal.style.display = 'none';
+    }
+    if (e.target == updateBirthdayModal) {
+      updateBirthdayModal.style.display = 'none';
+    }
+    if (e.target == updateGenderModal) {
+      updateGenderModal.style.display = 'none';
+    }
+    if (e.target == updateEmailModal) {
+      updateEmailModal.style.display = 'none';
+    }
+    if (e.target == updatePasswordModal) {
+      updatePasswordModal.style.display = 'none';
+    }
+  });
+
   updatePhotoInput.addEventListener('change', (e) => {
     e.preventDefault();
-    let image = document.getElementById('img__profile-photo');
+
+    console.log(e.target.files[0]);
+
     image.src = URL.createObjectURL(e.target.files[0]);
+    crop_image.src = URL.createObjectURL(e.target.files[0]);
+    cropper.replace(crop_image.src);
+  });
+
+  saveCropBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const croppedImage = cropper.getCroppedCanvas().toDataURL('image/png');
+    console.log(croppedImage);
+    image.src = croppedImage;
+    crop_image.src = croppedImage;
+
+    // console.log(image);
+    // const blob = blobCreationFromURL(image.src);
+    // console.log(blob);
+    // console.log(toBase64(image.src));
+    //send image croppedd
+
+    //exit cropper
+    cropPhotoModal.style.display = 'none';
   });
 
   updatePhotoForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    const form = new FormData();
-    form.append('photo', updatePhotoInput.files[0]);
-    updateSettings(form, 'data');
+    // *** Calling both function ***
+    let form = new FormData();
+    toDataURL(image.src).then((dataUrl) => {
+      var fileData = dataURLtoFile(dataUrl, 'croppedImage.png');
+      form.append('photo', fileData);
+      updateSettings(form, 'data');
+    });
   });
 }
-
 if (userDataForm)
   userDataForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -306,3 +367,73 @@ if (userPasswordForm)
 
 const alertMessage = document.querySelector('body').dataset.alert;
 if (alertMessage) showAlert('success', alertMessage, 20);
+
+const toDataURL = (url) =>
+  fetch(url)
+    .then((response) => response.blob())
+    .then(
+      (blob) =>
+        new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        })
+    );
+
+// ***Here is code for converting "Base64" to javascript "File Object".***
+
+const dataURLtoFile = (dataurl, filename) => {
+  var arr = dataurl.split(','),
+    mime = arr[0].match(/:(.*?);/)[1],
+    bstr = atob(arr[1]),
+    n = bstr.length,
+    u8arr = new Uint8Array(n);
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  return new File([u8arr], filename, { type: mime });
+};
+
+// const toBase64 = (file) => {
+//   var reader = new FileReader();
+//   // var blob = getBase64StringFromDataURL(file.src);
+//   reader.readAsDataURL(file);
+//   reader.onload = function () {
+//     return reader.result;
+//   };
+//   reader.onerror = function (error) {
+//     console.log('Error: ', error);
+//   };
+// };
+
+// const getBase64StringFromDataURL = (dataURL) =>
+//   dataURL.replace('data:', '').replace(/^.+,/, '');
+
+// // Create Blob file from URL
+// const blobCreationFromURL = (inputURI) => {
+//   var binaryVal;
+
+//   // mime extension extraction
+//   var inputMIME = inputURI.split(',')[0].split(':')[1].split(';')[0];
+
+//   // Extract remaining part of URL and convert it to binary value
+//   if (inputURI.split(',')[0].indexOf('base64') >= 0)
+//     binaryVal = atob(inputURI.split(',')[1]);
+//   // Decoding of base64 encoded string
+//   else binaryVal = window.unescape(inputURI.split(',')[1]);
+
+//   // Computation of new string in which hexadecimal
+//   // escape sequences are replaced by the character
+//   // it represents
+
+//   // Store the bytes of the string to a typed array
+//   var blobArray = [];
+//   for (var index = 0; index < binaryVal.length; index++) {
+//     blobArray.push(binaryVal.charCodeAt(index));
+//   }
+
+//   return new Blob([blobArray], {
+//     type: inputMIME,
+//   });
+// };

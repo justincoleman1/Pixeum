@@ -22,7 +22,7 @@ app.set('views', path.join(__dirname, 'views'));
 
 //1) GLOBAL MIDDLEWARES
 //Serving static files
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '/public/')));
 
 const defaultSources = [
   "'self'",
@@ -39,7 +39,6 @@ const scriptSources = [
   'ajax.googleapis.com',
   'www.google-analytics.com',
   'cdnjs.cloudflare.com',
-  'api.mapbox.com',
   'unpkg.com',
 ];
 const styleSources = [
@@ -48,14 +47,8 @@ const styleSources = [
   'ajax.googleapis.com',
   'fonts.googleapis.com',
   'cdnjs.cloudflare.com',
-  'api.mapbox.com',
 ];
-const connectSources = [
-  "'self'",
-  'api.mapbox.com',
-  'events.mapbox.com',
-  'unpkg.com',
-];
+const connectSources = ["'self'", 'unpkg.com', 'blob:', 'data:'];
 const fontSources = ["'self'", 'fonts.gstatic.com'];
 const workerSources = ["'self'", 'unsafe-inline', 'blob:'];
 const imageSources = ["'self'", 'data:', 'blob:'];

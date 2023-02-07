@@ -859,14 +859,32 @@ ul.personal-info__container-item__list li:last-child {
   width: 400px;
   height: 600px;
 }
+
+.crop-content {
+  width: 800px;
+  height: 800px;
+}
 /* img wrap */
-.form__update {
+.form__update,
+.crop-container {
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
 
   position: relative;
+}
+
+.crop {
+  margin-top: 24px;
+  display: block;
+  width: 100%;
+  height: 80%;
+  max-width: 100%;
+
+  display: flex;
+  justify-content: center;
+  justify-items: center;
 }
 
 /* .update-profile__header {
@@ -948,7 +966,37 @@ button.btn-escape__update-profile {
   justify-content: center;
 }
 
-button.btn-submit__photo {
+button.btn-crop__photo {
+  border: none;
+  background-color: #2e2d2d;
+
+  position: absolute;
+  left: 0;
+  width: 32px;
+  top: 27.5%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cropper-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.crop-container {
+  position: relative;
+}
+
+.crop-pic {
+  object-fit: cover;
+  max-width: 100%;
+  height: 100%;
+}
+
+button.btn-submit__photo,
+button.btn-save__crop {
   position: relative;
   display: flex;
   align-items: center;
@@ -960,6 +1008,12 @@ button.btn-submit__photo {
   background-color: #47b1f5;
   border: 1px solid #47b1f5;
   border-radius: 10px;
+  cursor: pointer;
+}
+
+button.btn-save__crop {
+  margin-top: -53px;
+  width: 100%;
 }
 
 .btn-submit__photo-icon {
@@ -971,6 +1025,26 @@ button.btn-submit__photo {
 
 input.form__upload {
   display: none;
+}
+
+/* .cropper-container {
+  min-width: 358px;
+  min-height: 400px;
+}
+.cropper-crop-box {
+  width: 356.8px;
+  height: 356.8px;
+} */
+.cropper-view-box {
+  box-shadow: 0 0 0 1px #39f;
+  border-radius: 50%;
+  outline: 0;
+}
+.cropper-face {
+  background-color: inherit !important;
+}
+.cropper-view-box {
+  outline: inherit !important;
 }
 /* 
 =========================END USER VIEW ACCOUNT PAGE CSS========================================
