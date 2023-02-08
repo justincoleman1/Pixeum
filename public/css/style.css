@@ -54,6 +54,10 @@ a {
 ul {
   list-style: none;
 }
+
+img.upload {
+  pointer-events: none !important;
+}
 /* 
 =========================END GENERAL CSS========================================
 */
@@ -103,25 +107,54 @@ ul {
   margin-bottom: 25px;
 }
 
+.form__input-wrapper {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+
+  width: 100%;
+}
+
+.form__label {
+  font-weight: 300;
+  width: 100px;
+  font-size: 16px;
+  color: #adb5bd;
+  margin-top: 24px;
+  margin-bottom: 18px;
+}
+
 .form__input {
   display: block;
   font-family: inherit;
-  font-size: 1rem;
-  color: inherit;
+  font-size: 18px;
+  color: #fff;
   padding: 0.25rem 0.75rem;
-  border: none;
   width: 100%;
-  background-color: #fff;
-  background-color: #f2f2f2;
-  border-top: 3px solid transparent;
-  border-bottom: 3px solid transparent;
+  background-color: #2e2d2d;
+  border: none;
+  border-bottom: 0.1px solid #3e3d3d;
   -webkit-transition: all 0.3s;
   transition: all 0.3s;
-  border-radius: 4px;
   -webkit-box-sizing: border-box;
   box-sizing: border-box;
   /* Pseudo element (a visible thing that isn't really in the DOM).
       Also needs -ms- */
+}
+
+.form__span {
+  position: absolute;
+  top: 35%;
+  right: 0;
+  transform: translate(0, -50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+span > svg.form__input--icon {
+  width: 24px;
+  stroke: #fff;
 }
 
 .form__input:focus {
@@ -860,15 +893,27 @@ ul.personal-info__container-item__list li:last-child {
   height: 600px;
 }
 
+.update-info__modal-content.sm {
+  height: auto;
+}
+
 .crop-content {
   width: 800px;
   height: 800px;
 }
 /* img wrap */
-.form__update,
+.form__update__profile-pic,
 .crop-container {
   width: 100%;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  position: relative;
+}
+
+.form__update {
+  width: 100%;
   display: flex;
   flex-direction: column;
 
@@ -994,8 +1039,7 @@ button.btn-crop__photo {
   max-width: 100%;
   height: 100%;
 }
-
-button.btn-submit__photo,
+button.btn-submit__update,
 button.btn-save__crop {
   position: relative;
   display: flex;
@@ -1016,7 +1060,8 @@ button.btn-save__crop {
   width: 100%;
 }
 
-.btn-submit__photo-icon {
+.btn-submit__photo-icon,
+.btn-submit__name-icon {
   position: absolute;
   left: 24px;
   top: 50%;
@@ -1165,6 +1210,31 @@ input.form__upload {
 =========================END SCREEM MEDIA 732 CSS========================================
 */
 
+/*
+=========================SCREEN MEDIA PRINT CSS =========================================
+*/
+@media print {
+  html,
+  body {
+    /* Hide the whole page */
+    display: none;
+  }
+}
+
+@media screenshot-capture {
+  html,
+  body {
+    /* Hide the whole page */
+    display: none;
+  }
+
+  html {
+    user-select: none;
+  }
+}
+/*
+=========================END SCREEN MEDIA PRINT CSS =========================================
+*/
 /* 
 =========================SVG ICONS CSS========================================
 */

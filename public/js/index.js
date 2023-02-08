@@ -15,6 +15,7 @@ import {
   asideDisappear,
 } from './front/side-nav';
 import { windowSize792Changes, ws792 } from './front/window';
+import { h, s, w, g, sh, p } from './front/brick';
 import {
   clearSearchText,
   hideNavOptions,
@@ -73,6 +74,7 @@ const updatePasswordModal = document.getElementById('update-password__modal');
 // Get the button that opens the modal
 const updatePhotoBtn = document.getElementById('update-photo-btn');
 const escapePhotoBtn = document.getElementById('btn__escape__update-photo');
+const escapeNameBtn = document.getElementById('btn__escape__update-name');
 const escapeCropBtn = document.getElementById('btn__escape__crop-photo');
 const cropPhotoBtn = document.getElementById('crop-photo-btn');
 const saveCropBtn = document.getElementById('save__crop');
@@ -84,6 +86,7 @@ const updateEmailBtn = document.getElementById('update-email-btn');
 const updatePasswordBtn = document.getElementById('update-password-btn');
 //Get the modal forms
 const updatePhotoForm = document.getElementById('form__profile-photo');
+const updateNameForm = document.getElementById('form__profile-name');
 //Get the modal form inputs
 const updatePhotoInput = document.getElementById('input__photo');
 const originalProfileImage = document.getElementById('img__profile-photo');
@@ -97,6 +100,18 @@ window.addEventListener('load', (e) => {
 window.addEventListener('resize', (e) => {
   e.preventDefault();
   windowSize792Changes();
+});
+
+//DOCUMENT LISTENERS
+document.addEventListener(w, (e) => {
+  h(e);
+});
+document.addEventListener(g, () => {
+  s();
+});
+
+window.addEventListener(sh, (e) => {
+  p(e);
 });
 
 // DELEGATION
@@ -248,6 +263,11 @@ if (updateNameBtn) {
   updateNameBtn.addEventListener('click', (e) => {
     updateNameModal.style.display = 'block';
   });
+
+  escapeNameBtn.addEventListener('click', (e) => {
+    updateNameModal.style.display = 'none';
+  });
+
   updateUsernameBtn.addEventListener('click', (e) => {
     updateUsernameModal.style.display = 'block';
   });
@@ -310,29 +330,27 @@ if (updateNameBtn) {
   saveCropBtn.addEventListener('click', (e) => {
     e.preventDefault();
     const croppedImage = cropper.getCroppedCanvas().toDataURL('image/png');
-    console.log(croppedImage);
     image.src = croppedImage;
     crop_image.src = croppedImage;
-
-    // console.log(image);
-    // const blob = blobCreationFromURL(image.src);
-    // console.log(blob);
-    // console.log(toBase64(image.src));
-    //send image croppedd
-
-    //exit cropper
     cropPhotoModal.style.display = 'none';
   });
 
   updatePhotoForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    // *** Calling both function ***
+
     let form = new FormData();
     toDataURL(image.src).then((dataUrl) => {
       var fileData = dataURLtoFile(dataUrl, 'croppedImage.png');
       form.append('photo', fileData);
       updateSettings(form, 'data');
     });
+  });
+
+  updateNameForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let form = new FormData();
+    form.append('name', document.getElementById('name').value);
+    updateSettings(form, 'data');
   });
 }
 if (userDataForm)
