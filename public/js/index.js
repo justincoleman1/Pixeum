@@ -71,11 +71,23 @@ const updateBirthdayModal = document.getElementById('update-birthday__modal');
 const updateGenderModal = document.getElementById('update-gender__modal');
 const updateEmailModal = document.getElementById('update-email__modal');
 const updatePasswordModal = document.getElementById('update-password__modal');
-// Get the button that opens the modal
-const updatePhotoBtn = document.getElementById('update-photo-btn');
+
 const escapePhotoBtn = document.getElementById('btn__escape__update-photo');
 const escapeNameBtn = document.getElementById('btn__escape__update-name');
+const escapeUsernameBtn = document.getElementById(
+  'btn__escape__update-username'
+);
+const escapeEmailBtn = document.getElementById('btn__escape__update-email');
+const escapeBirthdayBtn = document.getElementById(
+  'btn__escape__update-birthday'
+);
+const escapeGenderBtn = document.getElementById('btn__escape__update-gender');
+const escapePasswordBtn = document.getElementById(
+  'btn__escape__update-password'
+);
 const escapeCropBtn = document.getElementById('btn__escape__crop-photo');
+
+const updatePhotoBtn = document.getElementById('update-photo-btn');
 const cropPhotoBtn = document.getElementById('crop-photo-btn');
 const saveCropBtn = document.getElementById('save__crop');
 const updateNameBtn = document.getElementById('update-name-btn');
@@ -84,11 +96,19 @@ const updateBirthdayBtn = document.getElementById('update-birthday-btn');
 const updateGenderBtn = document.getElementById('update-gender-btn');
 const updateEmailBtn = document.getElementById('update-email-btn');
 const updatePasswordBtn = document.getElementById('update-password-btn');
+
 //Get the modal forms
 const updatePhotoForm = document.getElementById('form__profile-photo');
 const updateNameForm = document.getElementById('form__profile-name');
+const updateUsernameForm = document.getElementById('form__profile-username');
+const updateEmailForm = document.getElementById('form__profile-email');
+const updateBirthdayForm = document.getElementById('form__profile-birthday');
+const updateGenderForm = document.getElementById('form__profile-gender');
+const updatePasswordForm = document.getElementById('form__profile-password');
+
 //Get the modal form inputs
 const updatePhotoInput = document.getElementById('input__photo');
+
 const originalProfileImage = document.getElementById('img__profile-photo');
 
 //WINDOW RESIZES
@@ -335,37 +355,53 @@ if (updateNameBtn) {
     cropPhotoModal.style.display = 'none';
   });
 
-  updatePhotoForm.addEventListener('submit', (e) => {
+  updatePhotoForm.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     let form = new FormData();
-    toDataURL(image.src).then((dataUrl) => {
+    await toDataURL(image.src).then((dataUrl) => {
       var fileData = dataURLtoFile(dataUrl, 'croppedImage.png');
       form.append('photo', fileData);
       updateSettings(form, 'data');
     });
   });
 
-  updateNameForm.addEventListener('submit', (e) => {
+  updateNameForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     let form = new FormData();
     form.append('name', document.getElementById('name').value);
-    updateSettings(form, 'data');
+    await updateSettings(form, 'data');
   });
-}
-if (userDataForm)
-  userDataForm.addEventListener('submit', (e) => {
+
+  updateUsernameForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const form = new FormData();
-    form.append('name', document.getElementById('name').value);
-    form.append('email', document.getElementById('email').value);
-    form.append('photo', document.getElementById('photo').files[0]);
-
-    updateSettings(form, 'data');
+    let form = new FormData();
+    form.append('username', document.getElementById('username').value);
+    await updateSettings(form, 'data');
   });
 
-if (userPasswordForm)
-  userPasswordForm.addEventListener('submit', async (e) => {
+  updateEmailForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    let form = new FormData();
+    form.append('email', document.getElementById('email').value);
+    await updateSettings(form, 'data');
+  });
+
+  updateBirthdayForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    let form = new FormData();
+    form.append('birthday', document.getElementById('birtday').value);
+    await updateSettings(form, 'data');
+  });
+
+  updateGenderForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    let form = new FormData();
+    form.append('gender', document.getElementById('gender').value);
+    await updateSettings(form, 'data');
+  });
+
+  updatePasswordForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     document.querySelector('.btn--save-password').textContent = 'Updating...';
 
@@ -377,12 +413,12 @@ if (userPasswordForm)
       'password'
     );
 
-    document.querySelector('.btn--save-password').textContent = 'Save password';
-    document.getElementById('password-current').value = '';
-    document.getElementById('password').value = '';
-    document.getElementById('password-confirm').value = '';
+    // document.querySelector('.btn--save-password').textContent = 'Save password';
+    // document.getElementById('password-current').value = '';
+    // document.getElementById('password').value = '';
+    // document.getElementById('password-confirm').value = '';
   });
-
+}
 const alertMessage = document.querySelector('body').dataset.alert;
 if (alertMessage) showAlert('success', alertMessage, 20);
 

@@ -89,8 +89,26 @@ block content
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                             </svg>
                         #update-username__modal.update-info__modal
-                            .update-info__modal-content
-                                p Some Modal Text                            
+                            .update-info__modal-content.sm
+                                form#form__profile-username.form__update
+                                    h3.update-profile__header Username
+                                    button#btn__escape__update-username.btn-escape__update-profile(type='button')
+                                        svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor")
+                                            path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
+                                    p.update-profile__description Anyone can see this info.                            
+                                    label.form__label(for='username') Username
+                                    .form__input-wrapper      
+                                        input#username.form__input(type='text', value=`${user.username}`, required, name='username')
+                                        span.form__span
+                                            <svg class="form__input--icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="form_input--icon">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                                            </svg>
+                                    button#submit__username.btn-submit__update(type="submit")
+                                        <svg class="btn-submit__username-icon s24" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
+                                        </svg>
+                                        | Save
+                         
                     li  
                         a#update-birthday-btn.presonal-info__container-item__list-link=`${user.birthday}`
                             span.personal-info__span Birthday
@@ -98,8 +116,26 @@ block content
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                             </svg>
                         #update-birthday__modal.update-info__modal
-                            .update-info__modal-content
-                                p Some Modal Text                                
+                            .update-info__modal-content.sm
+                                form#form__profile-birthday.form__update
+                                    h3.update-profile__header birthday
+                                    button#btn__escape__update-birthday.btn-escape__update-profile(type='button')
+                                        svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor")
+                                            path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
+                                    p.update-profile__description Anyone can see this info.                            
+                                    label.form__label(for='birthday') Birthday
+                                    .form__input-wrapper      
+                                        input#birthday.form__input(type='text', value=`${user.birthday}`, required, name='birthday')
+                                        span.form__span
+                                            <svg class="form__input--icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="form_input--icon">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                                            </svg>
+                                    button#submit__birthday.btn-submit__update(type="submit")
+                                        <svg class="btn-submit__birthday-icon s24" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
+                                        </svg>
+                                        | Save
+                               
                     li  
                         a#update-gender-btn.presonal-info__container-item__list-link=`${user.gender}`
                             span.personal-info__span Gender
@@ -107,8 +143,26 @@ block content
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                             </svg>
                         #update-gender__modal.update-info__modal
-                            .update-info__modal-content
-                                p Some Modal Text
+                            .update-info__modal-content.sm
+                                form#form__profile-gender.form__update
+                                    h3.update-profile__header Gender
+                                    button#btn__escape__update-gender.btn-escape__update-profile(type='button')
+                                        svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor")
+                                            path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
+                                    p.update-profile__description Anyone can see this info.                            
+                                    label.form__label(for='gender') Gender
+                                    .form__input-wrapper      
+                                        input#gender.form__input(type='text', value=`${user.gender}`, required, name='gender')
+                                        span.form__span
+                                            <svg class="form__input--icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="form_input--icon">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                                            </svg>
+                                    button#submit__gender.btn-submit__update(type="submit")
+                                        <svg class="btn-submit__gender-icon s24" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
+                                        </svg>
+                                        | Save
+
 
             .personal-info__container-item 
                 h2.personal-info__container-item__header Contact info                       
@@ -120,8 +174,26 @@ block content
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                             </svg>
                         #update-email__modal.update-info__modal
-                            .update-info__modal-content
-                                p Some Modal Text
+                            .update-info__modal-content.sm
+                                form#form__profile-email.form__update
+                                    h3.update-profile__header Email
+                                    button#btn__escape__update-email.btn-escape__update-profile(type='button')
+                                        svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor")
+                                            path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
+                                    p.update-profile__description You have the option to share your email with our community.                           
+                                    label.form__label(for='email') Email
+                                    .form__input-wrapper      
+                                        input#email.form__input(type='text', value=`${user.email}`, required, name='email')
+                                        span.form__span
+                                            <svg class="form__input--icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="form_input--icon">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                                            </svg>
+                                    button#submit__email.btn-submit__update(type="submit")
+                                        <svg class="btn-submit__email-icon s24" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
+                                        </svg>
+                                        | Save
+
 
             .personal-info__container-item 
                 h2.personal-info__container-item__header Password
@@ -134,7 +206,39 @@ block content
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
                             </svg>
                         #update-password__modal.update-info__modal
-                            .update-info__modal-content
-                                p Some Modal Text
+                            .update-info__modal-content.sm
+                                form#form__profile-password.form__update
+                                    h3.update-profile__header Change Password
+                                    button#btn__escape__update-password.btn-escape__update-profile(type='button')
+                                        svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor")
+                                            path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
+                                    p.update-profile__description Provide a strong password.                        
+                                    label.form__label(for='passwordCurrent') Current Password
+                                    .form__input-wrapper      
+                                        input#password-current.form__input(type='text', value=``, required, name='passwordCurrent')
+                                        span.form__span
+                                            <svg class="form__input--icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="form_input--icon">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                                            </svg>
+                                    label.form__label(for='password') New Password
+                                    .form__input-wrapper      
+                                        input#password.form__input(type='text', value=``, required, name='password')
+                                        span.form__span
+                                            <svg class="form__input--icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="form_input--icon">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                                            </svg>
+                                    label.form__label(for='passwordConfirm') Confirm New Password
+                                    .form__input-wrapper      
+                                        input#password-confirm.form__input(type='text', value=``, required, name='passwordConfirm')
+                                        span.form__span
+                                            <svg class="form__input--icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="form_input--icon">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                                            </svg>
+                                    button#submit__password.btn-submit__update(type="submit")
+                                        <svg class="btn-submit__name-icon s24" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
+                                        </svg>
+                                        | Save
+
 
     //- script(type='module' src='/js/update-account-settings.js')
