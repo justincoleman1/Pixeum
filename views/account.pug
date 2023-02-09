@@ -37,7 +37,7 @@ block content
                                         </svg>
 
                                     button#submit__photo.btn-submit__update(type="submit")
-                                        <svg class="btn-submit__photo-icon s24" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="w-6 h-6">
+                                        <svg class="btn-submit__icon s24" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="w-6 h-6">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
                                         </svg>
@@ -71,13 +71,13 @@ block content
                                     p.update-profile__description Anyone can see this info.                            
                                     label.form__label(for='name') Full Name
                                     .form__input-wrapper      
-                                        input#name.form__input(type='text', value=`${user.name}`, required, name='name')
+                                        input#update-name.form__input(type='text', value=`${user.name}`, required, minlength='3', maxlength='20' ,name='name')
                                         span.form__span
                                             <svg class="form__input--icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="form_input--icon">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                                             </svg>
                                     button#submit__name.btn-submit__update(type="submit")
-                                        <svg class="btn-submit__name-icon s24" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff">
+                                        <svg class="btn-submit__icon s24" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
                                         </svg>
                                         | Save
@@ -98,14 +98,16 @@ block content
                                     p.update-profile__description Anyone can see this info.                            
                                     label.form__label(for='username') Username
                                     .form__input-wrapper      
-                                        input#username.form__input(type='text', value=`${user.username}`, required, name='username')
+                                        input#update-username.form__input(type='text', value=`${user.username}`, required, minlength='4', maxlength='16', name='username')
                                         span.form__span
                                             <svg class="form__input--icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="form_input--icon">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                                             </svg>
                                     button#submit__username.btn-submit__update(type="submit")
-                                        <svg class="btn-submit__username-icon s24" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
+                                        <svg class="btn-submit__icon s24" xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" viewBox="0 0 128 128">
+                                        <path fill="#fff" d="M110,9H18A18,18,0,0,0,0,27v74a18,18,0,0,0,18,18h92a18,18,0,0,0,18-18V27A18,18,0,0,0,110,9Zm14,92a14,14,0,0,1-14,14H18A14,14,0,0,1,4,101V27A14,14,0,0,1,18,13h92a14,14,0,0,1,14,14Z"/>
+                                        <path fill="#fff" d="M108,19H20A10,10,0,0,0,10,29V99a10,10,0,0,0,10,10h88a10,10,0,0,0,10-10V29A10,10,0,0,0,108,19ZM92,105H38V85.26c.58-7.79,11-10.16,12.92-10.54A15.55,15.55,0,0,0,64.31,82.5h1.36a15.33,15.33,0,0,0,11.19-4.86,16.51,16.51,0,0,0,2.2-2.92c1.8.34,12.35,2.7,12.93,10.54ZM57.93,69.25a12.21,12.21,0,0,0,14.14,0,9.85,9.85,0,0,0,3.21,4A12.54,12.54,0,0,1,74,74.89a11.37,11.37,0,0,1-8.29,3.61H64.31a11.54,11.54,0,0,1-9.61-5.25A9.84,9.84,0,0,0,57.93,69.25ZM51,48.7c0-7.28,6.28-13.2,14-13.2s14,5.92,14,13.2S72.59,67.5,65,67.5,51,56,51,48.7ZM114,99a6,6,0,0,1-6,6H96V85.19s0-.09,0-.13C95.2,73.27,80.05,70.82,79.45,70.73a5.45,5.45,0,0,1-4.14-4.18C80,61.7,83,54.27,83,48.7c0-9.48-8.08-17.2-18-17.2S47,39.22,47,48.7c0,5.57,3,13,7.69,17.85-.43,1.46-1.5,3.73-4.1,4.18-.64.1-15.79,2.55-16.58,14.34,0,0,0,.09,0,.13V105H20a6,6,0,0,1-6-6V29a6,6,0,0,1,6-6h88a6,6,0,0,1,6,6Z"/>
+                                        <path fill="#fff" d="M84,89H76a2,2,0,0,0,0,4h8a2,2,0,0,0,0-4Z"/>
                                         </svg>
                                         | Save
                          
@@ -125,14 +127,17 @@ block content
                                     p.update-profile__description Anyone can see this info.                            
                                     label.form__label(for='birthday') Birthday
                                     .form__input-wrapper      
-                                        input#birthday.form__input(type='text', value=`${user.birthday}`, required, name='birthday')
+                                        input#update-birthday.form__input(type='text', value=`${user.birthday}`, required, name='birthday')
                                         span.form__span
                                             <svg class="form__input--icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="form_input--icon">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                                             </svg>
                                     button#submit__birthday.btn-submit__update(type="submit")
-                                        <svg class="btn-submit__birthday-icon s24" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
+                                        <svg class="btn-submit__icon s24" xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" viewBox="0 0 64 64">
+                                        <line  x1="32" x2="32" y1="10.62" y2="4.42" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
+                                        <path  fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M29.5,10.62h5a1,1,0,0,1,1,1V21.79a0,0,0,0,1,0,0h-7a0,0,0,0,1,0,0V11.62A1,1,0,0,1,29.5,10.62Z"/>
+                                        <polyline fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" points="9.16 36.65 9.16 48.01 54.84 48.01 54.84 36.65"/>
+                                        <path fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13.63 21.79H50.38a6.12 6.12 0 0 1 6.12 6.12v4.55a6.13 6.13 0 0 1-6.12 6.13h0a6.13 6.13 0 0 1-6.13-6.13h0a6.13 6.13 0 0 1-6.12 6.13h0A6.13 6.13 0 0 1 32 32.46h0a6.13 6.13 0 0 1-6.12 6.13h0a6.13 6.13 0 0 1-6.13-6.13h0a6.13 6.13 0 0 1-6.12 6.13h0A6.13 6.13 0 0 1 7.5 32.46V27.91A6.12 6.12 0 0 1 13.63 21.79zM51.91 59.58H12.09a6 6 0 0 1-5.34-3.27L3.24 49.46A1 1 0 0 1 4.13 48H59.87a1 1 0 0 1 .89 1.45l-3.5 6.85A6 6 0 0 1 51.91 59.58z"/>
                                         </svg>
                                         | Save
                                
@@ -152,15 +157,12 @@ block content
                                     p.update-profile__description Anyone can see this info.                            
                                     label.form__label(for='gender') Gender
                                     .form__input-wrapper      
-                                        input#gender.form__input(type='text', value=`${user.gender}`, required, name='gender')
+                                        input#update-gender.form__input(type='text', value=`${user.gender}`, required, name='gender')
                                         span.form__span
                                             <svg class="form__input--icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="form_input--icon">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                                             </svg>
                                     button#submit__gender.btn-submit__update(type="submit")
-                                        <svg class="btn-submit__gender-icon s24" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
-                                        </svg>
                                         | Save
 
 
@@ -183,14 +185,14 @@ block content
                                     p.update-profile__description You have the option to share your email with our community.                           
                                     label.form__label(for='email') Email
                                     .form__input-wrapper      
-                                        input#email.form__input(type='text', value=`${user.email}`, required, name='email')
+                                        input#update-email.form__input(type='text', value=`${user.email}`, required, name='email')
                                         span.form__span
                                             <svg class="form__input--icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="form_input--icon">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                                             </svg>
                                     button#submit__email.btn-submit__update(type="submit")
-                                        <svg class="btn-submit__email-icon s24" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
+                                        <svg class="btn-submit__icon s24" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="w-6 h-6">
+                                        <path stroke-linecap="round" d="M16.5 12a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zm0 0c0 1.657 1.007 3 2.25 3S21 13.657 21 12a9 9 0 10-2.636 6.364M16.5 12V8.25" />
                                         </svg>
                                         | Save
 
@@ -214,29 +216,35 @@ block content
                                             path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
                                     p.update-profile__description Provide a strong password.                        
                                     label.form__label(for='passwordCurrent') Current Password
-                                    .form__input-wrapper      
-                                        input#password-current.form__input(type='text', value=``, required, name='passwordCurrent')
-                                        span.form__span
-                                            <svg class="form__input--icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="form_input--icon">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-                                            </svg>
+                                    .form__input-wrapper
+                                        button#pass-update-show.icon--password__update(type="button")
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                            <path fill="none" d="M0 0h24v24H0V0z"/>
+                                            <path fill="#fff" d="M12 4C7 4 2.73 7.11 1 11.5 2.73 15.89 7 19 12 19s9.27-3.11 11-7.5C21.27 7.11 17 4 12 4zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                                            </svg>   
+                                        button#pass-update-hide.icon--password__update.hidden(type="button")
+                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                             <path fill="none" d="M0 0h24v24H0V0zm0 0h24v24H0V0zm0 0h24v24H0V0zm0 0h24v24H0V0z"/>
+                                             <path fill="#fff" d="M12 6.5c2.76 0 5 2.24 5 5 0 .51-.1 1-.24 1.46l3.06 3.06c1.39-1.23 2.49-2.77 3.18-4.53C21.27 7.11 17 4 12 4c-1.27 0-2.49.2-3.64.57l2.17 2.17c.47-.14.96-.24 1.47-.24zM2.71 3.16c-.39.39-.39 1.02 0 1.41l1.97 1.97C3.06 7.83 1.77 9.53 1 11.5 2.73 15.89 7 19 12 19c1.52 0 2.97-.3 4.31-.82l2.72 2.72c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L4.13 3.16c-.39-.39-1.03-.39-1.42 0zM12 16.5c-2.76 0-5-2.24-5-5 0-.77.18-1.5.49-2.14l1.57 1.57c-.03.18-.06.37-.06.57 0 1.66 1.34 3 3 3 .2 0 .38-.03.57-.07L14.14 16c-.65.32-1.37.5-2.14.5zm2.97-5.33c-.15-1.4-1.25-2.49-2.64-2.64l2.64 2.64z"/>
+                                             </svg>      
+                                        input#password-current.form__input(type='password',  placeholder='••••••••', required, minlength='8', maxlength='32', name='passwordCurrent')
                                     label.form__label(for='password') New Password
                                     .form__input-wrapper      
-                                        input#password.form__input(type='text', value=``, required, name='password')
+                                        input#update-password.form__input(type='password', placeholder='••••••••', required, minlength='8', maxlength='32', name='password')
                                         span.form__span
                                             <svg class="form__input--icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="form_input--icon">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                                             </svg>
                                     label.form__label(for='passwordConfirm') Confirm New Password
                                     .form__input-wrapper      
-                                        input#password-confirm.form__input(type='text', value=``, required, name='passwordConfirm')
+                                        input#password-confirm.form__input(type='password', placeholder='••••••••', required, minlength='8', maxlength='32', name='passwordConfirm')
                                         span.form__span
                                             <svg class="form__input--icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="form_input--icon">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                                             </svg>
                                     button#submit__password.btn-submit__update(type="submit")
-                                        <svg class="btn-submit__name-icon s24" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
+                                        <svg class="btn-submit__icon s24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                        <path fill="#fff" d="M12,13a1.49,1.49,0,0,0-1,2.61V17a1,1,0,0,0,2,0V15.61A1.49,1.49,0,0,0,12,13Zm5-4V7A5,5,0,0,0,7,7V9a3,3,0,0,0-3,3v7a3,3,0,0,0,3,3H17a3,3,0,0,0,3-3V12A3,3,0,0,0,17,9ZM9,7a3,3,0,0,1,6,0V9H9Zm9,12a1,1,0,0,1-1,1H7a1,1,0,0,1-1-1V12a1,1,0,0,1,1-1H17a1,1,0,0,1,1,1Z"/>
                                         </svg>
                                         | Save
 

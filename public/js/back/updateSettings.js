@@ -4,6 +4,7 @@ import { showAlert } from '../front/alerts';
 
 // type is either 'password' or 'data'
 export const updateSettings = async (data, type) => {
+  console.log('trying to update');
   try {
     const url =
       type === 'password'
@@ -24,7 +25,6 @@ export const updateSettings = async (data, type) => {
 
     if (res.data.status === 'success')
       showAlert('success', `${type.toUpperCase()} updated successfully!`);
-
     setTimeout(window.location.reload(), 12000);
   } catch (err) {
     showAlert('error', err.response.data.message);

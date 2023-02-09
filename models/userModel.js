@@ -8,13 +8,15 @@ const userSchema = new mongoose.Schema(
     name: {
       type: String,
       required: [true, 'Please provide us your name!'],
+      minlength: 3,
+      maxlength: 20,
     },
     username: {
       type: String,
       required: [true, 'Please provide us your username!'],
       unique: true,
-      minlength: 8,
-      maxlength: 20,
+      minlength: 4,
+      maxlength: 16,
     },
     email: {
       type: String,
@@ -22,6 +24,10 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
       validate: [validator.isEmail, 'Please provide a valid email!'],
+    },
+    gender: {
+      type: String,
+      lowercase: true,
     },
     photo: {
       type: String,
@@ -36,6 +42,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, 'Please provide a password'],
       minlength: 8,
+      maxlength: 32,
       select: false,
     },
     passwordConfirm: {

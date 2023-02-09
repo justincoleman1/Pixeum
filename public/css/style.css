@@ -246,6 +246,22 @@ span > svg.form__input--icon {
   position: relative;
 }
 
+.icon--password__update {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 30px;
+  transform: translate(0, -50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
 .icon--password {
   position: absolute;
   top: 50%;
@@ -1060,8 +1076,7 @@ button.btn-save__crop {
   width: 100%;
 }
 
-.btn-submit__photo-icon,
-.btn-submit__name-icon {
+.btn-submit__icon {
   position: absolute;
   left: 24px;
   top: 50%;

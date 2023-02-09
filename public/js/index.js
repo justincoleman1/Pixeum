@@ -32,7 +32,10 @@ import {
   searchHasText,
 } from './front/search-bar';
 
-import { togglePasswordVisibillity } from './front/passwordVisibility';
+import {
+  togglePasswordVisibillity,
+  toggleUpdatePasswordVisibillity,
+} from './front/passwordVisibility';
 import {
   profileDropDownClosed,
   closeProfileDropDown,
@@ -53,6 +56,9 @@ const signupForm = document.getElementById('signup-form');
 
 const passShowBtn = document.getElementById('pass-show');
 const passHideBtn = document.getElementById('pass-hide');
+
+const updatePassShowBtn = document.getElementById('pass-update-show');
+const updatePassHideBtn = document.getElementById('pass-update-hide');
 
 const profileBtn = document.getElementById('profile-menu-trigger');
 
@@ -188,16 +194,14 @@ if (searchInput) {
 
 if (passShowBtn)
   passShowBtn.addEventListener('click', (e) => {
-    console.log('vis clicked');
-    togglePasswordVisibillity('password');
+    togglePasswordVisibillity();
     passShowBtn.classList.add('hidden');
     passHideBtn.classList.remove('hidden');
   });
 
 if (passHideBtn)
   passHideBtn.addEventListener('click', (e) => {
-    console.log('vis clicked');
-    togglePasswordVisibillity('password');
+    togglePasswordVisibillity();
     passHideBtn.classList.add('hidden');
     passShowBtn.classList.remove('hidden');
   });
@@ -267,6 +271,35 @@ if (updateNameBtn) {
   updatePhotoBtn.addEventListener('click', (e) => {
     updatePhotoModal.style.display = 'block';
   });
+
+  cropPhotoBtn.addEventListener('click', (e) => {
+    cropPhotoModal.style.display = 'block';
+  });
+
+  updateNameBtn.addEventListener('click', (e) => {
+    updateNameModal.style.display = 'block';
+  });
+
+  updateUsernameBtn.addEventListener('click', (e) => {
+    updateUsernameModal.style.display = 'block';
+  });
+
+  updateBirthdayBtn.addEventListener('click', (e) => {
+    updateBirthdayModal.style.display = 'block';
+  });
+
+  updateGenderBtn.addEventListener('click', (e) => {
+    updateGenderModal.style.display = 'block';
+  });
+
+  updateEmailBtn.addEventListener('click', (e) => {
+    updateEmailModal.style.display = 'block';
+  });
+
+  updatePasswordBtn.addEventListener('click', (e) => {
+    updatePasswordModal.style.display = 'block';
+  });
+
   escapePhotoBtn.addEventListener('click', (e) => {
     updatePhotoModal.style.display = 'none';
 
@@ -274,67 +307,33 @@ if (updateNameBtn) {
     crop_image.src = originalProfileImage.src;
     cropper.replace(originalProfileImage.src);
   });
-  cropPhotoBtn.addEventListener('click', (e) => {
-    cropPhotoModal.style.display = 'block';
-  });
+
   escapeCropBtn.addEventListener('click', (e) => {
     cropPhotoModal.style.display = 'none';
-  });
-  updateNameBtn.addEventListener('click', (e) => {
-    updateNameModal.style.display = 'block';
   });
 
   escapeNameBtn.addEventListener('click', (e) => {
     updateNameModal.style.display = 'none';
   });
 
-  updateUsernameBtn.addEventListener('click', (e) => {
-    updateUsernameModal.style.display = 'block';
-  });
-  updateBirthdayBtn.addEventListener('click', (e) => {
-    updateBirthdayModal.style.display = 'block';
-  });
-  updateGenderBtn.addEventListener('click', (e) => {
-    updateGenderModal.style.display = 'block';
-  });
-  updateEmailBtn.addEventListener('click', (e) => {
-    updateEmailModal.style.display = 'block';
-  });
-  updatePasswordBtn.addEventListener('click', (e) => {
-    updatePasswordModal.style.display = 'block';
+  escapeUsernameBtn.addEventListener('click', (e) => {
+    updateUsernameModal.style.display = 'none';
   });
 
-  window.addEventListener('click', (e) => {
-    if (e.target == updatePhotoModal) {
-      updatePhotoModal.style.display = 'none';
+  escapeBirthdayBtn.addEventListener('click', (e) => {
+    updateBirthdayModal.style.display = 'none';
+  });
 
-      image.src = originalProfileImage.src;
-      crop_image.src = originalProfileImage.src;
-      cropper.replace(originalProfileImage.src);
-    }
+  escapeGenderBtn.addEventListener('click', (e) => {
+    updateGenderModal.style.display = 'none';
+  });
 
-    if (e.target == cropPhotoModal) {
-      cropPhotoModal.style.display = 'none';
-    }
+  escapeEmailBtn.addEventListener('click', (e) => {
+    updateEmailModal.style.display = 'none';
+  });
 
-    if (e.target == updateNameModal) {
-      updateNameModal.style.display = 'none';
-    }
-    if (e.target == updateUsernameModal) {
-      updateUsernameModal.style.display = 'none';
-    }
-    if (e.target == updateBirthdayModal) {
-      updateBirthdayModal.style.display = 'none';
-    }
-    if (e.target == updateGenderModal) {
-      updateGenderModal.style.display = 'none';
-    }
-    if (e.target == updateEmailModal) {
-      updateEmailModal.style.display = 'none';
-    }
-    if (e.target == updatePasswordModal) {
-      updatePasswordModal.style.display = 'none';
-    }
+  escapePasswordBtn.addEventListener('click', (e) => {
+    updatePasswordModal.style.display = 'none';
   });
 
   updatePhotoInput.addEventListener('change', (e) => {
@@ -369,56 +368,66 @@ if (updateNameBtn) {
   updateNameForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     let form = new FormData();
-    form.append('name', document.getElementById('name').value);
+    form.append('name', document.getElementById('update-name').value);
     await updateSettings(form, 'data');
   });
 
   updateUsernameForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     let form = new FormData();
-    form.append('username', document.getElementById('username').value);
+    form.append('username', document.getElementById('update-username').value);
     await updateSettings(form, 'data');
   });
 
   updateEmailForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     let form = new FormData();
-    form.append('email', document.getElementById('email').value);
+    form.append('email', document.getElementById('update-email').value);
     await updateSettings(form, 'data');
   });
 
   updateBirthdayForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     let form = new FormData();
-    form.append('birthday', document.getElementById('birtday').value);
+    form.append('birthday', document.getElementById('update-birtday').value);
     await updateSettings(form, 'data');
   });
 
   updateGenderForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     let form = new FormData();
-    form.append('gender', document.getElementById('gender').value);
+    form.append('gender', document.getElementById('update-gender').value);
     await updateSettings(form, 'data');
+  });
+}
+
+if (updatePasswordForm) {
+  updatePassShowBtn.addEventListener('click', (e) => {
+    toggleUpdatePasswordVisibillity();
+    updatePassShowBtn.classList.add('hidden');
+    updatePassHideBtn.classList.remove('hidden');
+  });
+
+  updatePassHideBtn.addEventListener('click', (e) => {
+    toggleUpdatePasswordVisibillity();
+    updatePassHideBtn.classList.add('hidden');
+    updatePassShowBtn.classList.remove('hidden');
   });
 
   updatePasswordForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    document.querySelector('.btn--save-password').textContent = 'Updating...';
 
-    const passwordCurrent = document.getElementById('password-current').value;
-    const password = document.getElementById('password').value;
-    const passwordConfirm = document.getElementById('password-confirm').value;
+    const currentPassword = document.getElementById('password-current').value;
+    const newPassword = document.getElementById('update-password').value;
+    const newPasswordConfirm =
+      document.getElementById('password-confirm').value;
     await updateSettings(
-      { passwordCurrent, password, passwordConfirm },
+      { currentPassword, newPassword, newPasswordConfirm },
       'password'
     );
-
-    // document.querySelector('.btn--save-password').textContent = 'Save password';
-    // document.getElementById('password-current').value = '';
-    // document.getElementById('password').value = '';
-    // document.getElementById('password-confirm').value = '';
   });
 }
+
 const alertMessage = document.querySelector('body').dataset.alert;
 if (alertMessage) showAlert('success', alertMessage, 20);
 
