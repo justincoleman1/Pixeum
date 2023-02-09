@@ -388,8 +388,16 @@ if (updateNameBtn) {
 
   updateBirthdayForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    const month = document.getElementById('update-birthday-month').value;
+    let day = document.getElementById('update-birthday-day').value;
+    const year = document.getElementById('update-birthday-year').value;
+
+    day++;
+    const formatedDate = `${year}-${month}-${day.toString()}T00:00:00Z`;
+
     let form = new FormData();
-    form.append('birthday', document.getElementById('update-birtday').value);
+    form.append('birthday', formatedDate);
     await updateSettings(form, 'data');
   });
 

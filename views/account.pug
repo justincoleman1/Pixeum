@@ -121,18 +121,33 @@ block content
                         #update-birthday__modal.update-info__modal
                             .update-info__modal-content.sm
                                 form#form__profile-birthday.form__update
-                                    h3.update-profile__header birthday
+                                    h3.update-profile__header Birthday
                                     button#btn__escape__update-birthday.btn-escape__update-profile(type='button')
                                         svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor")
                                             path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
-                                    p.update-profile__description Anyone can see this info.                            
-                                    label.form__label(for='birthday') Birthday
-                                    .form__input-wrapper      
-                                        input#update-birthday.form__input(type='text', value=birthday, required, name='birthday')
-                                        span.form__span
-                                            <svg class="form__input--icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="form_input--icon">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-                                            </svg>
+                                    p.update-profile__description Anyone can see this info.
+                                    .update-birthday-flex-container  
+                                        .update-birthday-flex-item.flex-item-month                          
+                                            label.form__label.ml-18(for='month') Month
+                                            select#update-birthday-month.form__input(value='January', required, name='month')
+                                                option(value='01') January
+                                                option(value='02') February
+                                                option(value='03') March
+                                                option(value='04') April
+                                                option(value='05') May
+                                                option(value='06') June
+                                                option(value='07') July
+                                                option(value='08') August
+                                                option(value='09') September
+                                                option(value='10') October
+                                                option(value='11') November
+                                                option(value='12') December
+                                        .update-birthday-flex-item.flex-item-day   
+                                            label.form__label(for='day') Day
+                                            input#update-birthday-day.form__input(type=number, value=1,required, name='day')
+                                        .update-birthday-flex-item.flex-item-year  
+                                            label.form__label(for='year') Year
+                                            input#update-birthday-year.form__input(type='text', value='2000', minlength=4, maxlength=4, required, name='year')
                                     button#submit__birthday.btn-submit__update(type="submit")
                                         <svg class="btn-submit__icon s24" xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" viewBox="0 0 64 64">
                                         <line  x1="32" x2="32" y1="10.62" y2="4.42" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>

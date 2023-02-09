@@ -116,6 +116,28 @@ img.upload {
   width: 100%;
 }
 
+.update-birthday-flex-container {
+  display: flex;
+  gap: space-evenly;
+}
+
+.update-birthday-flex-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-item-month {
+  flex: 2 0 auto;
+}
+
+.flex-item-day {
+  flex: 0 2 auto;
+}
+
+.flex-item-year {
+  flex: 0 2 auto;
+}
+
 .form__label {
   font-weight: 300;
   width: 100px;
@@ -123,6 +145,11 @@ img.upload {
   color: #adb5bd;
   margin-top: 24px;
   margin-bottom: 18px;
+  margin-left: 12px;
+}
+
+.ml-18 {
+  margin-left: 18px;
 }
 
 .form__input {
@@ -828,7 +855,7 @@ END SIDE NAV BUTTON ACTIONS
 }
 
 ul.personal-info__container-item__list li {
-  border-top: 0.1px solid #595b5d;
+  border-top: 0.1px solid #3e3d3d;
 }
 
 ul.personal-info__container-item__list li:first-child {
