@@ -29,6 +29,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       lowercase: true,
     },
+    birthday: Date,
     photo: {
       type: String,
       default: 'default.jpg',

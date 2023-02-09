@@ -112,7 +112,8 @@ block content
                                         | Save
                          
                     li  
-                        a#update-birthday-btn.presonal-info__container-item__list-link=`${user.birthday}`
+                        - const birthday = user.birthday ? user.birthday.toLocaleString('en-us', {month: 'long', day: 'numeric' , year: 'numeric'}) : 'Not specified' 
+                        a#update-birthday-btn.presonal-info__container-item__list-link=birthday
                             span.personal-info__span Birthday
                             <svg class="personal-info__link-icon"  xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
@@ -127,7 +128,7 @@ block content
                                     p.update-profile__description Anyone can see this info.                            
                                     label.form__label(for='birthday') Birthday
                                     .form__input-wrapper      
-                                        input#update-birthday.form__input(type='text', value=`${user.birthday}`, required, name='birthday')
+                                        input#update-birthday.form__input(type='text', value=birthday, required, name='birthday')
                                         span.form__span
                                             <svg class="form__input--icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="form_input--icon">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
@@ -142,7 +143,8 @@ block content
                                         | Save
                                
                     li  
-                        a#update-gender-btn.presonal-info__container-item__list-link=`${user.gender}`
+                        - const gender = user.gender ? user.gender : 'Not specified'
+                        a#update-gender-btn.presonal-info__container-item__list-link=gender
                             span.personal-info__span Gender
                             <svg class="personal-info__link-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
@@ -157,7 +159,7 @@ block content
                                     p.update-profile__description Anyone can see this info.                            
                                     label.form__label(for='gender') Gender
                                     .form__input-wrapper      
-                                        input#update-gender.form__input(type='text', value=`${user.gender}`, required, name='gender')
+                                        input#update-gender.form__input(type='text', value=gender, required, name='gender')
                                         span.form__span
                                             <svg class="form__input--icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="form_input--icon">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
@@ -201,8 +203,9 @@ block content
                 h2.personal-info__container-item__header Password
                 p.personal-info__container-item__description A secure password helps protect your account.                      
                 ul.personal-info__container-item__list
-                    li
-                        a#update-password-btn.presonal-info__container-item__list-link=`${user.passwordChangedAt}`
+                    li  
+                        - const passwordChanged = user.passwordChangedAt ? `Password changed at ${user.passwordChangedAt.toLocaleString('en-US').split(' ')[1]} ${user.passwordChangedAt.toLocaleString('en-US').split(' ')[2]} on ${user.passwordChangedAt.toLocaleString('en-US').split(' ')[0].replaceAll(',','')}.` : 'Your password has never changed.'    
+                        a#update-password-btn.presonal-info__container-item__list-link=passwordChanged
                             span.personal-info__span **********
                             <svg class="personal-info__link-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />

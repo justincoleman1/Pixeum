@@ -849,6 +849,7 @@ ul.personal-info__container-item__list li > a:active {
 
 a.presonal-info__container-item__list-link {
   padding: 16px 0;
+  margin: 0 -32px;
 }
 
 ul.personal-info__container-item__list li:last-child {
@@ -865,6 +866,7 @@ ul.personal-info__container-item__list li:last-child {
   width: 100px;
   font-size: 16px;
   color: #adb5bd;
+  margin-left: 32px;
 }
 
 .personal-info__link-icon {
