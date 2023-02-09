@@ -58,6 +58,14 @@ ul {
 img.upload {
   pointer-events: none !important;
 }
+
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  transition: background-color 600000s 0s, color 600000s 0s;
+}
+input[data-autocompleted] {
+  background-color: transparent !important;
+}
 /* 
 =========================END GENERAL CSS========================================
 */
@@ -653,7 +661,7 @@ aside::-webkit-scrollbar {
 /* Handle */
 aside::-webkit-scrollbar-thumb {
   background: #595b5d;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 /* Handle on hover */
@@ -831,7 +839,7 @@ END SIDE NAV BUTTON ACTIONS
 .personal-info__container-item {
   background-color: #2e2d2d;
   border: solid 0.1px #595b5d;
-  border-radius: 10px;
+  border-radius: 8px;
   padding: 32px 32px 8px 32px;
 }
 
@@ -936,6 +944,7 @@ ul.personal-info__container-item__list li:last-child {
   border: 1px solid #888;
   width: 400px;
   height: 600px;
+  border-radius: 8px;
 }
 
 .update-info__modal-content.sm {
@@ -1324,6 +1333,10 @@ input.form__upload {
 }
 .st2 {
   fill: #fff;
+}
+
+.strW {
+  stroke: #fff;
 }
 
 /* 

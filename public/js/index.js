@@ -43,6 +43,8 @@ import {
   openCloseProfileDropDownMenu,
 } from './front/navbar';
 
+import { disallowBodyScroll, allowBodyScroll } from './front/scroll';
+
 // DOM ELEMENTS
 const sideNavBtn = document.querySelector('.btn-side-nav');
 
@@ -270,34 +272,42 @@ if (updateNameBtn) {
 
   updatePhotoBtn.addEventListener('click', (e) => {
     updatePhotoModal.style.display = 'block';
+    disallowBodyScroll();
   });
 
   cropPhotoBtn.addEventListener('click', (e) => {
     cropPhotoModal.style.display = 'block';
+    disallowBodyScroll();
   });
 
   updateNameBtn.addEventListener('click', (e) => {
     updateNameModal.style.display = 'block';
+    disallowBodyScroll();
   });
 
   updateUsernameBtn.addEventListener('click', (e) => {
     updateUsernameModal.style.display = 'block';
+    disallowBodyScroll();
   });
 
   updateBirthdayBtn.addEventListener('click', (e) => {
     updateBirthdayModal.style.display = 'block';
+    disallowBodyScroll();
   });
 
   updateGenderBtn.addEventListener('click', (e) => {
     updateGenderModal.style.display = 'block';
+    disallowBodyScroll();
   });
 
   updateEmailBtn.addEventListener('click', (e) => {
     updateEmailModal.style.display = 'block';
+    disallowBodyScroll();
   });
 
   updatePasswordBtn.addEventListener('click', (e) => {
     updatePasswordModal.style.display = 'block';
+    disallowBodyScroll();
   });
 
   escapePhotoBtn.addEventListener('click', (e) => {
@@ -306,6 +316,8 @@ if (updateNameBtn) {
     image.src = originalProfileImage.src;
     crop_image.src = originalProfileImage.src;
     cropper.replace(originalProfileImage.src);
+
+    allowBodyScroll();
   });
 
   escapeCropBtn.addEventListener('click', (e) => {
@@ -314,26 +326,32 @@ if (updateNameBtn) {
 
   escapeNameBtn.addEventListener('click', (e) => {
     updateNameModal.style.display = 'none';
+    allowBodyScroll();
   });
 
   escapeUsernameBtn.addEventListener('click', (e) => {
     updateUsernameModal.style.display = 'none';
+    allowBodyScroll();
   });
 
   escapeBirthdayBtn.addEventListener('click', (e) => {
     updateBirthdayModal.style.display = 'none';
+    allowBodyScroll();
   });
 
   escapeGenderBtn.addEventListener('click', (e) => {
     updateGenderModal.style.display = 'none';
+    allowBodyScroll();
   });
 
   escapeEmailBtn.addEventListener('click', (e) => {
     updateEmailModal.style.display = 'none';
+    allowBodyScroll();
   });
 
   escapePasswordBtn.addEventListener('click', (e) => {
     updatePasswordModal.style.display = 'none';
+    allowBodyScroll();
   });
 
   updatePhotoInput.addEventListener('change', (e) => {
