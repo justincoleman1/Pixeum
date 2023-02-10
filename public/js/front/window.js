@@ -62,11 +62,15 @@ export const windowSize792Changes = () => {
     }
     //If search input has text
     if (searchHasText() || searchIsActive()) {
+      smallSearchButton();
       showSearchBar();
       hideNavOptions();
       showRevertBtn();
     } else {
-      if (!searchHasText() && !searchIsActive()) hideSearchBar();
+      if (!searchHasText() && !searchIsActive()) {
+        largeSearchButton();
+        hideSearchBar();
+      }
     }
   }
 };
