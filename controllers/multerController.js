@@ -3,7 +3,10 @@ const multer = require('multer');
 const multerStorage = multer.memoryStorage();
 
 const multerFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image')) cb(null, true);
+  if (file.mimetype.startsWith('image')) cb(null, true); //images
+  else if (file.mimetype.startsWith('application'))
+    cb(null, true); //xml, zip, pdf
+  else if (file.mimetype.startsWith('text')) cb(null, true); //text
   else cb(new AppError('Not a image! Please upload an image.', 400), false);
 };
 

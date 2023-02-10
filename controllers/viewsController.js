@@ -47,39 +47,26 @@ exports.getAccount = (req, res) => {
   });
 };
 
-exports.getMyUploads = catchAsync(async (req, res, next) => {
-  // //1) Find all uploads
-  // const uploads = await Upload.find({ user: req.user._id }).populate('uploads');
-  // if (!uploads) {
-  //   res.status(200).render('overview', {
-  //     title: 'My uploads',
-  //     uploads: [],
-  //   });
-  // }
-  // //2) Find uploads with the returned IDs
-  // const uploadIDs = bookings.map((el) => el.upload);
-  // const uploads = await Upload.find({ _id: { $in: uploadIDs } });
-  // res.status(200).render('overview', {
-  //   title: 'My uploads',
-  //   uploads,
-  // });
-});
-
-exports.updateUserData = catchAsync(async (req, res, next) => {
-  const updatedUser = await User.findByIdAndUpdate(
-    req.user._id,
-    {
-      name: req.body.name,
-      email: req.body.email,
-    },
-    {
-      new: true,
-      runValidators: true,
-    }
-  );
-
-  res.status(200).render('account', {
-    title: 'Your account',
-    user: updatedUser,
+exports.getUploadForm = (req, res) => {
+  res.status(200).render('upload', {
+    title: 'Upload your work',
   });
-});
+};
+
+// exports.getMyUploads = catchAsync(async (req, res, next) => {
+//   //1) Find all uploads
+//   const uploads = await Upload.find({ user: req.user._id }).populate('uploads');
+//   if (!uploads) {
+//     res.status(200).render('overview', {
+//       title: 'My uploads',
+//       uploads: [],
+//     });
+//   }
+//   //2) Find uploads with the returned IDs
+//   const uploadIDs = bookings.map((el) => el.upload);
+//   const uploads = await Upload.find({ _id: { $in: uploadIDs } });
+//   res.status(200).render('overview', {
+//     title: 'My uploads',
+//     uploads,
+//   });
+// });

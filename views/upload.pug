@@ -1,54 +1,10 @@
 extends base
 
 block append head
-  script(src='https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.js')
-  link(href='https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.css' rel='stylesheet')
+  //- script(src='https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.js')
+  //- link(href='https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.css' rel='stylesheet')
 
   //- script(src='/js/mapbox.js')
-
-mixin overviewBox(label, text, icon)
-  .overview-box__detail
-    svg.overview-box__icon
-      use(xlink:href=`/img/icons.svg#icon-${icon}`)
-    span.overview-box__label= label
-    span.overview-box__text=  text
-
 block content
-  section.section-header
-    .header__hero
-      .header__hero-overlay &nbsp;
-      img.header__hero-img(src=`/img/uploads/${upload.imageCover}`, alt=`${upload.name}`)
-    .heading-box
-      h1.heading-primary
-        span= `${upload.name} upload`
-  
-  section.section-description
-    .overview-box
-      div
-        .overview-box__group
-          h2.heading-secondary.ma-bt-lg Info
-          +overviewBox('views', upload.view_count, 'calendar' )
-          +overviewBox('likes', upload.like_count, 'trending-up' )
-          +overviewBox('tags', `tags: ${upload.tags}`, 'user' )
-          +overviewBox('type', `${upload.media_type}`, 'star' )
-
-    .description-box
-      h2.heading-secondary.ma-bt-lg= `About ${upload.name} upload`
-      - const paragraphs = upload.description.split('\n');
-      each p in paragraphs
-        p.description__text= p
-
-
-  section.section-pictures
-    each img, i in upload.images
-      .picture-box
-        img.picture-box__img(src=`/img/uploads/${img}`, alt=`${upload.name} ${i + 1}`, class=`picture-box__img--${i + 1}`)
-
-  section.section-comments
-    .comments
-      each comment in upload.comments
-        .comments__card
-          .comments__avatar
-            img.comments__avatar-img(src=`/img/users/${comment.user.photo}`, alt=`${comment.user.name}`)
-            h6.comments__user= comment.user.name
-          p.comments__text= comment.comment
+    section#main.main
+        h1 UPLOAD

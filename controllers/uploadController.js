@@ -10,19 +10,44 @@ exports.setUploadUserIds = (req, res, next) => {
   next();
 };
 
+exports.uploadMain = upload.single('media');
 exports.uploadImageCover = upload.single('imageCover');
+exports.uploadImages = upload.array('images', 4);
 
-exports.resizeImageCover = catchAsync(async (req, res, next) => {
+//Image Display Options
+
+//Original Image --------------Downloads,Upload's Page Main Image Display
+exports.rawUploadedImage = catchAsync(async (req, res, next) => {
+  if (!req.file) return next();
+
+  req.file.filename = `upload-${req.upload._id}-${Date.now()}.jpeg`;
+
+  const { data, info } = await sharp(req.file.buffer)
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+
+  const pixelArray = new Uint8ClampedArray(data.buffer);
+  const { width, height, channels } = info;
+  await sharp(pixelArray, { raw: { width, height, channels } }).toFile(
+    `public/uploads/images/raw/${req.file.filename}`
+  );
+  next();
+});
+
+//Resized Image
+exports.resizedUploadedImage = catchAsync(async (req, res, next) => {
   // console.log('FILE?', req.file);
   if (!req.file) return next();
 
-  req.file.filename = `user-${req.user._id}-${Date.now()}.jpeg`;
-
+  req.file.filename = `upload-${req.upload._id}-${Date.now()}.jpeg`;
+  //pixel sizes for display 400, 600, 800, 900, 1024, 1280, 1600, 1920
   await sharp(req.file.buffer)
-    .resize(500, 500)
-    .toFormat('jpeg')
+    .resize({
+      fit: sharp.fit.contain,
+      width: req.body.pixelSize,
+    })
     .jpeg({ quality: 90 })
-    .toFile(`public/img/users/${req.file.filename}`);
+    .toFile(`public/uploads/images/resized/${req.file.filename}`);
 
   next();
 });

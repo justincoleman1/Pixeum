@@ -16,7 +16,7 @@ router
     authController.protect,
     uploadController.setUploadUserIds,
     uploadController.uploadImageCover,
-    uploadController.resizeImageCover,
+    uploadController.resizedUploadedImage,
     uploadController.createUpload
   );
 

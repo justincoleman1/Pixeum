@@ -351,7 +351,7 @@ header.nav {
   position: fixed;
   width: 100%;
   top: 0;
-  height: 50px;
+  height: 75px;
 
   color: #fff;
   background-color: #2e2d2d;
@@ -371,6 +371,9 @@ header.nav.disappear {
   align-items: center;
   justify-content: center;
   gap: 24px;
+}
+a h1.nav-header-brand {
+  cursor: pointer;
 }
 
 #brand.nav-item {
@@ -400,20 +403,6 @@ header.nav.disappear {
   border: none;
   cursor: pointer;
   margin-left: 26px;
-}
-
-.btn-side-nav:hover .nav-side-nav-icon,
-.btn-side-nav:active .nav-side-nav-icon,
-.clear-icon:hover,
-.clear-icon:active,
-.revert-icon:hover,
-.revert-icon:active {
-  stroke: #47b1f5;
-}
-
-.nav-btn:hover,
-.nav-btn:active {
-  color: #47b1f5;
 }
 
 .nav-side-nav-icon {
@@ -510,8 +499,8 @@ button.btn-revert.hidden {
 }
 
 .search {
-  border: 1px solid #2e2d2d;
-  border-radius: 5px;
+  border: 0.1px solid #555555;
+  border-radius: 10px;
   height: 50px;
   width: 100%;
   padding: 2px 28px 2px 35px;
@@ -525,7 +514,6 @@ button.btn-revert.hidden {
   color: #fff;
 }
 
-.search:hover,
 .search:focus {
   border: 1.5px solid #47b1f5;
 }
@@ -723,7 +711,7 @@ ul.profile-item-list li > a:hover,
 
 aside.side-nav {
   background-color: #2e2d2d;
-  top: 50px;
+  top: 75px;
   bottom: 0;
   position: fixed;
   overflow-y: auto;
@@ -849,8 +837,9 @@ section.main-login {
 }
 
 section.main {
-  background-color: green;
-  margin-top: 50px;
+  background-color: #2e2d2d;
+  /* background-color: green; */
+  margin-top: 75px;
   margin-left: 75px;
 
   padding: 35px 75px;
@@ -902,6 +891,10 @@ aside.side-nav.expand-aside {
 a.shrink-side-nav-link {
   flex-direction: column;
   font-size: 12px;
+}
+
+ul.side-nav-list li > a.side-nav-link.shrink-side-nav-link {
+  gap: 8px;
 }
 
 /* 
@@ -1279,10 +1272,6 @@ input.form__upload {
     width: 28px;
   }
 
-  .search-icon:hover,
-  .search-icon:active {
-    stroke: #47b1f5;
-  }
   /* 
 =========================END MEDIA 791 NAVBAR CSS========================================
 */

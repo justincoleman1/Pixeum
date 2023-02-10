@@ -2,6 +2,15 @@ const mongoose = require('mongoose');
 const slugify = require('slugify');
 // const User = require('./userModel'); //Need for embedding but not referencing
 // const validator = require('validator');
+//types of uploads
+// 'image',
+// 'gif',
+// 'video',
+// 'short',
+// 'pdf',
+// 'audio',
+// 'doc',
+// 'txt',
 
 const uploadSchema = new mongoose.Schema(
   {
@@ -13,6 +22,9 @@ const uploadSchema = new mongoose.Schema(
       type: mongoose.Schema.ObjectId,
       ref: 'User',
       required: [true, 'A upload must have a user!'],
+    },
+    media: {
+      type: String,
     },
     imageCover: {
       type: String,
