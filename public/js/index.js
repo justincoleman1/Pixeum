@@ -30,6 +30,8 @@ import {
   showSearchClearBtn,
   hideSearchClearBtn,
   searchHasText,
+  largeSearchButton,
+  smallSearchButton,
 } from './front/search-bar';
 
 import {
@@ -38,9 +40,12 @@ import {
 } from './front/passwordVisibility';
 import {
   profileDropDownClosed,
+  notificationsDropDownClosed,
   closeProfileDropDown,
+  closeNotificationsDropDown,
   closeOnEscape,
   openCloseProfileDropDownMenu,
+  openCloseNotificationsDropDownList,
 } from './front/navbar';
 
 import { disallowBodyScroll, allowBodyScroll } from './front/scroll';
@@ -49,6 +54,7 @@ import { disallowBodyScroll, allowBodyScroll } from './front/scroll';
 const sideNavBtn = document.querySelector('.btn-side-nav');
 
 const searchBtn = document.querySelector('.btn-search');
+const searchIcon = document.querySelector('.search-icon');
 const searchInput = document.getElementById('search-input');
 const searchClearBtn = document.getElementById('search-clear');
 const searchRevert = document.getElementById('search-revert');
@@ -63,6 +69,7 @@ const updatePassShowBtn = document.getElementById('pass-update-show');
 const updatePassHideBtn = document.getElementById('pass-update-hide');
 
 const profileBtn = document.getElementById('profile-menu-trigger');
+const notificationsBtn = document.getElementById('notifications-list-trigger');
 
 const logOutBtn = document.getElementById('logoutBtn');
 
@@ -160,11 +167,11 @@ if (searchBtn)
   searchBtn.addEventListener('click', (e) => {
     e.preventDefault();
     if (!ws792()) {
-      console.log('Search Btn clicked');
       makeSearchActive();
       hideNavOptions();
       showSearchBar();
       showRevertBtn();
+      smallSearchButton();
     }
   });
 
@@ -177,6 +184,7 @@ if (searchRevert)
       showNavOptions();
       hideSearchBar();
       hideRevertBtn();
+      largeSearchButton();
     }
   });
 
@@ -241,6 +249,7 @@ if (profileBtn) {
   profileBtn.addEventListener('click', (e) => {
     e.preventDefault;
     openCloseProfileDropDownMenu();
+    if (!notificationsDropDownClosed()) openCloseNotificationsDropDownList();
     if (!ws792() && sideNavExpanded()) {
       collapseSideNav();
     }
@@ -254,6 +263,22 @@ if (profileBtn) {
   //   e.preventDefault;
   //   closeOnEscape(e);
   // });
+}
+
+if (notificationsBtn) {
+  notificationsBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    openCloseNotificationsDropDownList();
+    if (!profileDropDownClosed()) openCloseProfileDropDownMenu();
+    if (!ws792() && sideNavExpanded()) {
+      collapseSideNav();
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    e.preventDefault;
+    if (!notificationsDropDownClosed()) closeNotificationsDropDown(e);
+  });
 }
 
 if (updateNameBtn) {

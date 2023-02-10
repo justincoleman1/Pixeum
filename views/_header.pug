@@ -1,26 +1,51 @@
 header#nav.nav
-    .nav-item
-        button#side-nav-btn.btn-side-nav
-            svg.nav-side-nav-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
-                path(stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5")
-    .nav-item
-        h1.nav-header-brand Pixeum
-    .nav-item   
-        #search-bar.wrapper
-            button.btn-search
-               svg.search-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor")
-                  path(stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z")
-            input#search-input.search(placeholder="Search" type="text")
-            button#search-clear.btn-search-clear.hidden
-               svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor")
-                  path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
-        button#search-revert.btn-revert.hidden
-            svg.revert-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
-               path(stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3")
-    .nav-item
-         if user
+   .nav-item
+      button#side-nav-btn.btn-side-nav
+         svg.nav-side-nav-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
+               path(stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5")
+   #brand.nav-item
+      h1.nav-header-brand Pixeum
+   #search.nav-item   
+      #search-bar.wrapper
+         button.btn-search
+            svg.search-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
+               path(stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z")
+         input#search-input.search(placeholder="Search" type="text")
+         button#search-clear.btn-search-clear.hidden
+            svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
+               path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
+      button#search-revert.btn-revert.hidden
+         svg.revert-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
+            path(stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3")
+
+   #user-features.nav-item
+      if user
+         .nav-item-option
+            a.nav-btn.loggedin-nav-btn.nav-btn__upload(href="#")
+               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="upload-icon">
+               <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+               </svg>
+         .nav-item-option
+            #drop_down_with_notifications
+               button#notifications-list-trigger.nav-btn.loggedin-nav-btn.bell
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="notifications-icon">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                  </svg>
+               #notifications-list.closed
+                  .notifications-list-item
+                     h4 Notifications
+                  .notifications-list-item
+                     ul.notifications-item-list
+                        li
+                           a.notification-link(href="#")
+                              //- image
+                              //- Title
+                              //- coverImage
+   #account.nav-item
+      if user                        
+         .nav-item-option                     
             #drop_down_with_links
-               button#profile-menu-trigger.nav-btn
+               button#profile-menu-trigger.nav-btn.loggedin-nav-btn
                   img.nav__user-img(src=`/img/users/${user.photo}` alt=`Photo of ${user.name}`)
                #profile-menu.closed
                   .profile-menu-item
@@ -80,8 +105,10 @@ header#nav.nav
                               <path d="M6.455 19L2 22.5V4a1 1 0 0 1 1-1h18a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1H6.455zM4 18.385L5.763 17H20V5H4v13.385zM11 13h2v2h-2v-2zm0-6h2v5h-2V7z" fill="#fff"/>
                               </svg>
                               | Send Feedback
-         else
+      else
+         .nav-item-option
             a.nav-btn.btn-join(href="/signup") Join
+         .nav-item-option
             a.nav-btn.btn-signin(href="/login") Sign in
 
 aside#aside.side-nav

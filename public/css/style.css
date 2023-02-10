@@ -93,14 +93,36 @@ input[data-autocompleted] {
 
 .login-form,
 .signup-form {
+  position: relative;
   margin: 0 auto;
   align-self: flex-end;
   max-width: 30rem;
   background-color: #2e2d2d;
+  border-radius: 8px;
   -webkit-box-shadow: 0 2.5rem 8rem 2rem rgba(0, 0, 0, 0.06);
   box-shadow: 0 2.5rem 8rem 2rem rgba(0, 0, 0, 0.06);
   padding: 4rem;
   /* border-radius: 35px; */
+  overflow: auto;
+}
+
+.btn-return__home {
+  position: absolute;
+  top: 0;
+  left: 24px;
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-return__icon {
+  stroke: #fff;
+  fill: #fff;
+  width: 24px;
+  height: 24px;
 }
 
 .heading-secondary {
@@ -206,6 +228,7 @@ span > svg.form__input--icon {
 .form__group {
   display: flex;
   justify-content: center;
+  margin-top: 10px;
 }
 
 .form__group:not(:last-child) {
@@ -346,16 +369,30 @@ header.nav.disappear {
 .nav-item {
   display: flex;
   align-items: center;
+  justify-content: center;
+  gap: 24px;
 }
 
-.nav-item:nth-child(3) {
-  margin-left: auto;
-  gap: 48px;
+#brand.nav-item {
 }
 
-.nav-item:last-child {
+#search.nav-item {
   margin-left: auto;
-  padding: 0 48px;
+}
+
+#user-features.nav-item {
+  margin-left: auto;
+}
+
+#account.nav-item {
+  /* margin-left: auto; */
+  display: flex;
+  right: 18px;
+  padding-right: 18px;
+}
+
+#account.nav-item.hidden {
+  display: none;
 }
 
 .btn-side-nav {
@@ -503,6 +540,12 @@ a.nav-btn {
   border-radius: 10px;
 }
 
+a.nav-btn.loggedin-nav-btn,
+button.nav-btn.loggedin-nav-btn {
+  padding: 0;
+  margin-left: 0;
+}
+
 .btn-join {
   background-color: #495057;
   border: none;
@@ -513,11 +556,13 @@ a.nav-btn {
 }
 /*-----------------------ProfileButtonCSS---------------------------*/
 
-#drop_down_with_links {
+#drop_down_with_links,
+#drop_down_with_notifications {
   position: relative;
 }
 
-#profile-menu-trigger {
+#profile-menu-trigger,
+#notifications-list-trigger {
   border: none;
   background: none;
 
@@ -526,6 +571,38 @@ a.nav-btn {
   justify-content: center;
 
   cursor: pointer;
+}
+
+button.nav-btn.bell {
+  width: 32px;
+}
+
+a.nav-btn__upload {
+  width: 32px;
+}
+
+.notifications-icon,
+.upload-icon {
+  stroke: #fff;
+  width: 32px;
+}
+
+.upload-icon {
+  margin-top: 3px;
+}
+
+#notifications-list {
+  position: absolute;
+  top: 41px;
+  right: 0;
+  width: 400px;
+  border-radius: 8px;
+  background-color: #424243;
+  color: #fff;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
+  padding: 8px 0;
+  transition: 500ms ease-in;
+  z-index: 1;
 }
 
 #profile-menu {
@@ -543,15 +620,18 @@ a.nav-btn {
   z-index: 1;
 }
 
-#profile-menu.closed {
+#profile-menu.closed,
+#notifications-list.closed {
   display: none;
 }
 
-.profile-menu-item {
+.profile-menu-item,
+.notifications-list-item {
   padding: 16px 0;
 }
 
-.profile-menu-item:first-child {
+.profile-menu-item:first-child,
+.notifications-list-item:first-child {
   position: relative;
   padding: 16px 16px;
 
@@ -620,9 +700,16 @@ ul.profile-item-list li > a:hover,
 }
 
 .nav__user-img {
+  background-color: #2e2d2d;
   height: 42px;
   width: 42px;
   border-radius: 50%;
+}
+
+.nav-item-option {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /*-----------------------End ProfileButtonCSS---------------------------*/
@@ -1175,22 +1262,21 @@ input.form__upload {
 =========================MEDIA 791 NAVBAR CSS========================================
 */
 
-  .nav-item:nth-child(3).active {
-    margin: 0;
-    align-self: auto;
-  }
-  .nav-item:last-child {
-    margin: 0;
-    margin-right: 0;
-    padding: 0 24px;
+  .nav-item:last-child.hidden {
+    display: none;
   }
 
-  .nav-item:last-child:first-child {
-    padding-left: 12px;
+  #search.nav-item {
+    margin: 0 auto;
   }
 
   .btn-search {
     cursor: pointer;
+    width: 28px;
+  }
+
+  .search-icon {
+    width: 28px;
   }
 
   .search-icon:hover,

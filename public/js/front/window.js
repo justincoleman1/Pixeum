@@ -14,6 +14,10 @@ import {
   revertBtnHidden,
   hideRevertBtn,
   showRevertBtn,
+  largeSearchButton,
+  smallSearchButton,
+  lrgSearchButtonMargin,
+  smSearchButtonMargin,
 } from './search-bar';
 import {
   turnOffOverlay,
@@ -24,6 +28,7 @@ import {
 } from './side-nav';
 
 const aside = document.getElementById('aside');
+const searchBtn = document.querySelector('.btn-search');
 
 export const ws792 = () => {
   return window.matchMedia('(min-width: 792px)').matches;
@@ -32,6 +37,7 @@ export const ws792 = () => {
 export const windowSize792Changes = () => {
   //if screen equal or greater than threshold size
   if (ws792()) {
+    lrgSearchButtonMargin();
     //if the overlay is active: turn off overlay
     if (overlayActive()) turnOffOverlay();
     //if sidenav is hidden: remove hidden
@@ -45,6 +51,7 @@ export const windowSize792Changes = () => {
     if (navOptionsHidden()) showNavOptions();
     hideRevertBtn();
   } else {
+    smSearchButtonMargin();
     //screen is less than target threshold
     //If sidenav is active: turn on overlay
     if (sideNavExpanded()) {

@@ -18,7 +18,7 @@ block content
                                 form#form__profile-photo.form__update__profile-pic
                                     h3.update-profile__header Profile picture
                                     button#btn__escape__update-photo.btn-escape__update-profile(type='button')
-                                        svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor")
+                                        svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
                                             path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
                                     p.update-profile__description A picture helps people recognize you and lets you know when you're signed in to your account
                                     .update-profile-pic__container
@@ -48,7 +48,7 @@ block content
                                 .crop-container
                                     h3.update-profile__header Crop picture
                                     button#btn__escape__crop-photo.btn-escape__update-profile(type='button')
-                                        svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor")
+                                        svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
                                             path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
                                     .crop
                                         img#img__crop-profile-photo.crop-pic(src=`/img/users/${user.photo}`, alt=`${user.name} photo`)  
@@ -66,7 +66,7 @@ block content
                                 form#form__profile-name.form__update
                                     h3.update-profile__header Name
                                     button#btn__escape__update-name.btn-escape__update-profile(type='button')
-                                        svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor")
+                                        svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
                                             path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
                                     p.update-profile__description Anyone can see this info.                            
                                     label.form__label(for='name') Full Name
@@ -93,7 +93,7 @@ block content
                                 form#form__profile-username.form__update
                                     h3.update-profile__header Username
                                     button#btn__escape__update-username.btn-escape__update-profile(type='button')
-                                        svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor")
+                                        svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
                                             path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
                                     p.update-profile__description Anyone can see this info.                            
                                     label.form__label(for='username') Username
@@ -123,7 +123,7 @@ block content
                                 form#form__profile-birthday.form__update
                                     h3.update-profile__header Birthday
                                     button#btn__escape__update-birthday.btn-escape__update-profile(type='button')
-                                        svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor")
+                                        svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
                                             path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
                                     p.update-profile__description Anyone can see this info.
                                     .update-birthday-flex-container  
@@ -150,10 +150,10 @@ block content
                                             input#update-birthday-year.form__input(type='text', value='2000', minlength=4, maxlength=4, required, name='year')
                                     button#submit__birthday.btn-submit__update(type="submit")
                                         <svg class="btn-submit__icon s24" xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" viewBox="0 0 64 64">
-                                        <line  x1="32" x2="32" y1="10.62" y2="4.42" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3"/>
-                                        <path  fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M29.5,10.62h5a1,1,0,0,1,1,1V21.79a0,0,0,0,1,0,0h-7a0,0,0,0,1,0,0V11.62A1,1,0,0,1,29.5,10.62Z"/>
-                                        <polyline fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" points="9.16 36.65 9.16 48.01 54.84 48.01 54.84 36.65"/>
-                                        <path fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13.63 21.79H50.38a6.12 6.12 0 0 1 6.12 6.12v4.55a6.13 6.13 0 0 1-6.12 6.13h0a6.13 6.13 0 0 1-6.13-6.13h0a6.13 6.13 0 0 1-6.12 6.13h0A6.13 6.13 0 0 1 32 32.46h0a6.13 6.13 0 0 1-6.12 6.13h0a6.13 6.13 0 0 1-6.13-6.13h0a6.13 6.13 0 0 1-6.12 6.13h0A6.13 6.13 0 0 1 7.5 32.46V27.91A6.12 6.12 0 0 1 13.63 21.79zM51.91 59.58H12.09a6 6 0 0 1-5.34-3.27L3.24 49.46A1 1 0 0 1 4.13 48H59.87a1 1 0 0 1 .89 1.45l-3.5 6.85A6 6 0 0 1 51.91 59.58z"/>
+                                        <line  x1="32" x2="32" y1="10.62" y2="4.42" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
+                                        <path  fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M29.5,10.62h5a1,1,0,0,1,1,1V21.79a0,0,0,0,1,0,0h-7a0,0,0,0,1,0,0V11.62A1,1,0,0,1,29.5,10.62Z"/>
+                                        <polyline fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" points="9.16 36.65 9.16 48.01 54.84 48.01 54.84 36.65"/>
+                                        <path fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13.63 21.79H50.38a6.12 6.12 0 0 1 6.12 6.12v4.55a6.13 6.13 0 0 1-6.12 6.13h0a6.13 6.13 0 0 1-6.13-6.13h0a6.13 6.13 0 0 1-6.12 6.13h0A6.13 6.13 0 0 1 32 32.46h0a6.13 6.13 0 0 1-6.12 6.13h0a6.13 6.13 0 0 1-6.13-6.13h0a6.13 6.13 0 0 1-6.12 6.13h0A6.13 6.13 0 0 1 7.5 32.46V27.91A6.12 6.12 0 0 1 13.63 21.79zM51.91 59.58H12.09a6 6 0 0 1-5.34-3.27L3.24 49.46A1 1 0 0 1 4.13 48H59.87a1 1 0 0 1 .89 1.45l-3.5 6.85A6 6 0 0 1 51.91 59.58z"/>
                                         </svg>
                                         | Save
                                
@@ -169,7 +169,7 @@ block content
                                 form#form__profile-gender.form__update
                                     h3.update-profile__header Gender
                                     button#btn__escape__update-gender.btn-escape__update-profile(type='button')
-                                        svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor")
+                                        svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
                                             path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
                                     p.update-profile__description Anyone can see this info.                            
                                     label.form__label(for='gender') Gender
@@ -197,7 +197,7 @@ block content
                                 form#form__profile-email.form__update
                                     h3.update-profile__header Email
                                     button#btn__escape__update-email.btn-escape__update-profile(type='button')
-                                        svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor")
+                                        svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
                                             path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
                                     p.update-profile__description You have the option to share your email with our community.                           
                                     label.form__label(for='email') Email
@@ -230,7 +230,7 @@ block content
                                 form#form__profile-password.form__update
                                     h3.update-profile__header Change Password
                                     button#btn__escape__update-password.btn-escape__update-profile(type='button')
-                                        svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor")
+                                        svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
                                             path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
                                     p.update-profile__description Provide a strong password.                        
                                     label.form__label(for='passwordCurrent') Current Password
