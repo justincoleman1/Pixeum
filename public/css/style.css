@@ -749,7 +749,7 @@ aside::-webkit-scrollbar-thumb:hover {
 }
 
 .side-nav-item + .side-nav-item {
-  border-top: solid 0.1px #2b3035;
+  border-top: solid 0.1px #343a40;
 }
 
 ul.side-nav-list li {
