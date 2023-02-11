@@ -372,6 +372,28 @@ header.nav.disappear {
   justify-content: center;
   gap: 24px;
 }
+
+.tt,
+.tt2 {
+  background-color: #595b5d;
+  padding: 6px 12px;
+  border: 0.1px solid #fff;
+  font-size: 0.9rem;
+  color: #fff;
+}
+
+/* #link-tooltip {
+  background-color: #595b5d;
+  padding: 6px 12px;
+  border: 0.1px solid #fff;
+  font-size: 0.9rem;
+  display: none;
+}
+
+#link-tooltip[data-show] {
+  display: block;
+} */
+
 a h1.nav-header-brand {
   cursor: pointer;
 }

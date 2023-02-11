@@ -51,6 +51,7 @@ import {
 import { disallowBodyScroll, allowBodyScroll } from './front/scroll';
 
 // DOM ELEMENTS
+
 const sideNavBtn = document.querySelector('.btn-side-nav');
 
 const searchBtn = document.querySelector('.btn-search');

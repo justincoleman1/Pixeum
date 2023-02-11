@@ -10,14 +10,14 @@ block content
                 p.personal-info__container-item__description Some info may be visible to other users on our website.                      
                 ul.personal-info__container-item__list
                     li
-                        a#update-photo-btn.presonal-info__container-item__list-link Add a photo
+                        a#update-photo-btn.presonal-info__container-item__list-link(title="Update Photo") Add a photo
                             span.personal-info__span Photo
                             img.personal-info__user-img(src=`/img/users/${user.photo}`, alt=`${user.name} photo`)
                         #update-photo__modal.update-info__modal
                             .update-info__modal-content
                                 form#form__profile-photo.form__update__profile-pic
                                     h3.update-profile__header Profile picture
-                                    button#btn__escape__update-photo.btn-escape__update-profile(type='button')
+                                    button#btn__escape__update-photo.btn-escape__update-profile(type='button' title="Escape")
                                         svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
                                             path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
                                     p.update-profile__description A picture helps people recognize you and lets you know when you're signed in to your account
@@ -31,12 +31,12 @@ block content
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
                                                 </svg>
                                         input#input__photo.form__upload(type='file', accept='image/*', name='input__photo')
-                                    button#crop-photo-btn.btn-crop__photo(type="button", name="crop")
+                                    button#crop-photo-btn.btn-crop__photo(type="button" name="crop" title="Crop photo")
                                         <svg class="cropper-icon" version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 24 24" style="enable-background:new 0 0 18 18;" xml:space="preserve">
                                         <path fill="#fff" id="cropper" class="profile-pic__cropper" d="M0,2v3c0,0.6,0.5,1,1,1s1-0.4,1-1V3c0-0.6,0.4-1,1-1h2c0.6,0,1-0.4,1-1S5.6,0,5,0H2C0.9,0,0,0.9,0,2z M1,12c-0.5,0-1,0.4-1,1v3c0,1.1,0.9,2,2,2h3c0.6,0,1-0.5,1-1s-0.4-1-1-1H3c-0.6,0-1-0.5-1-1v-2C2,12.4,1.6,12,1,12z M16,15c0,0.5-0.5,1-1,1h-2c-0.6,0-1,0.5-1,1s0.4,1,1,1h3c1.1,0,2-0.9,2-2v-3c0-0.6-0.5-1-1-1s-1,0.4-1,1V15zM16,0h-3c-0.6,0-1,0.5-1,1s0.4,1,1,1h2c0.5,0,1,0.4,1,1v2c0,0.6,0.5,1,1,1s1-0.4,1-1V2C18,0.9,17.1,0,16,0z"/>
                                         </svg>
 
-                                    button#submit__photo.btn-submit__update(type="submit")
+                                    button#submit__photo.btn-submit__update(type="submit" title="Submit photo update")
                                         <svg class="btn-submit__icon s24" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="w-6 h-6">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
@@ -47,16 +47,16 @@ block content
                             .update-info__modal-content
                                 .crop-container
                                     h3.update-profile__header Crop picture
-                                    button#btn__escape__crop-photo.btn-escape__update-profile(type='button')
+                                    button#btn__escape__crop-photo.btn-escape__update-profile(type='button' title="Escape")
                                         svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
                                             path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
                                     .crop
                                         img#img__crop-profile-photo.crop-pic(src=`/img/users/${user.photo}`, alt=`${user.name} photo`)  
-                                button#save__crop.btn-save__crop(type="button")
+                                button#save__crop.btn-save__crop(type="button" title="Save crop")
                                     | Crop Image
                                 //- img#img__profile-photo.profile-pic(src=`/img/users/${user.photo}`, alt=`${user.name} photo`) 
                     li  
-                        a#update-name-btn.presonal-info__container-item__list-link=`${user.name}`
+                        a#update-name-btn.presonal-info__container-item__list-link(title="Update Name")=`${user.name}`
                             span.personal-info__span Name
                             <svg class="personal-info__link-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
@@ -65,7 +65,7 @@ block content
                             .update-info__modal-content.sm
                                 form#form__profile-name.form__update
                                     h3.update-profile__header Name
-                                    button#btn__escape__update-name.btn-escape__update-profile(type='button')
+                                    button#btn__escape__update-name.btn-escape__update-profile(type='button' title="Escape")
                                         svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
                                             path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
                                     p.update-profile__description Anyone can see this info.                            
@@ -76,14 +76,14 @@ block content
                                             <svg class="form__input--icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="form_input--icon">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                                             </svg>
-                                    button#submit__name.btn-submit__update(type="submit")
+                                    button#submit__name.btn-submit__update(type="submit" title="Submit name update")
                                         <svg class="btn-submit__icon s24" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
                                         </svg>
                                         | Save
 
                     li  
-                        a#update-username-btn.presonal-info__container-item__list-link=`${user.username}`
+                        a#update-username-btn.presonal-info__container-item__list-link(title="Update Username")=`${user.username}`
                             span.personal-info__span Username
                             <svg class="personal-info__link-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
@@ -92,7 +92,7 @@ block content
                             .update-info__modal-content.sm
                                 form#form__profile-username.form__update
                                     h3.update-profile__header Username
-                                    button#btn__escape__update-username.btn-escape__update-profile(type='button')
+                                    button#btn__escape__update-username.btn-escape__update-profile(type='button' title="Escape")
                                         svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
                                             path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
                                     p.update-profile__description Anyone can see this info.                            
@@ -103,7 +103,7 @@ block content
                                             <svg class="form__input--icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="form_input--icon">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                                             </svg>
-                                    button#submit__username.btn-submit__update(type="submit")
+                                    button#submit__username.btn-submit__update(type="submit" title="Submit username update")
                                         <svg class="btn-submit__icon s24" xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" viewBox="0 0 128 128">
                                         <path fill="#fff" d="M110,9H18A18,18,0,0,0,0,27v74a18,18,0,0,0,18,18h92a18,18,0,0,0,18-18V27A18,18,0,0,0,110,9Zm14,92a14,14,0,0,1-14,14H18A14,14,0,0,1,4,101V27A14,14,0,0,1,18,13h92a14,14,0,0,1,14,14Z"/>
                                         <path fill="#fff" d="M108,19H20A10,10,0,0,0,10,29V99a10,10,0,0,0,10,10h88a10,10,0,0,0,10-10V29A10,10,0,0,0,108,19ZM92,105H38V85.26c.58-7.79,11-10.16,12.92-10.54A15.55,15.55,0,0,0,64.31,82.5h1.36a15.33,15.33,0,0,0,11.19-4.86,16.51,16.51,0,0,0,2.2-2.92c1.8.34,12.35,2.7,12.93,10.54ZM57.93,69.25a12.21,12.21,0,0,0,14.14,0,9.85,9.85,0,0,0,3.21,4A12.54,12.54,0,0,1,74,74.89a11.37,11.37,0,0,1-8.29,3.61H64.31a11.54,11.54,0,0,1-9.61-5.25A9.84,9.84,0,0,0,57.93,69.25ZM51,48.7c0-7.28,6.28-13.2,14-13.2s14,5.92,14,13.2S72.59,67.5,65,67.5,51,56,51,48.7ZM114,99a6,6,0,0,1-6,6H96V85.19s0-.09,0-.13C95.2,73.27,80.05,70.82,79.45,70.73a5.45,5.45,0,0,1-4.14-4.18C80,61.7,83,54.27,83,48.7c0-9.48-8.08-17.2-18-17.2S47,39.22,47,48.7c0,5.57,3,13,7.69,17.85-.43,1.46-1.5,3.73-4.1,4.18-.64.1-15.79,2.55-16.58,14.34,0,0,0,.09,0,.13V105H20a6,6,0,0,1-6-6V29a6,6,0,0,1,6-6h88a6,6,0,0,1,6,6Z"/>
@@ -113,7 +113,7 @@ block content
                          
                     li  
                         - const birthday = user.birthday ? user.birthday.toLocaleString('en-us', {month: 'long', day: 'numeric' , year: 'numeric'}) : 'Not specified' 
-                        a#update-birthday-btn.presonal-info__container-item__list-link=birthday
+                        a#update-birthday-btn.presonal-info__container-item__list-link(title="Update Birthday")=birthday
                             span.personal-info__span Birthday
                             <svg class="personal-info__link-icon"  xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
@@ -122,7 +122,7 @@ block content
                             .update-info__modal-content.sm
                                 form#form__profile-birthday.form__update
                                     h3.update-profile__header Birthday
-                                    button#btn__escape__update-birthday.btn-escape__update-profile(type='button')
+                                    button#btn__escape__update-birthday.btn-escape__update-profile(type='button' title="Escape")
                                         svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
                                             path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
                                     p.update-profile__description Anyone can see this info.
@@ -148,7 +148,7 @@ block content
                                         .update-birthday-flex-item.flex-item-year  
                                             label.form__label(for='year') Year
                                             input#update-birthday-year.form__input(type='text', value='2000', minlength=4, maxlength=4, required, name='year')
-                                    button#submit__birthday.btn-submit__update(type="submit")
+                                    button#submit__birthday.btn-submit__update(type="submit" title="Submit birthday update")
                                         <svg class="btn-submit__icon s24" xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" viewBox="0 0 64 64">
                                         <line  x1="32" x2="32" y1="10.62" y2="4.42" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
                                         <path  fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M29.5,10.62h5a1,1,0,0,1,1,1V21.79a0,0,0,0,1,0,0h-7a0,0,0,0,1,0,0V11.62A1,1,0,0,1,29.5,10.62Z"/>
@@ -159,7 +159,7 @@ block content
                                
                     li  
                         - const gender = user.gender ? user.gender : 'Not specified'
-                        a#update-gender-btn.presonal-info__container-item__list-link=gender
+                        a#update-gender-btn.presonal-info__container-item__list-link(title="Update Gender")=gender
                             span.personal-info__span Gender
                             <svg class="personal-info__link-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
@@ -168,7 +168,7 @@ block content
                             .update-info__modal-content.sm
                                 form#form__profile-gender.form__update
                                     h3.update-profile__header Gender
-                                    button#btn__escape__update-gender.btn-escape__update-profile(type='button')
+                                    button#btn__escape__update-gender.btn-escape__update-profile(type='button' title="Escape")
                                         svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
                                             path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
                                     p.update-profile__description Anyone can see this info.                            
@@ -179,7 +179,7 @@ block content
                                             <svg class="form__input--icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="form_input--icon">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                                             </svg>
-                                    button#submit__gender.btn-submit__update(type="submit")
+                                    button#submit__gender.btn-submit__update(type="submit" title="Submit gender update")
                                         | Save
 
 
@@ -187,7 +187,7 @@ block content
                 h2.personal-info__container-item__header Contact info                       
                 ul.personal-info__container-item__list
                     li
-                        a#update-email-btn.presonal-info__container-item__list-link=`${user.email}`
+                        a#update-email-btn.presonal-info__container-item__list-link(title="Update Email")=`${user.email}`
                             span.personal-info__span Email
                             <svg class="personal-info__link-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
@@ -196,7 +196,7 @@ block content
                             .update-info__modal-content.sm
                                 form#form__profile-email.form__update
                                     h3.update-profile__header Email
-                                    button#btn__escape__update-email.btn-escape__update-profile(type='button')
+                                    button#btn__escape__update-email.btn-escape__update-profile(type='button' title="Escape")
                                         svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
                                             path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
                                     p.update-profile__description You have the option to share your email with our community.                           
@@ -207,7 +207,7 @@ block content
                                             <svg class="form__input--icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="form_input--icon">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                                             </svg>
-                                    button#submit__email.btn-submit__update(type="submit")
+                                    button#submit__email.btn-submit__update(type="submit" title="Submit email update")
                                         <svg class="btn-submit__icon s24" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="w-6 h-6">
                                         <path stroke-linecap="round" d="M16.5 12a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zm0 0c0 1.657 1.007 3 2.25 3S21 13.657 21 12a9 9 0 10-2.636 6.364M16.5 12V8.25" />
                                         </svg>
@@ -220,7 +220,7 @@ block content
                 ul.personal-info__container-item__list
                     li  
                         - const passwordChanged = user.passwordChangedAt ? `Password changed at ${user.passwordChangedAt.toLocaleString('en-US').split(' ')[1]} ${user.passwordChangedAt.toLocaleString('en-US').split(' ')[2]} on ${user.passwordChangedAt.toLocaleString('en-US').split(' ')[0].replaceAll(',','')}.` : 'Your password has never changed.'    
-                        a#update-password-btn.presonal-info__container-item__list-link=passwordChanged
+                        a#update-password-btn.presonal-info__container-item__list-link(title="Update Password")=passwordChanged
                             span.personal-info__span **********
                             <svg class="personal-info__link-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
@@ -229,18 +229,18 @@ block content
                             .update-info__modal-content.sm
                                 form#form__profile-password.form__update
                                     h3.update-profile__header Change Password
-                                    button#btn__escape__update-password.btn-escape__update-profile(type='button')
+                                    button#btn__escape__update-password.btn-escape__update-profile(type='button' title="Escape")
                                         svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
                                             path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
                                     p.update-profile__description Provide a strong password.                        
                                     label.form__label(for='passwordCurrent') Current Password
                                     .form__input-wrapper
-                                        button#pass-update-show.icon--password__update(type="button")
+                                        button#pass-update-show.icon--password__update(type="button" title="Show password")
                                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                                             <path fill="none" d="M0 0h24v24H0V0z"/>
                                             <path fill="#fff" d="M12 4C7 4 2.73 7.11 1 11.5 2.73 15.89 7 19 12 19s9.27-3.11 11-7.5C21.27 7.11 17 4 12 4zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
                                             </svg>   
-                                        button#pass-update-hide.icon--password__update.hidden(type="button")
+                                        button#pass-update-hide.icon--password__update.hidden(type="button" title="Hide password")
                                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                                              <path fill="none" d="M0 0h24v24H0V0zm0 0h24v24H0V0zm0 0h24v24H0V0zm0 0h24v24H0V0z"/>
                                              <path fill="#fff" d="M12 6.5c2.76 0 5 2.24 5 5 0 .51-.1 1-.24 1.46l3.06 3.06c1.39-1.23 2.49-2.77 3.18-4.53C21.27 7.11 17 4 12 4c-1.27 0-2.49.2-3.64.57l2.17 2.17c.47-.14.96-.24 1.47-.24zM2.71 3.16c-.39.39-.39 1.02 0 1.41l1.97 1.97C3.06 7.83 1.77 9.53 1 11.5 2.73 15.89 7 19 12 19c1.52 0 2.97-.3 4.31-.82l2.72 2.72c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L4.13 3.16c-.39-.39-1.03-.39-1.42 0zM12 16.5c-2.76 0-5-2.24-5-5 0-.77.18-1.5.49-2.14l1.57 1.57c-.03.18-.06.37-.06.57 0 1.66 1.34 3 3 3 .2 0 .38-.03.57-.07L14.14 16c-.65.32-1.37.5-2.14.5zm2.97-5.33c-.15-1.4-1.25-2.49-2.64-2.64l2.64 2.64z"/>
@@ -260,7 +260,7 @@ block content
                                             <svg class="form__input--icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="form_input--icon">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                                             </svg>
-                                    button#submit__password.btn-submit__update(type="submit")
+                                    button#submit__password.btn-submit__update(type="submit" title="Submit password update")
                                         <svg class="btn-submit__icon s24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                                         <path fill="#fff" d="M12,13a1.49,1.49,0,0,0-1,2.61V17a1,1,0,0,0,2,0V15.61A1.49,1.49,0,0,0,12,13Zm5-4V7A5,5,0,0,0,7,7V9a3,3,0,0,0-3,3v7a3,3,0,0,0,3,3H17a3,3,0,0,0,3-3V12A3,3,0,0,0,17,9ZM9,7a3,3,0,0,1,6,0V9H9Zm9,12a1,1,0,0,1-1,1H7a1,1,0,0,1-1-1V12a1,1,0,0,1,1-1H17a1,1,0,0,1,1,1Z"/>
                                         </svg>
