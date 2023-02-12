@@ -122,6 +122,9 @@ const updateBirthdayForm = document.getElementById('form__profile-birthday');
 const updateGenderForm = document.getElementById('form__profile-gender');
 const updatePasswordForm = document.getElementById('form__profile-password');
 
+//Upload page Form
+const uploadForm = document.getElementById('uploadForm');
+
 //Get the modal form inputs
 const updatePhotoInput = document.getElementById('input__photo');
 
@@ -230,6 +233,10 @@ if (signupForm) {
     const passwordConfirm = document.getElementById('passwordConfirm').value;
     signup(name, username, email, password, passwordConfirm);
   });
+}
+
+if (uploadForm) {
+  asideDisappear();
 }
 
 if (loginForm) {

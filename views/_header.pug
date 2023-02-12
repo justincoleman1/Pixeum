@@ -14,7 +14,7 @@ header#nav.nav
                path(stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z")
          input#search-input.search(placeholder="Search" type="text")
          button#search-clear.btn-search-clear.hidden(title="Clear search")
-            svg.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
+            svg#search-clear-icon.clear-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
                path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
       button#search-revert.btn-revert.hidden(title="Close search")
          svg.revert-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
@@ -114,7 +114,7 @@ header#nav.nav
             a.nav-btn.btn-signin(href="/login" title="Sign in") Sign in
 
 aside#aside.side-nav
-    #sidenavitem1.side-nav-item.shrink-side-nav-item
+    #sidenavitem1.side-nav-item
         ul.side-nav-list
             li.center-side-nav-link
                a.side-nav-link.shrink-side-nav-link(href="/" title="Home")
@@ -136,7 +136,7 @@ aside#aside.side-nav
                   <path fill="#fff" d="M30.5,9.3v20.1h-29V9.3H30.5 M31.6,8.2H0.4v22.4h31.3L31.6,8.2L31.6,8.2z M3.1,6h25.7v1.1H3.1V6z M5.4,3.7h21.2v1.1H5.4V3.7z"/>
                   </svg>         
                   |Subscriptions
-    #sidenavitem2.side-nav-item.shrink-side-nav-item
+    #sidenavitem2.side-nav-item
         ul.side-nav-list
             li.center-side-nav-link
                a.side-nav-link.shrink-side-nav-link(href="#" title="Your Gallery")

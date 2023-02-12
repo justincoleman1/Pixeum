@@ -53,8 +53,6 @@ const expandSideNavChildren = () => {
   el.classList.add('shrink-main');
   el1.classList.add('expand-aside');
 
-  el2.classList.remove('shrink-side-nav-item');
-  el3.classList.remove('shrink-side-nav-item');
   if (el4) el4.classList.remove('hidden');
   el5.classList.remove('hidden');
   el6.classList.remove('hidden');
@@ -86,8 +84,6 @@ const collapseSideNavChildren = () => {
   el.classList.remove('shrink-main');
   el1.classList.remove('expand-aside');
 
-  el2.classList.add('shrink-side-nav-item');
-  el3.classList.add('shrink-side-nav-item');
   if (el4) el4.classList.add('hidden');
   el5.classList.add('hidden');
   el6.classList.add('hidden');
