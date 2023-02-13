@@ -608,9 +608,9 @@ a.nav-btn__upload {
 
 #notifications-list {
   position: absolute;
-  top: 2.625em;
+  top: 3.4em;
   right: 0;
-  width: 22em;
+  width: 30em;
   border-radius: 0.5em;
   background-color: #424243;
   color: #fff;
@@ -622,7 +622,7 @@ a.nav-btn__upload {
 
 #profile-menu {
   position: absolute;
-  top: 3em;
+  top: 3.65em;
   /* left: 0; */
   right: 0;
   width: 18.75em;
@@ -1297,6 +1297,10 @@ input.form__upload {
 
   .search-icon {
     width: 32px;
+  }
+
+  #notifications-list {
+    width: 23em;
   }
 
   /* 
