@@ -610,7 +610,7 @@ a.nav-btn__upload {
   position: absolute;
   top: 2.625em;
   right: 0;
-  width: 25em;
+  width: 22em;
   border-radius: 0.5em;
   background-color: #424243;
   color: #fff;
@@ -900,7 +900,8 @@ section.main.disappear {
 /* 
 =========================SIDENAVBAR BUTTON PRESS CSS========================================
 */
-section.main.shrink-main {
+section.main.shrink-main,
+section.upload.shrink-main {
   margin-left: 18.75em;
 }
 
@@ -1320,7 +1321,8 @@ input.form__upload {
     padding-right: 0.625em;
   }
 
-  section.main.shrink-main {
+  section.main.shrink-main,
+  section.upload.shrink-main {
     margin-left: 0;
   }
   /* 
@@ -1458,28 +1460,26 @@ input.form__upload {
 
 /*======================UPLOAD CSS=========================*/
 section.upload {
-  background-color: red;
   height: 100vh;
 }
 .upload-form {
   position: relative;
-  bottom: 0;
-  background-color: blue;
-  height: calc(100% - 5em);
-  margin-top: 5em;
+  height: 100%;
+  margin: 0 auto;
 }
 
 .modal-lip {
+  position: absolute;
   background-color: #495057;
-  margin: 5em;
-  left: 0;
+  margin-top: 5em;
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 0.5em;
 }
 
 .btn-lip {
-  background-color: #424242;
+  background-color: #555555;
   border-bottom: none;
   border-left: none;
   border-top: 0.1px solid #cccccc;
@@ -1492,22 +1492,19 @@ section.upload {
   padding: 0.2em 1.875em 0 1.875em;
 }
 .modal {
-  background-color: #424243;
-  border-radius: 0 0 8px 0.5em;
+  position: absolute;
+  top: 6.6em;
+  height: calc(100% - 6.6em);
+  width: 100%;
+
+  background-color: #555555;
   color: #fff;
-  height: calc(100% - 5em);
-  position: relative;
 }
 .modal:before {
-  border-radius: 50%;
   content: '';
   filter: blur(60px);
   opacity: 0.15;
   position: absolute;
-  top: -8em;
-  right: -15em;
-  width: 25em;
-  height: 25em;
   z-index: 0;
   transition: background-color var(--trans-dur);
 }
@@ -1630,8 +1627,8 @@ section.upload {
 }
 .modal__icon {
   display: block;
-  width: 2.25em;
-  height: 2.25em;
+  width: 36px;
+  height: 36px;
 }
 .modal__icon--color {
   stroke: #fff;
@@ -1657,7 +1654,7 @@ section.upload {
 .modal__icon-sdo69 {
   stroke-dashoffset: 69.12;
   transform: rotate(-90deg);
-  transform-origin: 0.75em 0.75em;
+  transform-origin: 12px 12px;
 }
 .modal__message {
   animation-delay: 0.1s;
@@ -1710,7 +1707,7 @@ section.upload {
 }
 .modal__content.drop_zone {
   width: 100%;
-  /* height: 100%; */
+  height: 100%;
 }
 
 .modal__actions.drop-zone {

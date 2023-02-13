@@ -13,6 +13,7 @@ import {
   mainCollapsed,
   sideNavExpanded,
   asideDisappear,
+  uploadMainCollapsed,
 } from './front/side-nav';
 import { windowSize792Changes, ws792 } from './front/window';
 import { h, s, w, g, sh, p } from './front/brick';
@@ -154,12 +155,13 @@ window.addEventListener(sh, (e) => {
 });
 
 // DELEGATION
-if (sideNavBtn)
+if (sideNavBtn) {
   sideNavBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    if (mainCollapsed()) collapseSideNav();
+    if (mainCollapsed() || uploadMainCollapsed()) collapseSideNav();
     else expandSideNav();
   });
+}
 
 if (overlay)
   overlay.addEventListener('click', (e) => {

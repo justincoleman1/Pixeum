@@ -28,7 +28,6 @@ import {
 } from './side-nav';
 
 const aside = document.getElementById('aside');
-const searchBtn = document.querySelector('.btn-search');
 
 export const ws792 = () => {
   return window.matchMedia('(min-width: 792px)').matches;
