@@ -14,51 +14,37 @@ const slugify = require('slugify');
 
 const uploadSchema = new mongoose.Schema(
   {
-    name: {
+    media: {
       type: String,
-      required: [true, 'A upload must have a name'],
+    },
+    media_type: {
+      type: String,
+      required: [true, 'A upload must have a media_type'],
+      enum: {
+        values: ['image', 'application', 'text'],
+        message: 'Media may only be of type image,application, or text',
+      },
     },
     user: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
       required: [true, 'A upload must have a user!'],
     },
-    media: {
+    title: {
       type: String,
+      required: [true, 'A upload must have a name'],
     },
-    imageCover: {
-      type: String,
-      default: 'default.jpg',
-    },
-    images: [{ type: String }],
-    tags: [
-      {
-        type: String,
-      },
-    ],
     description: {
       type: String,
       trim: true,
       maxlength: 1000,
     },
-    media_type: {
-      type: String,
-      required: [true, 'A upload must have a media_type'],
-      enum: {
-        values: [
-          'image',
-          'gif',
-          'video',
-          'short',
-          'pdf',
-          'audio',
-          'doc',
-          'txt',
-        ],
-        message: 'Media may only be of type Image, GIF',
+    tags: [
+      {
+        type: String,
       },
-    },
-    media_audience_maturity: [
+    ],
+    maturity: [
       {
         type: String,
         required: [true, 'An upload must have maturity marker.'],
@@ -81,6 +67,12 @@ const uploadSchema = new mongoose.Schema(
         },
       },
     ],
+    access: {
+      type: String,
+      enum: {
+        values: ['public', 'private', 'paying'],
+      },
+    },
     price: {
       type: Number,
       required: false,
@@ -123,10 +115,6 @@ const uploadSchema = new mongoose.Schema(
       select: false,
     },
     slug: String,
-    private: {
-      type: Boolean,
-      default: false,
-    },
   },
   {
     toJSON: { virtuals: true },
