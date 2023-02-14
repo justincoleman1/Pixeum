@@ -6,65 +6,90 @@ append head
 block content
   section#upload-main.upload
     #uploadForm.upload-form
-      .modal-lip
-        button.btn-lip(type="button")
-          h3.modal-lip-title New upload
-      #upload.modal(data-state='0' data-ready='false')
-        .modal__header
-          svg.modal__icon.modal__icon--color(viewbox='0 0 24 24' width='24px' height='24px' aria-hidden='true')
-            g(fill='none' stroke='#fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
-              circle.modal__icon-sdo69(cx='12' cy='12' r='11' stroke-dasharray='69.12 69.12')
-              polyline.modal__icon-sdo14(points='7 12 12 7 17 12' stroke-dasharray='14.2 14.2')
-              line.modal__icon-sdo10(x1='12' y1='7' x2='12' y2='17' stroke-dasharray='10 10')
-          svg.modal__icon.modal__icon--red(viewbox='0 0 24 24' width='24px' height='24px' aria-hidden='true' display='none')
-            g(fill='none' stroke='hsl(3,90%,50%)' stroke-width='2' stroke-linecap='round')
-              circle.modal__icon-sdo69(cx='12' cy='12' r='11' stroke-dasharray='69.12 69.12')
-              line.modal__icon-sdo14(x1='7' y1='7' x2='17' y2='17' stroke-dasharray='14.2 14.2')
-              line.modal__icon-sdo14(x1='17' y1='7' x2='7' y2='17' stroke-dasharray='14.2 14.2')
-          svg.modal__icon.modal__icon--green(viewbox='0 0 24 24' width='24px' height='24px' aria-hidden='true' display='none')
-            g(fill='none' stroke='hsl(138,90%,50%)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
-              circle.modal__icon-sdo69(cx='12' cy='12' r='11' stroke-dasharray='69.12 69.12')
-              polyline.modal__icon-sdo14(points='7 12.5 10 15.5 17 8.5' stroke-dasharray='14.2 14.2')
-          h2.modal__title Upload your art
-        .modal__body
-          .modal__content.drop_zone
-            .modal__actions.drop-zone
-              .span-prompts
-                span.drop-zone__prompt Drop image, pdf, or text here
-                span.drop-zone__prompt OR
-                span.drop-zone__prompt Click to upload 
-              input#file.drop-zone__input(type='file' name="myFile" hidden='' )
+      form
+        .modal-lip
+          button.btn-lip(type="button")
+            h3.modal-lip-title New upload
+        
+        #upload.modal(data-state='0' data-ready='false')
+          
+          .modal__header
+            svg.modal__icon.modal__icon--color(viewbox='0 0 24 24' width='24px' height='24px' aria-hidden='true')
+              g(fill='none' stroke='#fff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+                circle.modal__icon-sdo69(cx='12' cy='12' r='11' stroke-dasharray='69.12 69.12')
+                polyline.modal__icon-sdo14(points='7 12 12 7 17 12' stroke-dasharray='14.2 14.2')
+                line.modal__icon-sdo10(x1='12' y1='7' x2='12' y2='17' stroke-dasharray='10 10')
+            svg.modal__icon.modal__icon--red(viewbox='0 0 24 24' width='24px' height='24px' aria-hidden='true' display='none')
+              g(fill='none' stroke='hsl(3,90%,50%)' stroke-width='2' stroke-linecap='round')
+                circle.modal__icon-sdo69(cx='12' cy='12' r='11' stroke-dasharray='69.12 69.12')
+                line.modal__icon-sdo14(x1='7' y1='7' x2='17' y2='17' stroke-dasharray='14.2 14.2')
+                line.modal__icon-sdo14(x1='17' y1='7' x2='7' y2='17' stroke-dasharray='14.2 14.2')
+            svg.modal__icon.modal__icon--green(viewbox='0 0 24 24' width='24px' height='24px' aria-hidden='true' display='none')
+              g(fill='none' stroke='hsl(138,90%,50%)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
+                circle.modal__icon-sdo69(cx='12' cy='12' r='11' stroke-dasharray='69.12 69.12')
+                polyline.modal__icon-sdo14(points='7 12.5 10 15.5 17 8.5' stroke-dasharray='14.2 14.2')
+            h2.modal__title Upload your art
+          
+          .modal__body
 
+            .modal__content.drop_zone
+              .modal__actions.drop-zone
+                .span-prompts
+                  span.drop-zone__prompt Drop image, pdf, or text here
+                  span.drop-zone__prompt OR
+                  span.drop-zone__prompt Click to upload 
+                input#file.drop-zone__input(type='file' name="myFile" hidden='' )
+                
+            .modal__content.stashing-step(hidden='')
+              img.uploading-img(src="img/no-img-available.jpg")
+              .modal__actions.progress
+                .modal__progress
+                  .modal__progress-bar
+                    .modal__progress-fill(data-progress-fill)
+                  .modal__file(data-file='')
 
+            .modal__content(hidden='')
+                img.uploading-img(src="img/no-img-available.jpg")
+            
+            .modal__content.image-processing-step(hidden='')
+              .upload__mature-type
+                img.uploaded-img(src="img/no-img-available.jpg")
+              .upload__title-group
+                input#upload-title(type="text" placeholder="Give your upload a title")
+              .upload__description-group
+                textarea#upload-description(placeholder="Give your upload a description" cols="50" rows="10")
+              .upload__tags-group
+                input#upload-tags(type="text" placeholder="Tags#, (Seperate tags with a comma or space)")
+              .upload__maturity-group
+                input(type="checkbox" name='maturity-checkbox')
+                label(for='maturity-checkbox') Mature Content
+                ul.list__maturity-type
+                  li
+                    input(type="checkbox" name='moderate-checkbox')
+                    label(for='moderate-checkbox') Moderate
+                  li
+                    input(type="checkbox" name='strict-checkbox')
+                    label(for='strict-checkbox') Strict
+                ul.list__maturity-options
+                  li
+                    input(type="checkbox" name='nudity-checkbox')
+                    label(for='nudity-checkbox') Nudity
+                  li
+                    input(type="checkbox" name='sexual-themes-checkbox')
+                    label(for='sexual-themes-checkbox') Sexual Themes
+                  li
+                    input(type="checkbox" name='violence-gore-checkbox')
+                    label(for='violence-gore-checkbox') Violence / Gore
+                  li
+                    input(type="checkbox" name='strong-language-checkbox')
+                    label(for='strong-language-checkbox') Strong Language
+                  li
+                    input(type="checkbox" name='ideologically-sensitive-checkbox')
+                    label(for='ideologically-sensitive-checkbox') Ideologically Sensitive
 
-            .modal__actions(hidden='') 
-              svg.modal__file-icon(viewbox='0 0 24 24' width='24px' height='24px' aria-hidden='true')
-                g(fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round')
-                  polygon(points='4 1 12 1 20 8 20 23 4 23')
-                  polyline(points='12 1 12 8 20 8')
-              .modal__file(data-file='')
-              button.modal__close-button(type='button' data-action='fileReset')
-                svg.modal__close-icon(viewbox='0 0 16 16' width='16px' height='16px' aria-hidden='true')
-                  g(fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round')
-                    polyline(points='4,4 12,12')
-                    polyline(points='12,4 4,12')
-                span.modal__sr Remove
-              button.modal__button(type='button' data-action='upload') Upload
-          .modal__content(hidden='')
-            h2.modal__title Uploading&mldr;
-            p.modal__message Just give us a moment to process your file.
-            .modal__actions.progress
-              .modal__progress
-                .modal__progress-value(data-progress-value='') 0%
-          .modal__content(hidden='')
-            h2.modal__title Oops!
-            p.modal__message Your file could not be uploaded due to an error. Try uploading it again?
             .modal__actions.modal__actions--center
+              button#upload-btn.modal__button(type='button' data-action='upload') Upload
               button.modal__button(type='button' data-action='upload') Retry
               button.modal__button(type='button' data-action='cancel') Cancel
-          .modal__content(hidden='')
-            h2.modal__title Upload Successful!
-            p.modal__message Your file has been uploaded. You can copy the link to your clipboard.
-            .modal__actions.modal__actions--center
               button.modal__button(type='button' data-action='copy') Copy Link
               button.modal__button(type='button' data-action='cancel') Done

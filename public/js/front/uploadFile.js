@@ -1,4 +1,6 @@
 //esversion: 6
+const uploadBtn = document.getElementById('upload-btn');
+
 window.addEventListener('DOMContentLoaded', () => {
   const upload = new UploadModal('#upload');
 });
@@ -31,6 +33,7 @@ class UploadModal {
     this.progressDisplay();
     this.fileReset();
   }
+  //Copy's the image to clipboard
   async copy() {
     const copyButton = this.el?.querySelector("[data-action='copy']");
 
@@ -64,7 +67,7 @@ class UploadModal {
     this.filename = name;
 
     const fileValue = this.el?.querySelector('[data-file]');
-    if (fileValue) fileValue.textContent = this.filename;
+    if (fileValue) fileValue.textContent = `Uploading: ${this.filename}`;
 
     // show the file
     this.el?.setAttribute('data-ready', this.filename ? 'true' : 'false');
@@ -155,17 +158,6 @@ class Utils {
 document.querySelectorAll('.drop-zone__input').forEach((inputElement) => {
   const dropZoneElement = inputElement.closest('.drop-zone');
 
-  dropZoneElement.addEventListener('click', (e) => {
-    inputElement.click();
-  });
-
-  inputElement.addEventListener('change', (e) => {
-    console.log(inputElement.id, '---------', inputElement.files);
-    if (inputElement.files.length) {
-      updateThumbnail(dropZoneElement, inputElement.files[0]);
-    }
-  });
-
   dropZoneElement.addEventListener('dragover', (e) => {
     e.preventDefault();
     dropZoneElement.classList.add('drop-zone--over');
@@ -181,9 +173,26 @@ document.querySelectorAll('.drop-zone__input').forEach((inputElement) => {
     e.preventDefault();
 
     if (e.dataTransfer.files.length) {
-      console.log(e.dataTransfer.files.length);
       inputElement.files = e.dataTransfer.files;
-      updateThumbnail(dropZoneElement, e.dataTransfer.files[0]);
+      console.log('DROP', inputElement.files);
+      Array.from(inputElement.files).forEach(function (file, i) {
+        //Update thumbnail
+        updateThumbnail(dropZoneElement, file);
+        //Create modal with a form for each upload
+      });
+    }
+  });
+
+  dropZoneElement.addEventListener('click', (e) => {
+    inputElement.click();
+  });
+
+  inputElement.addEventListener('change', (e) => {
+    if (inputElement.files.length) {
+      document.querySelector('.modal-lip-title').innerHTML =
+        inputElement.files[0].name;
+      updateThumbnail(dropZoneElement, inputElement.files[0]);
+      uploadBtn.click();
     }
   });
 });
@@ -196,6 +205,7 @@ document.querySelectorAll('.drop-zone__input').forEach((inputElement) => {
  */
 function updateThumbnail(dropZoneElement, file) {
   let thumbnailElement = dropZoneElement.querySelector('.drop-zone__thumb');
+  let image = document.querySelector('.upload-img');
 
   // First time - remove the prompt
   dropZoneElement.querySelectorAll('.drop-zone__prompt').forEach((prompt) => {
@@ -218,9 +228,27 @@ function updateThumbnail(dropZoneElement, file) {
     reader.readAsDataURL(file);
     reader.onload = () => {
       thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
+      document.querySelector('.uploading-img').src = `${reader.result}`;
+      document.querySelector('.uploaded-img').src = `${reader.result}`;
     };
-    // document.querySelector('.span-prompts').style.display = 'none';
   } else {
     thumbnailElement.style.backgroundImage = null;
+  }
+}
+
+function addUploadTab(file, index) {
+  const name = file.name;
+  const fileType = name.slice(-4);
+  let uploadTab = document.querySelector('.modal-lip');
+  if (index === 0) {
+    document.querySelector('.modal-lip-title').innerHTML = file.name;
+    //   fileType + ' #' + (index + 1);
+  } else {
+    uploadTab.innerHTML +=
+      '<button class="btn-lip" type="button"> <h3 class="modal-lip-title"> ' +
+      fileType +
+      ' #' +
+      (index + 1) +
+      '</h3></button>';
   }
 }
