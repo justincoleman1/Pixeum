@@ -18,14 +18,27 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
-exports.uploadMain = upload.single('media');
-//Image Display Options
+const makeid = (length) => {
+  let result = '';
+  const characters =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const charactersLength = characters.length;
+  let counter = 0;
+  while (counter < length) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    counter += 1;
+  }
+  return result;
+};
 
+exports.uploadMain = upload.single('media');
+
+//Image Display Options
 //Original Image --------------Downloads,Upload's Page Main Image Display
 exports.rawUploadedImage = catchAsync(async (req, res, next) => {
   if (!req.file) return next();
-
-  req.file.filename = `upload-${req.user._id}-${Date.now()}.jpeg`;
+  req.body.filename = `${makeid(5)}` + `-${req.user._id}-${Date.now()}.jpeg`;
+  req.file.filename = req.body.filename;
 
   const { data, info } = await sharp(req.file.buffer)
     .raw()
@@ -34,7 +47,7 @@ exports.rawUploadedImage = catchAsync(async (req, res, next) => {
   const pixelArray = new Uint8ClampedArray(data.buffer);
   const { width, height, channels } = info;
   await sharp(pixelArray, { raw: { width, height, channels } }).toFile(
-    `public/img/uploads/raw-${req.file.filename}`
+    `public/img/stock/raw-${req.file.filename}`
   );
   console.log('end raw');
   next();
@@ -45,7 +58,7 @@ exports.resizedUploadedImage = catchAsync(async (req, res, next) => {
   // console.log('FILE?', req.file);
   if (!req.file) return next();
 
-  req.file.filename = `upload-${req.user._id}-${Date.now()}.jpeg`;
+  req.file.filename = req.body.filename;
   //pixel sizes for display 400, 600, 800, 900, 1024, 1280, 1600, 1920
   await sharp(req.file.buffer)
     .resize({
@@ -53,7 +66,7 @@ exports.resizedUploadedImage = catchAsync(async (req, res, next) => {
       width: req.body.pixelSize,
     })
     .jpeg({ quality: 90 })
-    .toFile(`public/img/uploads/${req.file.filename}`);
+    .toFile(`public/img/stock/${req.file.filename}`);
 
   next();
 });

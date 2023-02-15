@@ -14,6 +14,7 @@ const uploadRouter = require('./routes/uploadRoutes');
 const userRouter = require('./routes/userRoutes');
 const commentRouter = require('./routes/commentRoutes');
 const viewRouter = require('./routes/viewRoutes');
+const stockRouter = require('./routes/stockRoutes');
 
 const app = express();
 
@@ -120,6 +121,7 @@ app.use((req, res, next) => {
 app.use('/api/v1/uploads', uploadRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/comments', commentRouter);
+app.use('/api/v1/stock', stockRouter);
 app.use('/', viewRouter);
 
 //3 ERROR HANDLER
