@@ -14,7 +14,7 @@ router.get('/signup', viewController.getSignUpForm);
 
 router.get('/me', authController.protect, viewController.getAccount);
 
-router.get('/upload', authController.protect, viewController.getUploadForm);
+router.get('/submission', authController.protect, viewController.getUploadForm);
 
 router.get('/upload/:slug', viewController.getUploadPage);
 

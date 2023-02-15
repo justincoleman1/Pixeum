@@ -34,7 +34,7 @@ const comments = JSON.parse(
 //IMPORT DATA INTO DB
 const importData = async () => {
   try {
-    await User.create(users, { validateBeforeSave: false });
+    // --
     await Upload.create(uploads);
     await Comment.create(comments);
     // console.log('upload Data imported successfully!');
@@ -49,7 +49,7 @@ const deleteData = async () => {
   try {
     await Comment.deleteMany();
     await Upload.deleteMany();
-    await User.deleteMany();
+    // await User.deleteMany();
     // console.log('Data deleted successfully!');
   } catch (err) {
     console.error(err);

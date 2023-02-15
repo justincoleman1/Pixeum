@@ -6,7 +6,7 @@ append head
 block content
   section#upload-main.upload
     #uploadForm.upload-form
-      form
+      form#submit-upload
         .modal-lip
           button.btn-lip(type="button")
             h3.modal-lip-title New upload
@@ -38,7 +38,7 @@ block content
                   span.drop-zone__prompt Drop image, pdf, or text here
                   span.drop-zone__prompt OR
                   span.drop-zone__prompt Click to upload 
-                input#file.drop-zone__input(type='file' name="myFile" hidden='' )
+                input#media.drop-zone__input(type='file' name="myFile" hidden='' )
                 
             .modal__content.stashing-step(hidden='')
               img.uploading-img(src="img/no-img-available.jpg")
@@ -55,41 +55,43 @@ block content
               .upload__mature-type
                 img.uploaded-img(src="img/no-img-available.jpg")
               .upload__title-group
-                input#upload-title(type="text" placeholder="Give your upload a title")
+                input#title(type="text" name='title' placeholder="Give your upload a title")
               .upload__description-group
-                textarea#upload-description(placeholder="Give your upload a description" cols="50" rows="10")
+                textarea#description(name='description' placeholder="Give your upload a description" cols="50" rows="10")
               .upload__tags-group
-                input#upload-tags(type="text" placeholder="Tags#, (Seperate tags with a comma or space)")
+                input#tags(type="text" name='tags' placeholder="Tags#, (Seperate tags with a comma or space)")
               .upload__maturity-group
-                input(type="checkbox" name='maturity-checkbox')
+                input(type="checkbox" name='maturity-checkbox' value='mature')
                 label(for='maturity-checkbox') Mature Content
                 ul.list__maturity-type
                   li
-                    input(type="checkbox" name='moderate-checkbox')
+                    input(type="checkbox" name='moderate-checkbox' value='moderate')
                     label(for='moderate-checkbox') Moderate
                   li
-                    input(type="checkbox" name='strict-checkbox')
+                    input(type="checkbox" name='strict-checkbox' value='strict')
                     label(for='strict-checkbox') Strict
                 ul.list__maturity-options
                   li
-                    input(type="checkbox" name='nudity-checkbox')
+                    input(type="checkbox" name='nudity-checkbox' vaule='nudity')
                     label(for='nudity-checkbox') Nudity
                   li
-                    input(type="checkbox" name='sexual-themes-checkbox')
+                    input(type="checkbox" name='sexual-themes-checkbox' value='sexual themes')
                     label(for='sexual-themes-checkbox') Sexual Themes
                   li
-                    input(type="checkbox" name='violence-gore-checkbox')
-                    label(for='violence-gore-checkbox') Violence / Gore
+                    input(type="checkbox" name='violence-gore-checkbox' value='violence and/or gore')
+                    label(for='violence-gore-checkbox') Violence and/or Gore
                   li
-                    input(type="checkbox" name='strong-language-checkbox')
+                    input(type="checkbox" name='strong-language-checkbox' value='strong language')
                     label(for='strong-language-checkbox') Strong Language
                   li
-                    input(type="checkbox" name='ideologically-sensitive-checkbox')
+                    input(type="checkbox" name='ideologically-sensitive-checkbox' value='ideologically sensitive')
                     label(for='ideologically-sensitive-checkbox') Ideologically Sensitive
-
+        
+            button(type="submit") Submit
             .modal__actions.modal__actions--center
               button#upload-btn.modal__button(type='button' data-action='upload') Upload
               button.modal__button(type='button' data-action='upload') Retry
               button.modal__button(type='button' data-action='cancel') Cancel
               button.modal__button(type='button' data-action='copy') Copy Link
               button.modal__button(type='button' data-action='cancel') Done
+        

@@ -5,6 +5,7 @@ import Cropper from 'cropperjs';
 import { login, logout } from './back/login';
 import { signup } from './back/signup';
 import { updateSettings } from './back/updateSettings';
+import { submit_art, submit_art_details } from './back/submission';
 import { showAlert } from './front/alerts';
 import {
   expandSideNav,
@@ -124,7 +125,8 @@ const updateGenderForm = document.getElementById('form__profile-gender');
 const updatePasswordForm = document.getElementById('form__profile-password');
 
 //Upload page Form
-const uploadForm = document.getElementById('uploadForm');
+const uploadInput = document.getElementById('media');
+const uploadForm = document.getElementById('submit-upload');
 
 //Get the modal form inputs
 const updatePhotoInput = document.getElementById('input__photo');
@@ -239,6 +241,26 @@ if (signupForm) {
 
 if (uploadForm) {
   asideDisappear();
+
+  uploadForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    // const formData = new FormData();
+    // formData.append('media', uploadInput.files[0]);
+    // formData.append('title', document.getElementById('upload-title').value);
+    // formData.append(
+    //   'description',
+    //   document.getElementById('upload-description').value
+    // );
+    // formData.append('tags', document.getElementById('upload-tags').value);
+    // formData.append('maturity', 'everyone');
+    const media = uploadInput.files[0];
+    const title = document.getElementById('title').value;
+    const description = document.getElementById('description').value;
+    const tags = document.getElementById('tags').value;
+    const maturity = 'everyone';
+
+    submit_art(media, title, description, tags, maturity);
+  });
 }
 
 if (loginForm) {

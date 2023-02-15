@@ -4,13 +4,13 @@ const AppError = require('../utils/appError');
 
 exports.getOverviewPage = catchAsync(async (req, res, next) => {
   //1) Get upload data from collection
-  const uploads = await Upload.find();
+  const images = await Upload.find({ mimetype: 'image' });
 
   //2) Build Template
   //3) Render that template using upload data from 1)
   res.status(200).render('overview', {
     title: 'All Uploads',
-    uploads,
+    images,
   });
 });
 
@@ -48,7 +48,7 @@ exports.getAccount = (req, res) => {
 };
 
 exports.getUploadForm = (req, res) => {
-  res.status(200).render('upload', {
+  res.status(200).render('submission', {
     title: 'Upload your work',
   });
 };

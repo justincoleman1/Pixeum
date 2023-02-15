@@ -9,16 +9,17 @@ const router = express.Router();
 router.use('/:uploadId/comments', commentRouter);
 // router.param('id', uploadController.checkID);
 
-router
-  .route('/')
-  .get(uploadController.getAllUploads)
-  .post(
-    authController.protect,
-    uploadController.setUploadUserIds,
-    uploadController.uploadImageCover,
-    uploadController.resizedUploadedImage,
-    uploadController.createUpload
-  );
+router.route('/').get(uploadController.getAllUploads);
+
+router.post(
+  '/submission',
+  authController.protect,
+  uploadController.uploadMain,
+  uploadController.rawUploadedImage,
+  uploadController.resizedUploadedImage,
+  uploadController.createUpload
+);
+// .patch(authController.protect, uploadController.updateUpload);
 
 router
   .route('/:id')

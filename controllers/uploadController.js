@@ -10,17 +10,22 @@ exports.setUploadUserIds = (req, res, next) => {
   next();
 };
 
-exports.uploadMain = upload.single('media');
-exports.uploadImageCover = upload.single('imageCover');
-exports.uploadImages = upload.array('images', 4);
+const filterObj = (obj, ...allowedFields) => {
+  const newObj = {};
+  Object.keys(obj).forEach((el) => {
+    if (allowedFields.includes(el)) newObj[el] = obj[el];
+  });
+  return newObj;
+};
 
+exports.uploadMain = upload.single('media');
 //Image Display Options
 
 //Original Image --------------Downloads,Upload's Page Main Image Display
 exports.rawUploadedImage = catchAsync(async (req, res, next) => {
   if (!req.file) return next();
 
-  req.file.filename = `upload-${req.upload._id}-${Date.now()}.jpeg`;
+  req.file.filename = `upload-${req.user._id}-${Date.now()}.jpeg`;
 
   const { data, info } = await sharp(req.file.buffer)
     .raw()
@@ -29,8 +34,9 @@ exports.rawUploadedImage = catchAsync(async (req, res, next) => {
   const pixelArray = new Uint8ClampedArray(data.buffer);
   const { width, height, channels } = info;
   await sharp(pixelArray, { raw: { width, height, channels } }).toFile(
-    `public/uploads/images/raw/${req.file.filename}`
+    `public/stash/images/raw/${req.file.filename}`
   );
+  console.log('end raw');
   next();
 });
 
@@ -39,7 +45,7 @@ exports.resizedUploadedImage = catchAsync(async (req, res, next) => {
   // console.log('FILE?', req.file);
   if (!req.file) return next();
 
-  req.file.filename = `upload-${req.upload._id}-${Date.now()}.jpeg`;
+  req.file.filename = `upload-${req.user._id}-${Date.now()}.jpeg`;
   //pixel sizes for display 400, 600, 800, 900, 1024, 1280, 1600, 1920
   await sharp(req.file.buffer)
     .resize({
@@ -47,14 +53,54 @@ exports.resizedUploadedImage = catchAsync(async (req, res, next) => {
       width: req.body.pixelSize,
     })
     .jpeg({ quality: 90 })
-    .toFile(`public/uploads/images/resized/${req.file.filename}`);
+    .toFile(`public/stash/images/resized/${req.file.filename}`);
 
   next();
 });
 
+exports.createUpload = catchAsync(async (req, res, next) => {
+  console.log('create upload', req.file, req.body.title);
+
+  const filteredBody = filterObj(
+    req.body,
+    'title',
+    'description',
+    'tags',
+    'maturity'
+  );
+
+  if (req.file) {
+    filteredBody.media = req.file.filename;
+    filteredBody.mimetype = req.file.mimetype.split('/')[0];
+  }
+  filteredBody.user = req.user._id;
+
+  const newUpload = await Upload.create(filteredBody);
+
+  res.status(200).json({
+    status: 'success',
+  });
+});
+
+// exports.updateUpload = catchAsync(async (req, res, next) => {
+//   const newUpload = await Upload.findByIdAndUpdate(req.upload._id, {
+//     media_type: req.body.media_type,
+//     title: req.body.title,
+//     description: req.body.description,
+//     tags: req.body.tags,
+//     maturity: req.body.maturity,
+//   });
+
+//   res.status(200).json({
+//     status: 'success',
+//     data: {
+//       upload: newUpload,
+//     },
+//   });
+// });
+
 exports.getAllUploads = Handler.getAllDocs(Upload);
 exports.getUpload = Handler.getDoc(Upload, { path: 'comments' });
-exports.createUpload = Handler.createDoc(Upload);
 exports.updateUpload = Handler.updateDoc(Upload);
 exports.deleteUpload = Handler.deleteDoc(Upload);
 

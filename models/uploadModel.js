@@ -1,38 +1,28 @@
 const mongoose = require('mongoose');
-const slugify = require('slugify');
-// const User = require('./userModel'); //Need for embedding but not referencing
+// const slugify = require('slugify');
 // const validator = require('validator');
-//types of uploads
-// 'image',
-// 'gif',
-// 'video',
-// 'short',
-// 'pdf',
-// 'audio',
-// 'doc',
-// 'txt',
 
 const uploadSchema = new mongoose.Schema(
   {
     media: {
       type: String,
     },
-    media_type: {
+    mimetype: {
       type: String,
-      required: [true, 'A upload must have a media_type'],
-      enum: {
-        values: ['image', 'application', 'text'],
-        message: 'Media may only be of type image,application, or text',
-      },
+      // required: [true, 'A upload must have a media_type'],
+      // enum: {
+      //   values: ['image', 'application', 'text'],
+      //   message: 'Media may only be of type image,application, or text',
+      // },
     },
     user: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
-      required: [true, 'A upload must have a user!'],
+      // required: [true, 'A upload must have a user!'],
     },
     title: {
       type: String,
-      required: [true, 'A upload must have a name'],
+      // required: [true, 'A upload must have a title'],
     },
     description: {
       type: String,
@@ -44,29 +34,31 @@ const uploadSchema = new mongoose.Schema(
         type: String,
       },
     ],
-    maturity: [
+    maturity:
+      // [
       {
         type: String,
-        required: [true, 'An upload must have maturity marker.'],
-        enum: {
-          values: [
-            'everyone',
-            'moderate_nudity',
-            'moderate_sexual_themes',
-            'moderate_violence_and/or_gore',
-            'moderate_strong_language',
-            'moderate_ideologically_sensitive',
-            'strict_nudity',
-            'strict_sexual_themes',
-            'strict_sexually_explicit_themes',
-            'strict_violence_and/or_gore',
-            'strict_strong_language',
-            'strict_ideologically_sensitive',
-          ],
-          message: 'Maturity marker may only be of an allowed specified value.',
-        },
+        // required: [true, 'An upload must have maturity marker.'],
+        // enum: {
+        //   values: [
+        //     'everyone',
+        //     'moderate nudity',
+        //     'moderate sexual themes',
+        //     'moderate violence and/or gore',
+        //     'moderate strong language',
+        //     'moderate ideologically sensitive',
+        //     'strict nudity',
+        //     'strict sexual themes',
+        //     'strict sexually explicit themes',
+        //     'strict violence and/or gore',
+        //     'strict strong language',
+        //     'strict ideologically sensitive',
+        //   ],
+        //   message: 'Maturity marker may only be of an allowed specified value.',
+        // },
       },
-    ],
+    // ],
+    // slug: String,
     access: {
       type: String,
       enum: {
@@ -75,8 +67,7 @@ const uploadSchema = new mongoose.Schema(
     },
     price: {
       type: Number,
-      required: false,
-      unique: false,
+      default: 0,
     },
     view_count: {
       type: Number,
@@ -88,7 +79,7 @@ const uploadSchema = new mongoose.Schema(
     },
     comments_count: {
       type: Number,
-      default: 1,
+      default: 0,
     },
     sale_count: {
       type: Number,
@@ -98,7 +89,7 @@ const uploadSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    priceDiscount: {
+    discount: {
       type: Number,
       default: 0,
       validate: {
@@ -114,7 +105,6 @@ const uploadSchema = new mongoose.Schema(
       default: Date.now(),
       select: false,
     },
-    slug: String,
   },
   {
     toJSON: { virtuals: true },
@@ -124,35 +114,40 @@ const uploadSchema = new mongoose.Schema(
 //Only set index on highly queried attributes
 uploadSchema.index({ view_count: -1 });
 uploadSchema.index({ price: 1 });
-uploadSchema.index({ slug: 1 });
+// uploadSchema.index({ slug: 1 });
 
 //Virtual Populate
-uploadSchema.virtual('comments', {
+uploadSchema.virtual('Comments', {
   ref: 'Comment',
+  foreignField: 'upload',
+  localField: '_id',
+});
+uploadSchema.virtual('Users', {
+  ref: 'User',
   foreignField: 'upload',
   localField: '_id',
 });
 
 //DOCUMENT MIDDLEWARE: runs before .save() and .create()
-uploadSchema.pre('save', function (next) {
-  this.slug = slugify(this.name, { lower: true });
-  next();
-});
+// uploadSchema.pre('save', function (next) {
+//   this.slug = slugify(this.title, { lower: true });
+//   next();
+// });
 
 //QUERIES MIDDLEWARE
-uploadSchema.pre(/^find/, function (next) {
-  this.find({ privateupload: { $ne: true } });
-  this.start = Date.now();
-  next();
-});
+// uploadSchema.pre(/^find/, function (next) {
+//   this.find({ private: { $ne: true } });
+//   this.start = Date.now();
+//   next();
+// });
 
-uploadSchema.pre(/^find/, function (next) {
-  this.populate({
-    path: 'guides',
-    select: '-__v -passwordChangedAt -email',
-  });
-  next();
-});
+// uploadSchema.pre(/^find/, function (next) {
+//   this.populate({
+//     path: 'guides',
+//     select: '-__v -passwordChangedAt -email',
+//   });
+//   next();
+// });
 
 //AGGREGATION MIDDLEWARE
 // uploadSchema.post(/^find/, function (docs, next) {
@@ -160,6 +155,6 @@ uploadSchema.pre(/^find/, function (next) {
 //   next();
 // });
 
-const upload = mongoose.model('upload', uploadSchema);
+const Upload = mongoose.model('Upload', uploadSchema);
 
-module.exports = upload;
+module.exports = Upload;
