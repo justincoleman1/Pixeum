@@ -34,7 +34,7 @@ exports.rawUploadedImage = catchAsync(async (req, res, next) => {
   const pixelArray = new Uint8ClampedArray(data.buffer);
   const { width, height, channels } = info;
   await sharp(pixelArray, { raw: { width, height, channels } }).toFile(
-    `public/stash/images/raw/${req.file.filename}`
+    `public/img/uploads/raw-${req.file.filename}`
   );
   console.log('end raw');
   next();
@@ -53,7 +53,7 @@ exports.resizedUploadedImage = catchAsync(async (req, res, next) => {
       width: req.body.pixelSize,
     })
     .jpeg({ quality: 90 })
-    .toFile(`public/stash/images/resized/${req.file.filename}`);
+    .toFile(`public/img/uploads/${req.file.filename}`);
 
   next();
 });
