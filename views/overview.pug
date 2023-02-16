@@ -1,10 +1,15 @@
 extends base
 
+append head
+  script(type='module' src='/js/front/imageGrid.js')
+
 block content
   section#main.main
     .container
       if images.length
-        each image in images
-          img(src=`img/stock/${image.media}`) 
+        ul.image-gallery
+          each image in images
+            li
+              img(src=`img/stock/${image.media}`)
       else
         h1 Nothing to see here

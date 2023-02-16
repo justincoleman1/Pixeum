@@ -40,13 +40,14 @@ block content
                   span.drop-zone__prompt Click to upload 
                 input#media.drop-zone__input(type='file' name="myFile" hidden='' )
                 
-            .modal__content.stashing-step(hidden='')
-              img.uploading-img(src="img/no-img-available.jpg")
-              .modal__actions.progress
-                .modal__progress
-                  .modal__progress-bar
-                    .modal__progress-fill(data-progress-fill)
-                  .modal__file(data-file='')
+            .modal__content.loading-step(hidden='')
+              .upload__mature-type
+                img.uploading-img(src="img/no-img-available.jpg")
+                .modal__actions.progress
+                  .modal__progress
+                    .modal__progress-bar
+                      .modal__progress-fill(data-progress-fill)
+                    .modal__file(data-file)
 
             .modal__content(hidden='')
                 img.uploading-img(src="img/no-img-available.jpg")
@@ -59,39 +60,44 @@ block content
               .upload__description-group
                 textarea#description(name='description' placeholder="Give your upload a description" cols="50" rows="10")
               .upload__tags-group
-                input#tags(type="text" name='tags' placeholder="Tags#, (Seperate tags with a comma or space)")
+                input#tags(type="text" name='tags' placeholder="#tags, (Seperate tags with a comma or space)")
+                .tagButtons
               .upload__maturity-group
-                input(type="checkbox" name='maturity-checkbox' value='mature')
-                label(for='maturity-checkbox') Mature Content
-                ul.list__maturity-type
-                  li
-                    input(type="checkbox" name='moderate-checkbox' value='moderate')
-                    label(for='moderate-checkbox') Moderate
-                  li
-                    input(type="checkbox" name='strict-checkbox' value='strict')
-                    label(for='strict-checkbox') Strict
-                ul.list__maturity-options
-                  li
-                    input(type="checkbox" name='nudity-checkbox' vaule='nudity')
-                    label(for='nudity-checkbox') Nudity
-                  li
-                    input(type="checkbox" name='sexual-themes-checkbox' value='sexual themes')
-                    label(for='sexual-themes-checkbox') Sexual Themes
-                  li
-                    input(type="checkbox" name='violence-gore-checkbox' value='violence and/or gore')
-                    label(for='violence-gore-checkbox') Violence and/or Gore
-                  li
-                    input(type="checkbox" name='strong-language-checkbox' value='strong language')
-                    label(for='strong-language-checkbox') Strong Language
-                  li
-                    input(type="checkbox" name='ideologically-sensitive-checkbox' value='ideologically sensitive')
-                    label(for='ideologically-sensitive-checkbox') Ideologically Sensitive
+                .mature-content
+                  input#mature(type="checkbox" name='maturity-checkbox' value='mature')
+                  label(for='maturity-checkbox') Mature Content
+                fieldset#maturity-field.hidden
+                  legend What level of maturity does your content contain?
+                  ul.list__maturity-type
+                    li
+                      input#moderate(type="checkbox" name='moderate-checkbox' value='moderate')
+                      label(for='moderate-checkbox') Moderate
+                    li
+                      input#strict(type="checkbox" name='strict-checkbox' value='strict')
+                      label(for='strict-checkbox') Strict
+                  ul.list__maturity-options
+                    li
+                      input(type="checkbox" name='nudity-checkbox' vaule='nudity')
+                      label(for='nudity-checkbox') Nudity
+                    li
+                      input(type="checkbox" name='sexual-themes-checkbox' value='sexual themes')
+                      label(for='sexual-themes-checkbox') Sexual Themes
+                    li
+                      input(type="checkbox" name='violence-gore-checkbox' value='violence and/or gore')
+                      label(for='violence-gore-checkbox') Violence and/or Gore
+                    li
+                      input(type="checkbox" name='strong-language-checkbox' value='strong language')
+                      label(for='strong-language-checkbox') Strong Language
+                    li
+                      input(type="checkbox" name='ideologically-sensitive-checkbox' value='ideologically sensitive')
+                      label(for='ideologically-sensitive-checkbox') Ideologically Sensitive
         
-            button(type="submit") Submit
+              button.btn-upload-submit(type="submit") Submit
+            
             .modal__actions.modal__actions--center
-              button#upload-btn.modal__button(type='button' data-action='upload') Upload
-              button.modal__button(type='button' data-action='upload') Retry
-              button.modal__button(type='button' data-action='cancel') Cancel
-              button.modal__button(type='button' data-action='copy') Copy Link
-              button.modal__button(type='button' data-action='cancel') Done
+              button#upload-btn.btn.modal__button(type='button' data-action='upload') Upload
+              button.btn.modal__button(type='button' data-action='upload') Retry
+              button.btn.modal__button(type='button' data-action='cancel') Cancel
+              button.btn.modal__button(type='button' data-action='copy') Copy Link
+              button.btn.modal__button(type='button' data-action='cancel') Done
         

@@ -244,15 +244,7 @@ if (uploadForm) {
 
   uploadForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    // const formData = new FormData();
-    // formData.append('media', uploadInput.files[0]);
-    // formData.append('title', document.getElementById('upload-title').value);
-    // formData.append(
-    //   'description',
-    //   document.getElementById('upload-description').value
-    // );
-    // formData.append('tags', document.getElementById('upload-tags').value);
-    // formData.append('maturity', 'everyone');
+
     const media = uploadInput.files[0];
     const title = document.getElementById('title').value;
     const description = document.getElementById('description').value;

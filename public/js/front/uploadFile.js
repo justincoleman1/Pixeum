@@ -1,8 +1,93 @@
 //esversion: 6
 const uploadBtn = document.getElementById('upload-btn');
+const matureContentInput = document.getElementById('mature');
+const matureFieldSet = document.getElementById('maturity-field');
+const moderateInput = document.getElementById('moderate');
+const strictInput = document.getElementById('strict');
+const tagsInput = document.getElementById('tags');
+const tagsGroup = document.querySelector('.tagButtons');
+
+let tags = [];
 
 window.addEventListener('DOMContentLoaded', () => {
   const upload = new UploadModal('#upload');
+});
+
+matureContentInput.addEventListener('change', (e) => {
+  e.preventDefault();
+  if (!e.target.checked) {
+    matureFieldSet.classList.add('hidden');
+    strictInput.checked = false;
+    moderateInput.checked = false;
+  } else {
+    matureFieldSet.classList.remove('hidden');
+    moderateInput.checked = true;
+  }
+});
+
+moderateInput.addEventListener('change', (e) => {
+  e.preventDefault();
+  if (!e.target.checked) strictInput.checked = true;
+  else strictInput.checked = false;
+});
+
+strictInput.addEventListener('change', (e) => {
+  e.preventDefault();
+  if (!e.target.checked) moderateInput.checked = true;
+  else moderateInput.checked = false;
+});
+
+tagsInput.addEventListener('focus', (e) => {
+  e.preventDefault();
+  tagsInput.classList.add('tags__input-expand');
+});
+
+tagsInput.addEventListener('blur', (e) => {
+  e.preventDefault();
+  if (!tagsInput.value) tagsInput.classList.remove('tags__input-expand');
+});
+
+tagsInput.addEventListener('keyup', (e) => {
+  if ((e.key === 'space' || e.keyCode === 32) && e.target.value) {
+    //create the btn
+    const tagBtn = document.createElement('button');
+    const tagEscapeIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="s24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>`;
+    tagBtn.classList.add('btn');
+    tagBtn.classList.add('btn-upload-tag');
+
+    //add the button content
+    tagBtn.textContent = e.target.value.split(' ')[0];
+
+    //push the target string onto tags
+    tags.push(e.target.value.split(' ')[0]);
+
+    //combine button and svg markup
+    tagBtn.innerHTML += tagEscapeIcon;
+
+    //append to tagsGroup
+    tagsGroup.appendChild(tagBtn);
+  }
+  if ((e.key === 'comma' || e.keyCode === 188) && e.target.value) {
+    //create the btn
+    const tagBtn = document.createElement('button');
+    const tagEscapeIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="s24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>`;
+    tagBtn.classList.add('btn');
+    tagBtn.classList.add('btn-upload-tag');
+
+    //add the button content
+    tagBtn.textContent = e.target.value.split(',')[0];
+
+    //push the target string onto tags
+    tags.push(e.target.value.split(',')[0]);
+
+    //combine button and svg markup
+    tagBtn.innerHTML += tagEscapeIcon;
+
+    //append to tagsGroup
+    tagsGroup.appendChild(tagBtn);
+  }
+
+  console.log(tags);
 });
 
 class UploadModal {
@@ -17,7 +102,7 @@ class UploadModal {
     this.el = document.querySelector(el);
     this.el?.addEventListener('click', this.action.bind(this));
     this.el
-      ?.querySelector('#file')
+      ?.querySelector('#media')
       ?.addEventListener('change', this.fileHandle.bind(this));
   }
   action(e) {
@@ -60,13 +145,14 @@ class UploadModal {
     this.stateDisplay();
   }
   file() {
-    this.el?.querySelector('#file').click();
+    this.el?.querySelector('#media').click();
   }
   fileDisplay(name = '') {
     // update the name
     this.filename = name;
 
     const fileValue = this.el?.querySelector('[data-file]');
+
     if (fileValue) fileValue.textContent = `Uploading: ${this.filename}`;
 
     // show the file
@@ -85,7 +171,7 @@ class UploadModal {
     });
   }
   fileReset() {
-    const fileField = this.el?.querySelector('#file');
+    const fileField = this.el?.querySelector('#media');
     if (fileField) fileField.value = null;
 
     this.fileDisplay();
@@ -205,7 +291,6 @@ document.querySelectorAll('.drop-zone__input').forEach((inputElement) => {
  */
 function updateThumbnail(dropZoneElement, file) {
   let thumbnailElement = dropZoneElement.querySelector('.drop-zone__thumb');
-  let image = document.querySelector('.upload-img');
 
   // First time - remove the prompt
   dropZoneElement.querySelectorAll('.drop-zone__prompt').forEach((prompt) => {
