@@ -7,6 +7,11 @@ const strictInput = document.getElementById('strict');
 const tagsInput = document.getElementById('tags');
 const tagsGroup = document.querySelector('.tagButtons');
 
+//Match the last occurrence of a string of characters followed by a comma or white space.
+//The occurrence has to be the end of the string
+//And the occurence has to be a unique substring
+const patterns = { tags: /[\w]{2,30}[\s,](?!.*[\w]{2,30}[\s,])$/g };
+
 let tags = [];
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -48,47 +53,33 @@ tagsInput.addEventListener('blur', (e) => {
 });
 
 tagsInput.addEventListener('keyup', (e) => {
-  if ((e.key === 'space' || e.keyCode === 32) && e.target.value) {
-    //create the btn
-    const tagBtn = document.createElement('button');
-    const tagEscapeIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="s24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>`;
-    tagBtn.classList.add('btn');
-    tagBtn.classList.add('btn-upload-tag');
+  if (validTag(e.target, patterns[e.target.attributes.name.value])) {
+    const subset = e.target.value.match(
+      /[\w]{2,30}[\s,](?!.*[\w]{2,30}[\s,])$/g
+    )[0];
+    const tag = subset.slice(0, -1);
+    if (!tags.length || !tags.includes(tag)) {
+      //push tag into tags
+      tags.push(tag);
+      //create tag button
+      const tagBtn = document.createElement('button');
 
-    //add the button content
-    tagBtn.textContent = e.target.value.split(' ')[0];
+      tagBtn.classList.add('btn');
+      tagBtn.classList.add('btn-upload-tag');
+      tagBtn.textContent = tag;
+      tagBtn.innerHTML += `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="s24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>`;
 
-    //push the target string onto tags
-    tags.push(e.target.value.split(' ')[0]);
-
-    //combine button and svg markup
-    tagBtn.innerHTML += tagEscapeIcon;
-
-    //append to tagsGroup
-    tagsGroup.appendChild(tagBtn);
+      //append to tagsGroup
+      tagsGroup.appendChild(tagBtn);
+    } else e.target.value = e.target.value.slice(0, -subset.length);
   }
-  if ((e.key === 'comma' || e.keyCode === 188) && e.target.value) {
-    //create the btn
-    const tagBtn = document.createElement('button');
-    const tagEscapeIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="s24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>`;
-    tagBtn.classList.add('btn');
-    tagBtn.classList.add('btn-upload-tag');
-
-    //add the button content
-    tagBtn.textContent = e.target.value.split(',')[0];
-
-    //push the target string onto tags
-    tags.push(e.target.value.split(',')[0]);
-
-    //combine button and svg markup
-    tagBtn.innerHTML += tagEscapeIcon;
-
-    //append to tagsGroup
-    tagsGroup.appendChild(tagBtn);
-  }
-
   console.log(tags);
 });
+
+//BOOLEAN
+function validTag(field, regex) {
+  return regex.test(field.value);
+}
 
 class UploadModal {
   filename = '';
