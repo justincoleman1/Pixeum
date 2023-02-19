@@ -34,30 +34,19 @@ const uploadSchema = new mongoose.Schema(
         type: String,
       },
     ],
-    maturity:
-      // [
-      {
-        type: String,
-        // required: [true, 'An upload must have maturity marker.'],
-        // enum: {
-        //   values: [
-        //     'everyone',
-        //     'moderate nudity',
-        //     'moderate sexual themes',
-        //     'moderate violence and/or gore',
-        //     'moderate strong language',
-        //     'moderate ideologically sensitive',
-        //     'strict nudity',
-        //     'strict sexual themes',
-        //     'strict sexually explicit themes',
-        //     'strict violence and/or gore',
-        //     'strict strong language',
-        //     'strict ideologically sensitive',
-        //   ],
-        //   message: 'Maturity marker may only be of an allowed specified value.',
-        // },
-      },
-    // ],
+    maturity: {
+      type: [String],
+      enum: [
+        'moderate',
+        'strict',
+        'nudity',
+        'sexual themes',
+        'violence and/or gore',
+        'strong language',
+        'ideologically sensitive',
+      ],
+    },
+
     // slug: String,
     access: {
       type: String,

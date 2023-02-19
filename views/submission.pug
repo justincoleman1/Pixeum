@@ -2,13 +2,14 @@ extends base
 
 append head
   script(type='module' src='/js/front/uploadFile.js')
+  script(type='module' src='/js/front/tagsInput.js')
 
 block content
   section#upload-main.upload
     #uploadForm.upload-form
       form#submit-upload
         .modal-lip
-          button.btn-lip(type="button")
+          button.btn-lip(type='button')
             h3.modal-lip-title New upload
         
         #upload.modal(data-state='0' data-ready='false')
@@ -38,11 +39,11 @@ block content
                   span.drop-zone__prompt Drop image, pdf, or text here
                   span.drop-zone__prompt OR
                   span.drop-zone__prompt Click to upload 
-                input#media.drop-zone__input(type='file' name="myFile" hidden='' )
+                input#media.drop-zone__input(type='file' name='myFile' hidden='' )
                 
             .modal__content.loading-step(hidden='')
               .upload__mature-type
-                img.uploading-img(src="img/no-img-available.jpg")
+                img.uploading-img(src='img/no-img-available.jpg')
                 .modal__actions.progress
                   .modal__progress
                     .modal__progress-bar
@@ -50,49 +51,51 @@ block content
                     .modal__file(data-file)
 
             .modal__content(hidden='')
-                img.uploading-img(src="img/no-img-available.jpg")
+                img.uploading-img(src='img/no-img-available.jpg')
             
             .modal__content.image-processing-step(hidden='')
               .upload__mature-type
-                img.uploaded-img(src="img/no-img-available.jpg")
+                img.uploaded-img(src='img/no-img-available.jpg')
               .upload__title-group
-                input#title(type="text" name='title' placeholder="Give your upload a title")
+                h4 Title
+                input#title(type='text' name='title' placeholder='Give your upload a title')
               .upload__description-group
-                textarea#description(name='description' placeholder="Give your upload a description" cols="50" rows="10")
+                h4 Description
+                textarea#description(name='description' placeholder='Give your upload a description' cols='50' rows='10')
               .upload__tags-group
-                input#tags(type="text" name='tags' placeholder="#tags, (Seperate tags with a comma or space)")
-                .tagButtons
+                h4 Tags
+                input#tags(type='text' name='tags')
               .upload__maturity-group
                 .mature-content
-                  input#mature(type="checkbox" name='maturity-checkbox' value='mature')
+                  input#mature(type='checkbox' name='maturity-checkbox' value='mature')
                   label(for='maturity-checkbox') Mature Content
                 fieldset#maturity-field.hidden
                   legend What level of maturity does your content contain?
                   ul.list__maturity-type
                     li
-                      input#moderate(type="checkbox" name='moderate-checkbox' value='moderate')
+                      input#moderate.maturity-option(type='checkbox' name='moderate-checkbox' value='moderate')
                       label(for='moderate-checkbox') Moderate
                     li
-                      input#strict(type="checkbox" name='strict-checkbox' value='strict')
+                      input#strict.maturity-option(type='checkbox' name='strict-checkbox' value='strict')
                       label(for='strict-checkbox') Strict
                   ul.list__maturity-options
                     li
-                      input(type="checkbox" name='nudity-checkbox' vaule='nudity')
+                      input.maturity-option(type='checkbox' name='nudity-checkbox' value='nudity')
                       label(for='nudity-checkbox') Nudity
                     li
-                      input(type="checkbox" name='sexual-themes-checkbox' value='sexual themes')
+                      input.maturity-option(type='checkbox' name='sexual-themes-checkbox' value='sexual themes')
                       label(for='sexual-themes-checkbox') Sexual Themes
                     li
-                      input(type="checkbox" name='violence-gore-checkbox' value='violence and/or gore')
+                      input.maturity-option(type='checkbox' name='violence-gore-checkbox' value='violence and/or gore')
                       label(for='violence-gore-checkbox') Violence and/or Gore
                     li
-                      input(type="checkbox" name='strong-language-checkbox' value='strong language')
+                      input.maturity-option(type='checkbox' name='strong-language-checkbox' value='strong language')
                       label(for='strong-language-checkbox') Strong Language
                     li
-                      input(type="checkbox" name='ideologically-sensitive-checkbox' value='ideologically sensitive')
+                      input.maturity-option(type='checkbox' name='ideologically-sensitive-checkbox' value='ideologically sensitive')
                       label(for='ideologically-sensitive-checkbox') Ideologically Sensitive
         
-              button.btn-upload-submit(type="submit") Submit
+              button.btn-upload-submit(type='submit') Submit
             
             .modal__actions.modal__actions--center
               button#upload-btn.btn.modal__button(type='button' data-action='upload') Upload

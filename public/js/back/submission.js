@@ -30,34 +30,3 @@ export const submit_art = async (media, title, description, tags, maturity) => {
     showAlert('error', err.response.data.message);
   }
 };
-
-// export const submit_art_details = async (
-//   media_type,
-//   title,
-//   description,
-//   tags,
-//   maturity
-// ) => {
-//   try {
-//     const res = await axios({
-//       method: 'PATCH',
-//       url,
-//       data: {
-//         media_type,
-//         title,
-//         description,
-//         tags,
-//         maturity,
-//       },
-//     });
-
-//     if (res.data.status === 'success') {
-//       showAlert('success', 'Upload successful!');
-//       window.setTimeout(() => {
-//         location.assign('/');
-//       }, 1500);
-//     }
-//   } catch (err) {
-//     showAlert('error', err.response.data.message);
-//   }
-// };

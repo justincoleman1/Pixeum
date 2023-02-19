@@ -4,15 +4,6 @@ const matureContentInput = document.getElementById('mature');
 const matureFieldSet = document.getElementById('maturity-field');
 const moderateInput = document.getElementById('moderate');
 const strictInput = document.getElementById('strict');
-const tagsInput = document.getElementById('tags');
-const tagsGroup = document.querySelector('.tagButtons');
-
-//Match the last occurrence of a string of characters followed by a comma or white space.
-//The occurrence has to be the end of the string
-//And the occurence has to be a unique substring
-const patterns = { tags: /[\w]{2,30}[\s,](?!.*[\w]{2,30}[\s,])$/g };
-
-let tags = [];
 
 window.addEventListener('DOMContentLoaded', () => {
   const upload = new UploadModal('#upload');
@@ -41,45 +32,6 @@ strictInput.addEventListener('change', (e) => {
   if (!e.target.checked) moderateInput.checked = true;
   else moderateInput.checked = false;
 });
-
-tagsInput.addEventListener('focus', (e) => {
-  e.preventDefault();
-  tagsInput.classList.add('tags__input-expand');
-});
-
-tagsInput.addEventListener('blur', (e) => {
-  e.preventDefault();
-  if (!tagsInput.value) tagsInput.classList.remove('tags__input-expand');
-});
-
-tagsInput.addEventListener('keyup', (e) => {
-  if (validTag(e.target, patterns[e.target.attributes.name.value])) {
-    const subset = e.target.value.match(
-      /[\w]{2,30}[\s,](?!.*[\w]{2,30}[\s,])$/g
-    )[0];
-    const tag = subset.slice(0, -1);
-    if (!tags.length || !tags.includes(tag)) {
-      //push tag into tags
-      tags.push(tag);
-      //create tag button
-      const tagBtn = document.createElement('button');
-
-      tagBtn.classList.add('btn');
-      tagBtn.classList.add('btn-upload-tag');
-      tagBtn.textContent = tag;
-      tagBtn.innerHTML += `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="#fff" class="s24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>`;
-
-      //append to tagsGroup
-      tagsGroup.appendChild(tagBtn);
-    } else e.target.value = e.target.value.slice(0, -subset.length);
-  }
-  console.log(tags);
-});
-
-//BOOLEAN
-function validTag(field, regex) {
-  return regex.test(field.value);
-}
 
 class UploadModal {
   filename = '';
@@ -251,12 +203,15 @@ document.querySelectorAll('.drop-zone__input').forEach((inputElement) => {
 
     if (e.dataTransfer.files.length) {
       inputElement.files = e.dataTransfer.files;
-      console.log('DROP', inputElement.files);
-      Array.from(inputElement.files).forEach(function (file, i) {
-        //Update thumbnail
-        updateThumbnail(dropZoneElement, file);
-        //Create modal with a form for each upload
-      });
+      document.querySelector('.modal-lip-title').innerHTML =
+        inputElement.files[0].name;
+      updateThumbnail(dropZoneElement, inputElement.files[0]);
+      uploadBtn.click();
+      // Array.from(inputElement.files).forEach(function (file, i) {
+      //   //Update thumbnail
+      //   updateThumbnail(dropZoneElement, file);
+      //   //Create modal with a form for each upload
+      // });
     }
   });
 

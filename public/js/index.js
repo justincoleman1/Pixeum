@@ -5,7 +5,7 @@ import Cropper from 'cropperjs';
 import { login, logout } from './back/login';
 import { signup } from './back/signup';
 import { updateSettings } from './back/updateSettings';
-import { submit_art, submit_art_details } from './back/submission';
+import { submit_art } from './back/submission';
 import { showAlert } from './front/alerts';
 import {
   expandSideNav,
@@ -156,6 +156,20 @@ window.addEventListener(sh, (e) => {
   p(e);
 });
 
+const throttleInput = document.querySelector('button');
+
+throttleInput.onclick = function () {
+  if (!throttleInput.hasAttribute('data-prevent-double-click')) {
+    throttleInput.setAttribute('data-prevent-double-click', true);
+    throttleInput.setAttribute('disabled', true);
+  }
+
+  setTimeout(function () {
+    throttleInput.removeAttribute('disabled');
+    throttleInput.removeAttribute('data-prevent-double-click');
+  }, 3000);
+};
+
 // DELEGATION
 if (sideNavBtn) {
   sideNavBtn.addEventListener('click', (e) => {
@@ -248,8 +262,17 @@ if (uploadForm) {
     const media = uploadInput.files[0];
     const title = document.getElementById('title').value;
     const description = document.getElementById('description').value;
-    const tags = document.getElementById('tags').value;
-    const maturity = 'everyone';
+    let tags = [];
+    document
+      .querySelectorAll('.tag')
+      .forEach((tag) => tags.push(tag.textContent));
+
+    let maturity = [];
+    if (document.getElementById('mature').checked) {
+      document.querySelectorAll('.maturity-option').forEach((option) => {
+        if (option.checked) maturity.push(option.value);
+      });
+    }
 
     submit_art(media, title, description, tags, maturity);
   });
@@ -283,10 +306,6 @@ if (profileBtn) {
     e.preventDefault;
     if (!profileDropDownClosed()) closeProfileDropDown(e);
   });
-  // document.addEventListener('keydown', (e) => {
-  //   e.preventDefault;
-  //   closeOnEscape(e);
-  // });
 }
 
 if (notificationsBtn) {
