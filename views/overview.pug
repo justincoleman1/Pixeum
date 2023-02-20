@@ -5,11 +5,19 @@ append head
 
 block content
   section#main.main
+    .header-container
+      if tags.length
+        each tag in tags
+          a(href="#")
+            span(class='tag')=tag
+      else
+        h1 Nothing to see here
     .container
       if images.length
         ul.image-gallery
           each image in images
             li
               img(src=`img/stock/${image.media}`)
+          li
       else
         h1 Nothing to see here

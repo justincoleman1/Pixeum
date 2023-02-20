@@ -60,32 +60,7 @@ class UploadModal {
     this.stateDisplay();
     this.progressDisplay();
     this.fileReset();
-  }
-  //Copy's the image to clipboard
-  async copy() {
-    const copyButton = this.el?.querySelector("[data-action='copy']");
-
-    if (!this.isCopying && copyButton) {
-      // disable
-      this.isCopying = true;
-      copyButton.style.width = `${copyButton.offsetWidth}px`;
-      copyButton.disabled = true;
-      copyButton.textContent = 'Copied!';
-      navigator.clipboard.writeText(this.filename);
-      await new Promise((res) => setTimeout(res, 1000));
-      // reenable
-      this.isCopying = false;
-      copyButton.removeAttribute('style');
-      copyButton.disabled = false;
-      copyButton.textContent = 'Copy Link';
-    }
-  }
-  fail() {
-    this.isUploading = false;
-    this.progress = 0;
-    this.progressTimeout = null;
-    this.state = 2;
-    this.stateDisplay();
+    document.querySelector('.modal-lip-title').innerHTML = 'New upload';
   }
   file() {
     this.el?.querySelector('#media').click();
@@ -136,9 +111,6 @@ class UploadModal {
         await new Promise((res) => setTimeout(res, 1000));
         // fail randomly
         if (!this.isUploading) {
-          return;
-        } else if (Utils.randomInt(0, 2) === 0) {
-          this.fail();
           return;
         }
       }
@@ -205,13 +177,11 @@ document.querySelectorAll('.drop-zone__input').forEach((inputElement) => {
       inputElement.files = e.dataTransfer.files;
       document.querySelector('.modal-lip-title').innerHTML =
         inputElement.files[0].name;
-      updateThumbnail(dropZoneElement, inputElement.files[0]);
+      updateThumbnail(inputElement.files[0]);
+      const fileValue = document.querySelector('[data-file]');
+      if (fileValue)
+        fileValue.textContent = `Uploading: ${inputElement.files[0].name}`;
       uploadBtn.click();
-      // Array.from(inputElement.files).forEach(function (file, i) {
-      //   //Update thumbnail
-      //   updateThumbnail(dropZoneElement, file);
-      //   //Create modal with a form for each upload
-      // });
     }
   });
 
@@ -223,7 +193,7 @@ document.querySelectorAll('.drop-zone__input').forEach((inputElement) => {
     if (inputElement.files.length) {
       document.querySelector('.modal-lip-title').innerHTML =
         inputElement.files[0].name;
-      updateThumbnail(dropZoneElement, inputElement.files[0]);
+      updateThumbnail(inputElement.files[0]);
       uploadBtn.click();
     }
   });
@@ -235,35 +205,16 @@ document.querySelectorAll('.drop-zone__input').forEach((inputElement) => {
  * @param {HTMLElement} dropZoneElement
  * @param {File} file
  */
-function updateThumbnail(dropZoneElement, file) {
-  let thumbnailElement = dropZoneElement.querySelector('.drop-zone__thumb');
-
-  // First time - remove the prompt
-  dropZoneElement.querySelectorAll('.drop-zone__prompt').forEach((prompt) => {
-    prompt.style.display = 'none';
-  });
-
-  // First time - there is no thumbnail element, so lets create it
-  if (!thumbnailElement) {
-    thumbnailElement = document.createElement('div');
-    thumbnailElement.classList.add('drop-zone__thumb');
-    dropZoneElement.appendChild(thumbnailElement);
-  }
-
-  thumbnailElement.dataset.label = file.name;
-
+function updateThumbnail(file) {
   // Show thumbnail for image files
   if (file.type.startsWith('image/')) {
     const reader = new FileReader();
 
     reader.readAsDataURL(file);
     reader.onload = () => {
-      thumbnailElement.style.backgroundImage = `url('${reader.result}')`;
       document.querySelector('.uploading-img').src = `${reader.result}`;
       document.querySelector('.uploaded-img').src = `${reader.result}`;
     };
-  } else {
-    thumbnailElement.style.backgroundImage = null;
   }
 }
 

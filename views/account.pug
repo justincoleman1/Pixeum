@@ -144,7 +144,7 @@ block content
                                                 option(value='12') December
                                         .update-birthday-flex-item.flex-item-day   
                                             label.form__label(for='day') Day
-                                            input#update-birthday-day.form__input(type=number, value=1,required, name='day')
+                                            input#update-birthday-day.form__input(type=number, value=1,required, name='day',  minlength=1, maxlength=2,)
                                         .update-birthday-flex-item.flex-item-year  
                                             label.form__label(for='year') Year
                                             input#update-birthday-year.form__input(type='text', value='2000', minlength=4, maxlength=4, required, name='year')

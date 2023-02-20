@@ -156,20 +156,6 @@ window.addEventListener(sh, (e) => {
   p(e);
 });
 
-const throttleInput = document.querySelector('button');
-
-throttleInput.onclick = function () {
-  if (!throttleInput.hasAttribute('data-prevent-double-click')) {
-    throttleInput.setAttribute('data-prevent-double-click', true);
-    throttleInput.setAttribute('disabled', true);
-  }
-
-  setTimeout(function () {
-    throttleInput.removeAttribute('disabled');
-    throttleInput.removeAttribute('data-prevent-double-click');
-  }, 3000);
-};
-
 // DELEGATION
 if (sideNavBtn) {
   sideNavBtn.addEventListener('click', (e) => {
@@ -265,7 +251,7 @@ if (uploadForm) {
     let tags = [];
     document
       .querySelectorAll('.tag')
-      .forEach((tag) => tags.push(tag.textContent));
+      .forEach((tag) => tags.push(tag.textContent.slice(0, -1)));
 
     let maturity = [];
     if (document.getElementById('mature').checked) {
