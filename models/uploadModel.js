@@ -105,6 +105,12 @@ uploadSchema.index({ view_count: -1 });
 uploadSchema.index({ price: 1 });
 // uploadSchema.index({ slug: 1 });
 
+uploadSchema.pre(/^find/, function (next) {
+  this.sort({ createdAt: -1 });
+
+  next();
+});
+
 //Virtual Populate
 uploadSchema.virtual('Comments', {
   ref: 'Comment',
