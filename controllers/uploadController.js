@@ -1,5 +1,6 @@
 const Handler = require('./handlerFactory');
 const Upload = require('../models/uploadModel');
+const Tag = require('../models/tagModel');
 const catchAsync = require('../utils/catchAsync');
 const { upload } = require('./multerController');
 const sharp = require('sharp');
@@ -86,9 +87,36 @@ exports.createUpload = catchAsync(async (req, res, next) => {
     filteredBody.media = req.file.filename;
     filteredBody.mimetype = req.file.mimetype.split('/')[0];
   }
+
   filteredBody.user = req.user._id;
 
   const newUpload = await Upload.create(filteredBody);
+
+  if (filteredBody.tags) {
+    filteredBody.tags.forEach(
+      catchAsync(async function (tag) {
+        if (filteredBody.maturity) {
+          if (
+            await Tag.exists({ name: tag, maturity: filteredBody.maturity[0] })
+          ) {
+            await Tag.findOneAndUpdate(
+              { name: tag, maturity: filteredBody.maturity[0] },
+              { $inc: { count: 1 } }
+            );
+          } else {
+            await Tag.create({ name: tag, maturity: filteredBody.maturity[0] });
+          }
+        } else {
+          if (await Tag.exists({ name: tag })) {
+            await Tag.findOneAndUpdate({ name: tag }, { $inc: { count: 1 } });
+          } else {
+            //create new tag
+            await Tag.create({ name: tag });
+          }
+        }
+      })
+    );
+  }
 
   res.status(200).json({
     status: 'success',

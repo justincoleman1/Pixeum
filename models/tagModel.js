@@ -10,9 +10,15 @@ const tagSchema = new mongoose.Schema(
     },
     count: {
       type: Number,
+      default: 1,
+    },
+    view_count: {
+      type: Number,
+      default: 1,
     },
     maturity: {
       type: String,
+      default: 'everyone',
     },
     createdAt: {
       type: Date,

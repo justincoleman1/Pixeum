@@ -9,7 +9,7 @@ block content
       if tags.length
         each tag in tags
           a(href="#")
-            span(class='tag')=tag
+            span.hashtag=`#${tag.name}`
       else
         h1 Nothing to see here
     .container

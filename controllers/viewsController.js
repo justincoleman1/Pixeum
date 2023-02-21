@@ -1,4 +1,5 @@
 const Upload = require('../models/uploadModel');
+const Tags = require('../models/tagModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
@@ -9,13 +10,14 @@ exports.getOverviewPage = catchAsync(async (req, res, next) => {
   //---- upload.[tags]---- gather all tags into a struct
   //---- key: tag , value: the occurrence
   //---- order tags based on highest occurrence
-  const arrayOfUploadArrays = await Upload.aggregate({}, 'tags');
-  console.log(tags);
+  const tags = await Tags.find({ maturity: 'everyone' });
+
   //2) Build Template
   //3) Render that template using upload data from 1)
   res.status(200).render('overview', {
     title: 'All Uploads',
     images,
+    tags,
   });
 });
 
