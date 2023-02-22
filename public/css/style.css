@@ -2076,7 +2076,7 @@ section.upload {
 .image-gallery > li {
   height: 15em;
   cursor: pointer;
-  flex-grow: 1;
+  /* flex-grow: 1; */
 }
 
 .image-gallery > li:last-child {
@@ -2085,13 +2085,17 @@ section.upload {
 
 .image-gallery li img {
   object-fit: cover;
-  width: 100%;
+  max-width: 100%;
   height: 100%;
   vertical-align: bottom;
 }
 @media (max-width: 1061px) {
   .image-gallery > li {
     flex-grow: 1;
+  }
+  .image-gallery li img {
+    object-fit: cover;
+    width: 100%;
   }
 }
 
@@ -2120,19 +2124,42 @@ section.upload {
   gap: 1.5em;
 }
 
+.highlighted-section {
+  background-color: #2e2d2d;
+  padding: 0 5em 5em 5em;
+  max-width: 50em;
+  border-left: solid 1px #343a40;
+}
+
 .highlighted-container {
-  background-color: #424243;
+  background-color: #3d3c3c;
   /* position: absolute;
   left: 50%;
   transform: translate(-50%, 0); */
-  padding: 0 5em;
+  /* padding: 5em 5em; */
   border-radius: 10px;
   display: flex;
   flex-direction: column;
+  /* max-width: 50em; */
+  color: #fff;
+}
+
+.highlighted-panel {
+  margin-top: 1em;
+  display: flex;
+  justify-content: space-between;
+}
+
+.highlighted-impact {
+  margin-left: 1em;
+  display: flex;
+  align-items: center;
+  gap: 1em;
+
+  color: #c3c3c3;
 }
 
 .highlighted-actions {
-  margin-top: 1em;
   display: flex;
   gap: 1em;
   justify-content: flex-end;
@@ -2140,13 +2167,14 @@ section.upload {
 
 .btn-highlighted {
   width: 32px;
-  background-color: #424243;
+  background-color: #3d3c3c;
   display: inline;
 }
 
 .side-container {
   /* background-color: #39f; */
   width: 20em;
+  border-right: solid 1px #343a40;
 }
 
 .highlighted__img {
@@ -2185,12 +2213,19 @@ section.upload {
 
 .highlighted-tags {
   display: flex;
+  flex-direction: row;
   align-items: center;
   flex-wrap: wrap;
+  gap: 1em;
+}
+
+a .highlighted-hashtag {
+  color: #c3c3c3;
 }
 
 .description-container {
-  background-color: #424243;
+  background-color: #2e2d2d;
+  border-radius: 8px;
 }
 
 .highlighted__description-label {
@@ -2200,6 +2235,7 @@ section.upload {
 .highlighted-description {
   padding: 0.5em 1em;
   color: #fff;
+  text-indent: 30px;
 }
 
 .side-container {
@@ -2235,14 +2271,34 @@ section.upload {
     padding: 24px;
   }
 
+  .highlighted-section {
+    border-right: solid 1px #343a40;
+  }
+
+  .side-container {
+    border: none;
+  }
+
   .highlighted-container {
-    padding: 0;
+    /* padding: 5em 5em 5em 5em; */
     display: flex;
     justify-content: center;
   }
 }
 
 @media (max-width: 741px) {
+  .upload-container {
+    padding: 0;
+  }
+  .highlighted-section {
+    padding: 0em;
+    border: none;
+  }
+  .highlighted-container {
+    /* padding: 0em; */
+    display: flex;
+    justify-content: center;
+  }
   .highlighted__img {
     /* object-fit: contain; */
     height: 40em;

@@ -176,5 +176,5 @@
 var tagInput1 = new TagsInput({
   selector: 'tags',
   duplicate: false,
-  max: 10,
+  max: 30,
 });

@@ -5,49 +5,53 @@ append head
 block content
   section#main.main
     .upload-container
-        .highlighted-container
-            img.highlighted__img(src=`/img/stock/raw-${upload.media}`)
-
-            .highlighted-actions
-                button.btn.btn-highlighted(type='button')
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="highlighted-icons">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                    </svg>
-                button.btn.btn-highlighted(type='button')
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="highlighted-icons">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" />
-                    </svg>
-                button.btn.btn-highlighted(type='button')
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="highlighted-icons">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 13.5l3 3m0 0l3-3m-3 3v-6m1.06-4.19l-2.12-2.12a1.5 1.5 0 00-1.061-.44H4.5A2.25 2.25 0 002.25 6v12a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9a2.25 2.25 0 00-2.25-2.25h-5.379a1.5 1.5 0 01-1.06-.44z" />
-                    </svg>
-                button.btn.btn-highlighted(type='button')
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="highlighted-icons">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
-                    </svg>
-            .highlighted-header
-                .highlighted__title-container
-                    h2.highlighted-title=`${upload.title}`
-                    .highlighted-maturity-container
-                        if upload.maturity
-                            h5.highlighted-maturity R-18
-                            if upload.maturity[0] === 'strict'
-                                h5.highlighted-maturity explicit
-                            else
-                                h5 moderate
-                            each mat,i in upload.maturity
-                                if i > 0
-                                    h5=mat
-                if upload.tags.length
-                    .highlighted-tags
-                    each tag in upload.tags
-                        a(href="#")
-                            span.hashtag=`#${tag}`
-                    
-                .description-container           
-                    p.highlighted-description(name='description')=`${upload.description}`
-                
-                .highlighted-tags
+        .highlighted-section
+            .highlighted-container
+                img.highlighted__img(src=`/img/stock/raw-${upload.media}`)
+                .highlighted-panel
+                    .highlighted-impact
+                        .highlighted-views
+                            p= `views: ${upload.view_count}`
+                        .highlighted-likes
+                            p= `likes: ${upload.like_count}`
+                    .highlighted-actions
+                        button.btn.btn-highlighted(type='button')
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="highlighted-icons">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                            </svg>
+                        button.btn.btn-highlighted(type='button')
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" class="highlighted-icons">
+                            <path fill="#fff" d="M6.54 55.08a1.91 1.91 0 0 1-.62-.1 2 2 0 0 1-1.38-2c0-.3 2.06-29.34 31.18-31.62V10.92a2 2 0 0 1 3.43-1.4l19.74 20.16a2 2 0 0 1 0 2.8L39.15 52.64a2 2 0 0 1-3.43-1.4V41c-19.44.74-27.41 13-27.49 13.15a2 2 0 0 1-1.69.93Zm33.18-39.26v7.41a2 2 0 0 1-1.93 2c-18.84.69-25.58 13.24-28 21.31 5-4.32 13.91-9.6 27.81-9.6h.09a2 2 0 0 1 2 2v7.41l15-15.26Z" data-name="Arrow"/>
+                            </svg>
+                        button.btn.btn-highlighted(type='button')
+                            <svg xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" viewBox="0 0 24 24">
+                            <path fill="#fff" d="M14.29,17.29,13,18.59V13a1,1,0,0,0-2,0v5.59l-1.29-1.3a1,1,0,0,0-1.42,1.42l3,3a1,1,0,0,0,.33.21.94.94,0,0,0,.76,0,1,1,0,0,0,.33-.21l3-3a1,1,0,0,0-1.42-1.42ZM18.42,6.22A7,7,0,0,0,5.06,8.11,4,4,0,0,0,6,16a1,1,0,0,0,0-2,2,2,0,0,1,0-4A1,1,0,0,0,7,9a5,5,0,0,1,9.73-1.61,1,1,0,0,0,.78.67,3,3,0,0,1,.24,5.84,1,1,0,1,0,.5,1.94,5,5,0,0,0,.17-9.62Z"/>
+                            </svg>
+                        button.btn.btn-highlighted(type='button')
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="highlighted-icons">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
+                            </svg>
+                .highlighted-header
+                    .highlighted__title-container
+                        h2.highlighted-title=`${upload.title}`
+                        .highlighted-maturity-container
+                            if upload.maturity
+                                h5.highlighted-maturity R-18
+                                if upload.maturity[0] === 'strict'
+                                    h5.highlighted-maturity explicit
+                                else
+                                    h5 moderate
+                                each mat,i in upload.maturity
+                                    if i > 0
+                                        h5=mat
+                        if upload.tags
+                            .highlighted-tags
+                                each tag in upload.tags
+                                    a(href="#")
+                                        span.highlighted-hashtag=`#${tag}`
+                    if upload.description  
+                        .description-container           
+                            p.highlighted-description(name='description')=`${upload.description}`
 
         .side-container
             .side-container-header
