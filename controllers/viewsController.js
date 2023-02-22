@@ -32,7 +32,6 @@ exports.getOverviewPage = catchAsync(async (req, res, next) => {
   });
   //2) Get most used tags
   const tags = await Tags.find({ maturity: 'everyone' }).limit(20);
-
   //2) Build Template
   //3) Render that template using upload data from 1)
   res.status(200).render('overview', {
@@ -51,18 +50,21 @@ exports.getUploadPage = catchAsync(async (req, res, next) => {
     path: 'user',
     fields: 'username photo',
   });
+  const recents = await Upload.find({ user: user._id, mimetype: 'image' })
+    .where('slug')
+    .ne(req.params.slug)
+    .limit(9);
 
   if (!upload)
     return next(new AppError('There is no upload with that name.', 404));
 
-  console.log(upload.createdAt);
   const date = timeAgo.format(upload.createdAt - 2 * 60 * 60 * 1000);
-  console.log('This is your date: ', date);
 
   res.status(200).render('uploadpage', {
     title: `${upload.title}`,
     upload,
     date,
+    recents,
   });
 });
 

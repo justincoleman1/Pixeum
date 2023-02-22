@@ -95,7 +95,43 @@ block content
                             p.highlighted-description(name='description')=`${upload.description}`
 
         .side-container
-            .side-container-header
+            .side__container-header
                 img.profile__avatar-img(src=`/img/users/${upload.user.photo}`)
                 h4=`${upload.user.username}`
             button.btn.btn-subscribe Subscribe
+
+            .side__container-body
+                .side__container-item
+                    if recents
+                        h4 Recent Works
+                        .grid__recent-works
+                            if recents[0]
+                                a.el.el-1(href=`/${upload.user.username}/${recents[0].slug}`)
+                                    img.grid-image(src=`/img/stock/${recents[0].media}`)
+                            if recents[1]
+                                a.el.el-2(href=`/${upload.user.username}/${recents[1].slug}`)
+                                    img.grid-image(src=`/img/stock/${recents[1].media}`)
+                            if recents[2]
+                                a.el.el-3(href=`/${upload.user.username}/${recents[2].slug}`)
+                                    img.grid-image(src=`/img/stock/${recents[2].media}`)
+                            if recents[3]
+                                a.el.el-4(href=`/${upload.user.username}/${recents[2].slug}`)
+                                    img.grid-image(src=`/img/stock/${recents[3].media}`)
+                            if recents[4]
+                                a.el.el-5(href=`/${upload.user.username}/${recents[4].slug}`)
+                                    img.grid-image(src=`/img/stock/${recents[4].media}`)
+                            if recents[5]
+                                a.el.el-6(href=`/${upload.user.username}/${recents[5].slug}`)
+                                    img.grid-image(src=`/img/stock/${recents[5].media}`)
+                            if recents[6]
+                                a.el.el-7(href=`/${upload.user.username}/${recents[6].slug}`)
+                                    img.grid-image(src=`/img/stock/${recents[6].media}`)
+                            if recents[7]
+                                a.el.el-8(href=`/${upload.user.username}/${recents[7].slug}`)
+                                    img.grid-image(src=`/img/stock/${recents[7].media}`)
+                            if recents[8]
+                                a.el.el-9(href=`/${upload.user.username}/${recents[8].slug}`)
+                                    img.grid-image(src=`/img/stock/${recents[8].media}`)
+                                
+                    
+
