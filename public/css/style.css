@@ -2151,18 +2151,47 @@ section.upload {
 }
 
 .highlighted-impact {
-  margin-left: 1em;
   display: flex;
   align-items: center;
-  gap: 1em;
+  gap: 1.5em;
 
   color: #c3c3c3;
 }
 
-.highlighted-actions {
+.highlighted__view-count,
+.highlighted__like-count,
+.highlighted__comment-count {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2em;
+}
+
+span.hc {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+p.hc {
+  margin-bottom: 2px;
+}
+
+.btn__highlighted-favorites {
+  display: flex;
+  gap: 0.25em;
+  align-items: center;
+  color: #fff;
+  font-size: 18px;
+  background-color: transparent;
+  font-weight: 600;
+  margin-left: 1em;
+}
+
+.highlighted-actions-l,
+.highlighted-actions-r {
   display: flex;
   gap: 1em;
-  justify-content: flex-end;
 }
 
 .btn-highlighted {
@@ -2193,6 +2222,21 @@ section.upload {
 .highlighted__title-container {
   display: flex;
   flex-direction: column;
+  gap: 2em;
+}
+
+.highlighted__title-date {
+  display: flex;
+  justify-content: space-between;
+}
+
+.highlighted__title-date-l {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+
+.highlighted-author {
 }
 
 .highlighted-title {
@@ -2212,15 +2256,24 @@ section.upload {
 }
 
 .highlighted-tags {
+  margin-top: 1em;
   display: flex;
-  flex-direction: row;
-  align-items: center;
   flex-wrap: wrap;
-  gap: 1em;
+  gap: 0.5em;
+}
+
+.highlighted-tags > a {
+  padding: 0.5em 0;
 }
 
 a .highlighted-hashtag {
-  color: #c3c3c3;
+  color: #fff;
+  background-color: #424243;
+  padding: 0.5em;
+  border: 1px solid #c3c3c3;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 500;
 }
 
 .description-container {
@@ -2252,9 +2305,25 @@ a .highlighted-hashtag {
 }
 
 .profile__avatar-img {
-  height: 42px;
-  width: 42px;
+  height: 62px;
+  width: 62px;
   border-radius: 50%;
+}
+
+.author {
+  font-size: 20px;
+}
+
+.highlighted-subscribe {
+  display: flex;
+  align-items: center;
+  gap: 2em;
+}
+
+.author-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
 }
 
 .btn-subscribe {
@@ -2263,6 +2332,22 @@ a .highlighted-hashtag {
   color: #fff;
   padding: 8px 16px;
   border-radius: 25px;
+}
+
+.btn__subscribe-upload {
+  display: flex;
+  gap: 0.25em;
+  align-items: center;
+  color: #47b1f5;
+  font-size: 20px;
+  background-color: transparent;
+  font-weight: 500;
+}
+
+.highlighted-sub-icon {
+  stroke: #47b1f5;
+  stroke-width: 3;
+  width: 20px;
 }
 
 @media (max-width: 1500px) {
@@ -2283,6 +2368,14 @@ a .highlighted-hashtag {
     /* padding: 5em 5em 5em 5em; */
     display: flex;
     justify-content: center;
+  }
+}
+
+@media (max-width: 939px) {
+  .highlighted__title-date {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
   }
 }
 

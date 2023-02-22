@@ -4,6 +4,26 @@ const Tags = require('../models/tagModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
+const TimeAgo = require('javascript-time-ago');
+const en = require('javascript-time-ago/locale/en');
+
+TimeAgo.addDefaultLocale(en);
+
+// Create formatter (English).
+const timeAgo = new TimeAgo('en-US');
+
+timeAgo.format(new Date());
+// "just now"
+
+timeAgo.format(Date.now() - 60 * 1000);
+// "1 minute ago"
+
+timeAgo.format(Date.now() - 2 * 60 * 60 * 1000);
+// "2 hours ago"
+
+timeAgo.format(Date.now() - 24 * 60 * 60 * 1000);
+// "1 day ago"
+
 exports.getOverviewPage = catchAsync(async (req, res, next) => {
   //1) Get upload data from collection
   const images = await Upload.find({ mimetype: 'image' }).populate({
@@ -35,9 +55,14 @@ exports.getUploadPage = catchAsync(async (req, res, next) => {
   if (!upload)
     return next(new AppError('There is no upload with that name.', 404));
 
+  console.log(upload.createdAt);
+  const date = timeAgo.format(upload.createdAt - 2 * 60 * 60 * 1000);
+  console.log('This is your date: ', date);
+
   res.status(200).render('uploadpage', {
     title: `${upload.title}`,
     upload,
+    date,
   });
 });
 
