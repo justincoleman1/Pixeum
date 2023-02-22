@@ -1,3 +1,4 @@
+const User = require('../models/userModel');
 const Upload = require('../models/uploadModel');
 const Tags = require('../models/tagModel');
 const catchAsync = require('../utils/catchAsync');
@@ -5,7 +6,10 @@ const AppError = require('../utils/appError');
 
 exports.getOverviewPage = catchAsync(async (req, res, next) => {
   //1) Get upload data from collection
-  const images = await Upload.find({ mimetype: 'image' });
+  const images = await Upload.find({ mimetype: 'image' }).populate({
+    path: 'users',
+    fields: 'username',
+  });
   //2) Get most used tags
   const tags = await Tags.find({ maturity: 'everyone' }).limit(20);
 
@@ -19,16 +23,20 @@ exports.getOverviewPage = catchAsync(async (req, res, next) => {
 });
 
 exports.getUploadPage = catchAsync(async (req, res, next) => {
-  const upload = await Upload.findOne({ slug: req.params.slug }).populate({
-    path: 'comments',
-    fields: 'comment rating user',
+  const user = await User.findOne({ username: req.params.username });
+  const upload = await Upload.findOne({
+    user: user._id,
+    slug: req.params.slug,
+  }).populate({
+    path: 'user',
+    fields: 'username photo',
   });
 
   if (!upload)
     return next(new AppError('There is no upload with that name.', 404));
 
-  res.status(200).render('upload', {
-    title: `${upload.name} Upload`,
+  res.status(200).render('uploadpage', {
+    title: `${upload.title}`,
     upload,
   });
 });

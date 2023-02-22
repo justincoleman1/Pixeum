@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-// const slugify = require('slugify');
+const slugify = require('slugify');
 // const validator = require('validator');
 
 const uploadSchema = new mongoose.Schema(
@@ -94,6 +94,7 @@ const uploadSchema = new mongoose.Schema(
       default: Date.now(),
       select: false,
     },
+    slug: String,
   },
   {
     toJSON: { virtuals: true },
@@ -103,10 +104,14 @@ const uploadSchema = new mongoose.Schema(
 //Only set index on highly queried attributes
 uploadSchema.index({ view_count: -1 });
 uploadSchema.index({ price: 1 });
-// uploadSchema.index({ slug: 1 });
+uploadSchema.index({ slug: 1 });
 
 uploadSchema.pre(/^find/, function (next) {
   this.sort({ createdAt: -1 });
+  this.populate({
+    path: 'user',
+    select: 'username photo',
+  });
 
   next();
 });
@@ -124,10 +129,10 @@ uploadSchema.virtual('Users', {
 });
 
 //DOCUMENT MIDDLEWARE: runs before .save() and .create()
-// uploadSchema.pre('save', function (next) {
-//   this.slug = slugify(this.title, { lower: true });
-//   next();
-// });
+uploadSchema.pre('save', function (next) {
+  this.slug = slugify(this.title, { lower: true });
+  next();
+});
 
 //QUERIES MIDDLEWARE
 // uploadSchema.pre(/^find/, function (next) {

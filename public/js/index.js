@@ -133,6 +133,9 @@ const updatePhotoInput = document.getElementById('input__photo');
 
 const originalProfileImage = document.getElementById('img__profile-photo');
 
+//Upload page
+const uploadPageContainer = document.querySelector('.upload-container');
+
 //WINDOW RESIZES
 window.addEventListener('load', (e) => {
   e.preventDefault();
@@ -239,6 +242,20 @@ if (signupForm) {
   });
 }
 
+if (loginForm) {
+  asideDisappear();
+  navDisappear();
+  loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    console.log('submit');
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    login(email, password);
+  });
+}
+
+if (logOutBtn) logOutBtn.addEventListener('click', logout);
+
 if (uploadForm) {
   asideDisappear();
 
@@ -263,20 +280,6 @@ if (uploadForm) {
     submit_art(media, title, description, tags, maturity);
   });
 }
-
-if (loginForm) {
-  asideDisappear();
-  navDisappear();
-  loginForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    console.log('submit');
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    login(email, password);
-  });
-}
-
-if (logOutBtn) logOutBtn.addEventListener('click', logout);
 
 if (profileBtn) {
   profileBtn.addEventListener('click', (e) => {
@@ -508,6 +511,10 @@ if (updatePasswordForm) {
   });
 }
 
+// if (uploadPageContainer) {
+//   asideDisappear();
+//   navDisappear();
+// }
 const alertMessage = document.querySelector('body').dataset.alert;
 if (alertMessage) showAlert('success', alertMessage, 20);
 

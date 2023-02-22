@@ -63,8 +63,11 @@ exports.resizedUploadedImage = catchAsync(async (req, res, next) => {
   //pixel sizes for display 400, 600, 800, 900, 1024, 1280, 1600, 1920
   await sharp(req.file.buffer)
     .resize({
+      // width: req.body.pixelSize,
+      // height: 270,
+      // width: 230,
+      // width: req.body.pixelSize,
       fit: sharp.fit.contain,
-      width: req.body.pixelSize,
     })
     .jpeg({ quality: 90 })
     .toFile(`public/img/stock/${req.file.filename}`);

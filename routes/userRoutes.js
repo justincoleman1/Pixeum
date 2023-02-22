@@ -3,9 +3,11 @@ const express = require('express');
 const userController = require('../controllers/userController');
 const authController = require('../controllers/authController');
 // const commentRouter = require('./commentRoutes');
+const uploadRouter = require('./uploadRoutes');
 
 const router = express.Router();
 
+router.use('/:userId/uploads/:slug', uploadRouter);
 // router.use('/:userId/comments', commentRouter);
 
 router.param('id', (req, res, next, val) => {

@@ -16,6 +16,6 @@ router.get('/me', authController.protect, viewController.getAccount);
 
 router.get('/submission', authController.protect, viewController.getUploadForm);
 
-router.get('/upload/:slug', viewController.getUploadPage);
+router.get('/:username/:slug', viewController.getUploadPage);
 
 module.exports = router;

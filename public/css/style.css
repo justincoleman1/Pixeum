@@ -605,7 +605,8 @@ a.nav-btn__upload {
 }
 
 .notifications-icon,
-.upload-icon {
+.upload-icon,
+.highlighted-icons {
   stroke: #fff;
   width: 32px;
 }
@@ -2069,6 +2070,7 @@ section.upload {
   display: flex;
   flex-wrap: wrap;
   gap: 0.625em;
+  /* gap: 0; */
 }
 
 .image-gallery > li {
@@ -2087,6 +2089,12 @@ section.upload {
   height: 100%;
   vertical-align: bottom;
 }
+@media (max-width: 1061px) {
+  .image-gallery > li {
+    flex-grow: 1;
+  }
+}
+
 @media (min-width: 791px) {
   .image-gallery li img:hover {
     transform: scale(1.15);
@@ -2102,6 +2110,146 @@ section.upload {
 }
 
 /*======================END RESPONSIVE IMAGE GRID 1=====================*/
+
+/*======================SINGULAR IMAGE PAGE=====================*/
+
+.upload-container {
+  padding: 1em 5em 5em 5em;
+  display: flex;
+  justify-content: center;
+  gap: 1.5em;
+}
+
+.highlighted-container {
+  background-color: #424243;
+  /* position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0); */
+  padding: 0 5em;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.highlighted-actions {
+  margin-top: 1em;
+  display: flex;
+  gap: 1em;
+  justify-content: flex-end;
+}
+
+.btn-highlighted {
+  width: 32px;
+  background-color: #424243;
+  display: inline;
+}
+
+.side-container {
+  /* background-color: #39f; */
+  width: 20em;
+}
+
+.highlighted__img {
+  object-fit: cover;
+  height: 50em;
+  max-width: 100%;
+}
+
+.highlighted-header {
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+  gap: 2em;
+}
+
+.highlighted__title-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.highlighted-title {
+  /* font-style: italic; */
+  font-weight: 700;
+}
+
+.highlighted-maturity-container {
+  display: flex;
+  gap: 1em;
+  align-items: center;
+}
+
+.highlighted-maturity {
+  color: red;
+  font-size: 18px;
+}
+
+.highlighted-tags {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.description-container {
+  background-color: #424243;
+}
+
+.highlighted__description-label {
+  color: #fff;
+}
+
+.highlighted-description {
+  padding: 0.5em 1em;
+  color: #fff;
+}
+
+.side-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  padding: 1em;
+}
+
+.side-container-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+}
+
+.profile__avatar-img {
+  height: 42px;
+  width: 42px;
+  border-radius: 50%;
+}
+
+.btn-subscribe {
+  font-size: 16px;
+  background-color: #47b1f5;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 25px;
+}
+
+@media (max-width: 1500px) {
+  .upload-container {
+    flex-direction: column;
+    padding: 24px;
+  }
+
+  .highlighted-container {
+    padding: 0;
+    display: flex;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 741px) {
+  .highlighted__img {
+    /* object-fit: contain; */
+    height: 40em;
+  }
+}
+
+/*======================END SINGULAR IMAGE PAGE=====================*/
 
 .hide,
 .disappear,
