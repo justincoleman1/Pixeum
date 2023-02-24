@@ -56,10 +56,6 @@ exports.resizedUploadedImage = catchAsync(async (req, res, next) => {
     req.body.width !== 'original' ? parseInt(req.body.width) : null;
 
   const processImage = async () => {
-    await sharp(imageBuffer)
-      .jpeg({ quality: 90 })
-      .toFile(`public/img/stock/${req.file.filename}`);
-
     const rIB = await fs.promises.readFile(
       `public/img/stock/${req.file.filename}`
     );
@@ -87,6 +83,9 @@ exports.resizedUploadedImage = catchAsync(async (req, res, next) => {
       return next(AppError(error.message, 500));
     }
   } else {
+    await sharp(imageBuffer)
+      .jpeg({ quality: 90 })
+      .toFile(`public/img/stock/${req.file.filename}`);
     try {
       await processImage();
     } catch (error) {
@@ -111,7 +110,7 @@ exports.createUpload = catchAsync(async (req, res, next) => {
     filteredBody.mimetype = req.file.mimetype.split('/')[0];
     filteredBody.size = formatBytes(req.body.size);
 
-    filteredBody.buffer = req.body.buffer;
+    filteredBody.data = req.body.buffer;
     filteredBody.width = req.body.width;
     filteredBody.height = req.body.height;
     filteredBody.format = req.body.format;

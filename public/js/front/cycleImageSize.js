@@ -7,6 +7,10 @@ const modalImage = document.getElementById('modal-image');
 
 const mImage = document.getElementById('main-image');
 
+const imageWidth = document
+  .querySelector('.image-details')
+  .textContent.split(' ')[0];
+
 const zoomInOnMax = (image, maxZoomFactor) => {
   image.onclick = function () {
     if (image.classList.contains('W8uuV')) {
@@ -35,4 +39,4 @@ modalCloseBtn.addEventListener('click', function () {
   document.body.classList.remove('modal-open');
 });
 
-zoomInOnMax(modalImage, 1920);
+zoomInOnMax(modalImage, imageWidth);
