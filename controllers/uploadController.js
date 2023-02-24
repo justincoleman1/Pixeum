@@ -1,9 +1,13 @@
+const fs = require('fs');
 const Handler = require('./handlerFactory');
+const AppError = require('../utils/appError');
 const Upload = require('../models/uploadModel');
 const Tag = require('../models/tagModel');
 const catchAsync = require('../utils/catchAsync');
 const { upload } = require('./multerController');
 const sharp = require('sharp');
+const { makeid } = require('../utils/makeId');
+const { formatBytes } = require('../utils/formatBytes');
 
 exports.setUploadUserIds = (req, res, next) => {
   // Allow nested routes
@@ -17,19 +21,6 @@ const filterObj = (obj, ...allowedFields) => {
     if (allowedFields.includes(el)) newObj[el] = obj[el];
   });
   return newObj;
-};
-
-const makeid = (length) => {
-  let result = '';
-  const characters =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  const charactersLength = characters.length;
-  let counter = 0;
-  while (counter < length) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    counter += 1;
-  }
-  return result;
 };
 
 exports.uploadMain = upload.single('media');
@@ -50,34 +41,63 @@ exports.rawUploadedImage = catchAsync(async (req, res, next) => {
   await sharp(pixelArray, { raw: { width, height, channels } }).toFile(
     `public/img/stock/raw-${req.file.filename}`
   );
-  console.log('end raw');
   next();
 });
 
-//Resized Image
 exports.resizedUploadedImage = catchAsync(async (req, res, next) => {
   // console.log('FILE?', req.file);
   if (!req.file) return next();
 
   req.file.filename = req.body.filename;
-  //pixel sizes for display 400, 600, 800, 900, 1024, 1280, 1600, 1920
-  await sharp(req.file.buffer)
-    .resize({
-      // width: req.body.pixelSize,
-      // height: 270,
-      // width: 230,
-      // width: req.body.pixelSize,
-      fit: sharp.fit.contain,
-    })
-    .jpeg({ quality: 90 })
-    .toFile(`public/img/stock/${req.file.filename}`);
+
+  const imageBuffer = req.file.buffer;
+
+  const imageWidth =
+    req.body.width !== 'original' ? parseInt(req.body.width) : null;
+
+  const processImage = async () => {
+    await sharp(imageBuffer)
+      .jpeg({ quality: 90 })
+      .toFile(`public/img/stock/${req.file.filename}`);
+
+    const rIB = await fs.promises.readFile(
+      `public/img/stock/${req.file.filename}`
+    );
+    const metadata = await sharp(rIB).metadata();
+
+    req.body.buffer = metadata.buffer;
+    req.body.size = metadata.size;
+    req.body.width = metadata.width;
+    req.body.height = metadata.height;
+    req.body.format = metadata.format;
+  };
+
+  if (imageWidth !== null) {
+    await sharp(imageBuffer)
+      .resize({
+        fit: sharp.fit.contain,
+        width: imageWidth,
+      })
+      .jpeg({ quality: 90 })
+      .toFile(`public/img/stock/${req.file.filename}`);
+
+    try {
+      await processImage();
+    } catch (error) {
+      return next(AppError(error.message, 500));
+    }
+  } else {
+    try {
+      await processImage();
+    } catch (error) {
+      return next(AppError(error.message, 500));
+    }
+  }
 
   next();
 });
 
 exports.createUpload = catchAsync(async (req, res, next) => {
-  console.log('create upload', req.file, req.body.title);
-
   const filteredBody = filterObj(
     req.body,
     'title',
@@ -89,6 +109,12 @@ exports.createUpload = catchAsync(async (req, res, next) => {
   if (req.file) {
     filteredBody.media = req.file.filename;
     filteredBody.mimetype = req.file.mimetype.split('/')[0];
+    filteredBody.size = formatBytes(req.body.size);
+
+    filteredBody.buffer = req.body.buffer;
+    filteredBody.width = req.body.width;
+    filteredBody.height = req.body.height;
+    filteredBody.format = req.body.format;
   }
 
   filteredBody.user = req.user._id;

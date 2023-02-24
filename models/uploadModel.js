@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+const { makeid } = require('../utils/makeId');
 // const validator = require('validator');
 
 const uploadSchema = new mongoose.Schema(
@@ -15,6 +16,11 @@ const uploadSchema = new mongoose.Schema(
       //   message: 'Media may only be of type image,application, or text',
       // },
     },
+    data: Buffer,
+    width: Number,
+    height: Number,
+    format: String,
+    size: String,
     user: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
@@ -89,10 +95,6 @@ const uploadSchema = new mongoose.Schema(
         message: '({VALUE}) should be below the upload price',
       },
     },
-    createdAt: {
-      type: Date,
-      default: Date.now(),
-    },
     slug: String,
   },
   {
@@ -100,10 +102,12 @@ const uploadSchema = new mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
+
+uploadSchema.set('timestamps', true);
 //Only set index on highly queried attributes
-uploadSchema.index({ view_count: -1 });
-uploadSchema.index({ price: 1 });
-uploadSchema.index({ slug: 1 });
+// uploadSchema.index({ view_count: -1 });
+// uploadSchema.index({ price: 1 });
+// uploadSchema.index({ slug: 1 });
 
 uploadSchema.pre(/^find/, function (next) {
   this.sort({ createdAt: -1 });
@@ -129,7 +133,9 @@ uploadSchema.virtual('Users', {
 
 //DOCUMENT MIDDLEWARE: runs before .save() and .create()
 uploadSchema.pre('save', function (next) {
-  this.slug = slugify(this.title, { lower: true });
+  this.slug = slugify(this.title + '-' + this.media.split('-')[0] + makeid(5), {
+    lower: true,
+  });
   next();
 });
 

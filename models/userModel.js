@@ -81,6 +81,8 @@ const userSchema = new mongoose.Schema(
   }
 );
 
+userSchema.set('timestamps', true);
+
 userSchema.virtual('Comments', {
   ref: 'Comment',
   foreignField: 'user',

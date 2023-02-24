@@ -263,6 +263,7 @@ if (uploadForm) {
     e.preventDefault();
 
     const media = uploadInput.files[0];
+    const width = document.getElementById('image-display').value;
     const title = document.getElementById('title').value;
     const description = document.getElementById('description').value;
     let tags = [];
@@ -277,7 +278,7 @@ if (uploadForm) {
       });
     }
 
-    submit_art(media, title, description, tags, maturity);
+    submit_art(media, width, title, description, tags, maturity);
   });
 }
 

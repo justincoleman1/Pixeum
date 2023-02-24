@@ -20,16 +20,14 @@ const tagSchema = new mongoose.Schema(
       type: String,
       default: 'everyone',
     },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
   },
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
   }
 );
+
+tagSchema.set('timestamps', true);
 
 tagSchema.pre(/^find/, function (next) {
   this.sort({ count: -1 });

@@ -2,13 +2,21 @@
 import axios from 'axios';
 import { showAlert } from '../front/alerts';
 
-export const submit_art = async (media, title, description, tags, maturity) => {
+export const submit_art = async (
+  media,
+  width,
+  title,
+  description,
+  tags,
+  maturity
+) => {
   try {
     const res = await axios({
       method: 'POST',
       url: '/api/v1/uploads/submission',
       data: {
         media,
+        width,
         title,
         description,
         tags,

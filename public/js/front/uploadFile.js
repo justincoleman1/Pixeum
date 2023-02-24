@@ -1,39 +1,58 @@
 //esversion: 6
+// get references to HTML elements
 const uploadBtn = document.getElementById('upload-btn');
 const matureContentInput = document.getElementById('mature');
 const matureFieldSet = document.getElementById('maturity-field');
 const moderateInput = document.getElementById('moderate');
 const strictInput = document.getElementById('strict');
+const selectImageDisplaySize = document.getElementById('image-display');
 
+// get the first option element of the "image-display" select element
+const firstOption = selectImageDisplaySize.options[0];
+
+// set up an event listener for the window's load event
 window.addEventListener('DOMContentLoaded', () => {
+  // create a new UploadModal object with a reference to the modal HTML element
   const upload = new UploadModal('#upload');
 });
 
+// set up event listeners for the maturity checkboxes
 matureContentInput.addEventListener('change', (e) => {
-  e.preventDefault();
   if (!e.target.checked) {
+    // if the checkbox is unchecked, hide the associated fieldset and uncheck the strict and moderate checkboxes
     matureFieldSet.classList.add('hidden');
     strictInput.checked = false;
     moderateInput.checked = false;
   } else {
+    // if the checkbox is checked, show the associated fieldset and check the moderate checkbox
     matureFieldSet.classList.remove('hidden');
     moderateInput.checked = true;
   }
 });
 
 moderateInput.addEventListener('change', (e) => {
-  e.preventDefault();
-  if (!e.target.checked) strictInput.checked = true;
-  else strictInput.checked = false;
+  if (!e.target.checked) {
+    // if the moderate checkbox is unchecked, check the strict checkbox
+    strictInput.checked = true;
+  } else {
+    // if the moderate checkbox is checked, uncheck the strict checkbox
+    strictInput.checked = false;
+  }
 });
 
 strictInput.addEventListener('change', (e) => {
-  e.preventDefault();
-  if (!e.target.checked) moderateInput.checked = true;
-  else moderateInput.checked = false;
+  if (!e.target.checked) {
+    // if the strict checkbox is unchecked, check the moderate checkbox
+    moderateInput.checked = true;
+  } else {
+    // if the strict checkbox is checked, uncheck the moderate checkbox
+    moderateInput.checked = false;
+  }
 });
 
+// a class representing the upload modal
 class UploadModal {
+  // initialize instance variables
   filename = '';
   isCopying = false;
   isUploading = false;
@@ -42,6 +61,7 @@ class UploadModal {
   state = 0;
 
   constructor(el) {
+    // set up event listeners for the modal and its file input element
     this.el = document.querySelector(el);
     this.el?.addEventListener('click', this.action.bind(this));
     this.el
@@ -52,6 +72,7 @@ class UploadModal {
     this[e.target?.getAttribute('data-action')]?.();
     this.stateDisplay();
   }
+  // method to cancel the upload
   cancel() {
     this.isUploading = false;
     this.progress = 0;
@@ -62,11 +83,13 @@ class UploadModal {
     this.fileReset();
     document.querySelector('.modal-lip-title').innerHTML = 'New upload';
   }
+  // method to initiate file selection
   file() {
     this.el?.querySelector('#media').click();
   }
+  // method to display the selected file
   fileDisplay(name = '') {
-    // update the name
+    // update the filename instance variable
     this.filename = name;
 
     const fileValue = this.el?.querySelector('[data-file]');
@@ -76,6 +99,8 @@ class UploadModal {
     // show the file
     this.el?.setAttribute('data-ready', this.filename ? 'true' : 'false');
   }
+
+  // method to handle file selection
   fileHandle(e) {
     return new Promise(() => {
       const { target } = e;
@@ -177,7 +202,7 @@ document.querySelectorAll('.drop-zone__input').forEach((inputElement) => {
       inputElement.files = e.dataTransfer.files;
       document.querySelector('.modal-lip-title').innerHTML =
         inputElement.files[0].name;
-      updateThumbnail(inputElement.files[0]);
+      document.updateThumbnail(inputElement.files[0]);
       const fileValue = document.querySelector('[data-file]');
       if (fileValue)
         fileValue.textContent = `Uploading: ${inputElement.files[0].name}`;
@@ -214,6 +239,13 @@ function updateThumbnail(file) {
     reader.onload = () => {
       document.querySelector('.uploading-img').src = `${reader.result}`;
       document.querySelector('.uploaded-img').src = `${reader.result}`;
+
+      const img = new Image();
+      img.onload = function () {
+        // alert(this.width + 'x' + this.height);
+        firstOption.textContent = `Original (${this.width} x ${this.height} pixels)`;
+      };
+      img.src = `${reader.result}`;
     };
   }
 }

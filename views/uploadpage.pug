@@ -2,12 +2,21 @@ extends base
 
 append head
   script(type='module' src='/js/front/imageGrid.js')
+  script(type='module' src='/js/front/cycleImageSize.js')
 block content
+  #imageModal.image-modal.zoom
+    #imageModal-content.modal-content
+        button#imageModal-close-btn
+            svg.modal-close-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor")
+                path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
+
+  
+        img#modal-image.modal-image(src=`/img/stock/raw-${upload.media}`)
   section#main.main
     .upload-container
         .highlighted-section
             .highlighted-container
-                img.highlighted__img(src=`/img/stock/raw-${upload.media}`)
+                img#main-image.highlighted__img(src=`/img/stock/raw-${upload.media}` onclick='openImageModal()')
                 .highlighted-panel
                     .highlighted-actions-l
                         button.btn.btn__highlighted-favorites(type='button')
@@ -90,9 +99,14 @@ block content
                                     each tag in upload.tags
                                         a(href="#")
                                             span.highlighted-hashtag=`#${tag}`
-                    if upload.description  
-                        .description-container           
-                            p.highlighted-description(name='description')=`${upload.description}`
+                        if upload.description  
+                            .description-container           
+                                p.highlighted-description(name='description')=`${upload.description}`
+                        
+                        .image-details-container
+                            span IMAGE SIZE:  
+                            p=`${upload.width} x ${upload.height}px ${upload.size}`
+
 
         .side-container
             .side__container-header

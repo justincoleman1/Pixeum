@@ -33,6 +33,8 @@ const commentSchema = new mongoose.Schema(
   }
 );
 
+commentSchema.set('timestamps', true);
+
 commentSchema.index({ upload: 1, user: 1 });
 
 commentSchema.pre(/^find/, function (next) {

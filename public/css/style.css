@@ -39,6 +39,11 @@ body {
   /* height: 100vh;  */
 }
 
+/* Disable scrolling of content underneath modal when modal is open */
+body.modal-open {
+  overflow: hidden;
+}
+
 h1,
 h2,
 h3,
@@ -1868,6 +1873,53 @@ section.upload {
   font-size: 1em;
 }
 
+.image-display-container {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+}
+
+.image-display-wrapper {
+  position: relative;
+  display: inline-block;
+  font-size: 16px;
+  margin: 10px;
+}
+
+#image-display {
+  appearance: none;
+  background: transparent;
+  border: 1px solid #fff;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #47b1f5;
+  padding: 8px;
+  margin: 0;
+  cursor: pointer;
+  outline: none;
+  width: 300px;
+  padding: 8px 40px 8px 16px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.chevron-down {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  fill: #333;
+}
+
+#image-display option {
+  background-color: #2e2d2d;
+  color: #c3c3c3;
+}
+
 .upload__title-group,
 .upload__description-group,
 .upload__maturity-group {
@@ -1931,7 +1983,7 @@ section.upload {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 0.625em;
+  gap: 2em;
 
   position: relative;
 }
@@ -2033,6 +2085,12 @@ section.upload {
   }
 }
 
+@media (max-width: 731px) {
+  .image-display-container {
+    flex-direction: column;
+  }
+}
+
 /* Beyond mobile */
 @media (min-width: 768px) {
   .modal__actions--center {
@@ -2128,19 +2186,86 @@ section.upload {
   background-color: #2e2d2d;
   padding: 0 5em 5em 5em;
   max-width: 50em;
-  border-left: solid 1px #343a40;
+  /* border-left: solid 1px #343a40; */
+}
+
+/* Style for modal container */
+#imageModal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  overflow: auto; /* Enable scrolling for modal content */
+}
+
+/* Style for modal content */
+#imageModal-content {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #000;
+  padding: 24px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow-y: auto; /* Enable scrolling for modal content */
+}
+
+/* Style for modal close button */
+#imageModal-close-btn {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  border-radius: 48px;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.modal-close-icon {
+  stroke: #fff;
+  width: 48px;
+}
+img.modal-image {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.modal-image.W8uuV {
+  cursor: zoom-in;
+  margin: auto;
+  /* pointer-events: all; */
+}
+
+.modal-image._28Iam {
+  cursor: zoom-out;
+  max-width: none;
+  max-height: none;
+  position: relative;
+  margin: auto auto 24px auto;
+  top: 0;
+  left: 0;
+  /* pointer-events: all; */
 }
 
 .highlighted-container {
   background-color: #3d3c3c;
-  /* position: absolute;
-  left: 50%;
-  transform: translate(-50%, 0); */
-  /* padding: 5em 5em; */
   border-radius: 10px;
   display: flex;
   flex-direction: column;
-  /* max-width: 50em; */
   color: #fff;
 }
 
@@ -2202,8 +2327,7 @@ p.hc {
 
 .side-container {
   /* background-color: #39f; */
-  width: 20em;
-  border-right: solid 1px #343a40;
+  /* border-right: solid 1px #343a40; */
 }
 
 .highlighted__img {
@@ -2334,6 +2458,12 @@ a .highlighted-hashtag {
   gap: 0.5em;
 }
 
+.image-details-container {
+  display: flex;
+  gap: 1em;
+  align-items: center;
+}
+
 .btn-subscribe {
   font-size: 16px;
   background-color: #47b1f5;
@@ -2453,7 +2583,7 @@ img.grid-image {
   }
 
   .highlighted-section {
-    border-right: solid 1px #343a40;
+    /* border-right: solid 1px #343a40; */
   }
 
   .side-container {

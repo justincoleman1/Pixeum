@@ -46,6 +46,23 @@ block content
             .modal__content.image-processing-step(hidden='')
               .upload__mature-type
                 img.uploaded-img(src='img/no-img-available.jpg')
+                .image-display-container
+                  label(for="image-display") Display Options:
+                  .image-display-wrapper
+                    select#image-display
+                      option#orignalSize(value='original')
+                      option(value='400') Size: 400 pixels wide
+                      option(value='600') Size: 600 pixels wide
+                      option(value='800') Size: 800 pixels wide
+                      option(value='900') Size: 900 pixels wide
+                      option(value='1024') Size: 1024 pixels wide
+                      option(value='1280') size: 1280 pixels wide
+                      option(value='1600') size: 1600 pixels wide
+                      option(value='1920') size: 1920 pixels wide
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="chevron-down">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                    </svg>
+
               .upload__title-group
                 h4 Title
                 input#title(type='text' name='title' placeholder='Give your upload a title')
