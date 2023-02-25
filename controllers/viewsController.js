@@ -5,15 +5,7 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const { timeAgo2 } = require('../utils/timeAgo');
 
-// exports.alerts = (req, res, next) => {
-//   const { alert } = req.query;
-//   if (alert === 'booking')
-//     res.locals.alert =
-//       "Your booking was successful! Please check your email for a confirmation. If your booking doesn't show up here immediatly, please come back later.";
-//   next();
-// };
-
-exports.getOverviewPage = catchAsync(async (req, res, next) => {
+exports.getHomePage = catchAsync(async (req, res, next) => {
   //1) Get upload data from collection
   const images = await Upload.find({ mimetype: 'image' }).populate({
     path: 'users',
@@ -23,7 +15,7 @@ exports.getOverviewPage = catchAsync(async (req, res, next) => {
   const tags = await Tags.find({ maturity: 'everyone' }).limit(20);
   //2) Build Template
   //3) Render that template using upload data from 1)
-  res.status(200).render('overview', {
+  res.status(200).render('home', {
     title: 'All Uploads',
     images,
     tags,
@@ -81,21 +73,3 @@ exports.getUploadForm = (req, res) => {
     title: 'Upload your work',
   });
 };
-
-// exports.getMyUploads = catchAsync(async (req, res, next) => {
-//   //1) Find all uploads
-//   const uploads = await Upload.find({ user: req.user._id }).populate('uploads');
-//   if (!uploads) {
-//     res.status(200).render('overview', {
-//       title: 'My uploads',
-//       uploads: [],
-//     });
-//   }
-//   //2) Find uploads with the returned IDs
-//   const uploadIDs = bookings.map((el) => el.upload);
-//   const uploads = await Upload.find({ _id: { $in: uploadIDs } });
-//   res.status(200).render('overview', {
-//     title: 'My uploads',
-//     uploads,
-//   });
-// });

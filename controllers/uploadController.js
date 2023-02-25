@@ -1,5 +1,6 @@
 const fs = require('fs');
 const sharp = require('sharp');
+const { v5: uuidv5 } = require('uuid');
 const axios = require('axios');
 const FormData = require('form-data');
 const Handler = require('./handlerFactory');
@@ -8,15 +9,16 @@ const Tag = require('../models/tagModel');
 const { upload } = require('./multerController');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
-const { makeid } = require('../utils/makeId');
 const { formatBytes } = require('../utils/formatBytes');
 
+// Middleware to set the user ID for a new upload
 exports.setUploadUserIds = (req, res, next) => {
   // Allow nested routes
   if (!req.body.user) req.body.user = req.user.id;
   next();
 };
 
+// Utility function to filter an object for certain properties
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
   Object.keys(obj).forEach((el) => {
@@ -25,16 +27,19 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
+// Middleware to handle the file upload itself
 exports.uploadMain = upload.single('media');
 
+// Middleware to check for nudity using the Sightengine API
 exports.checkForNudity = async (req, res, next) => {
   if (!req.file) {
+    // if there is no file, pass to the next middleware
     return next();
   }
 
   const imageBuffer = req.file.buffer;
 
-  // Send the image buffer to the Sightengine API
+  // Create FormData to send the image buffer to the Sightengine API
   const formData = new FormData();
   formData.append('media', imageBuffer, {
     filename: req.file.originalname,
@@ -44,6 +49,7 @@ exports.checkForNudity = async (req, res, next) => {
   formData.append('api_user', '204557528');
   formData.append('api_secret', 'gsz7YJsFniemKtFx8KkL');
 
+  // Send a post request to the Sightengine API with the FormData
   axios({
     method: 'post',
     url: 'https://api.sightengine.com/1.0/check.json',
@@ -51,18 +57,21 @@ exports.checkForNudity = async (req, res, next) => {
     headers: formData.getHeaders(),
   })
     .then(function (response) {
+      // if request was successful
       console.log('Sightengine API Response:', response.data);
 
+      // Check if the nudity score is greater than 0.5
       const nsfwScore = response.data.nudity.erotica;
       if (nsfwScore > 0.5) {
         try {
           if (!req.body.maturity) {
-            // remove the empty string from the array and add 'moderate' in its place
+            // If maturity is not set, add 'moderate' and 'nudity' to the maturity string
             req.body.maturity = 'moderate';
             req.body.maturity += ',nudity';
           } else {
-            // check if 'nudity' is an array element within the maturity array, if it isn't, then add it
+            // If maturity is already set, check if 'nudity' is included in the maturity string
             if (!req.body.maturity.includes('nudity')) {
+              // If not, add 'nudity' to the maturity string
               req.body.maturity += ',nudity';
             }
           }
@@ -70,84 +79,104 @@ exports.checkForNudity = async (req, res, next) => {
           console.log('Error accessing maturity array:', error);
         }
       }
-      next();
+      next(); // call the next middleware
     })
     .catch(function (error) {
+      // if there was an error with the request
       console.log('Error:', error.message);
-      return next();
+      return next(); // call the next middleware
     });
 };
 
-//Image Display Options
-//Original Image --------------Downloads,Upload's Page Main Image Display
+// Middleware to handle resizing the image and saving the original
 exports.rawUploadedImage = catchAsync(async (req, res, next) => {
+  // If no file is present, skip this middleware and move on to the next one
   if (!req.file) return next();
-  req.body.filename = `${makeid(5)}` + `-${req.user._id}-${Date.now()}.jpeg`;
+
+  // Generate a unique filename for the uploaded image
+  // Generate a unique identifier using the current timestamp and namespace
+  const timestamp = new Date().getTime();
+  const uniqueFilename =
+    uuidv5(`${process.env.NAME_SPACE}-${timestamp}`, process.env.NAME_SPACE) +
+    '.jpeg';
+  // const uniqueFilename = ${makeid(5)}` + `-${req.user._id}-${Date.now()}.jpeg`;
+  req.body.filename = uniqueFilename;
   req.file.filename = req.body.filename;
 
+  // Extract the raw pixel data and image info using Sharp
   const { data, info } = await sharp(req.file.buffer)
     .raw()
     .toBuffer({ resolveWithObject: true });
 
+  // Convert the raw pixel data to a Uint8ClampedArray and retrieve the width, height, and channels from the image info
   const pixelArray = new Uint8ClampedArray(data.buffer);
   const { width, height, channels } = info;
+
+  // Write the raw image file to disk using Sharp
   await sharp(pixelArray, { raw: { width, height, channels } }).toFile(
     `public/img/stock/raw-${req.file.filename}`
   );
+
+  // Move on to the next middleware
   next();
 });
 
+// Middleware to resize uploaded images
 exports.resizedUploadedImage = catchAsync(async (req, res, next) => {
-  // console.log('FILE?', req.file);
-  if (!req.file) return next();
+  if (!req.file) return next(); // If there is no uploaded file, move to next middleware
 
-  req.file.filename = req.body.filename;
+  req.file.filename = req.body.filename; // Set filename from request body
 
-  const imageBuffer = req.file.buffer;
+  const imageBuffer = req.file.buffer; // Get the buffer of the uploaded file
 
   const imageWidth =
-    req.body.width !== 'original' ? parseInt(req.body.width) : null;
+    req.body.width !== 'original' ? parseInt(req.body.width) : null; // Get the width of the image to resize
 
   const processImage = async (pathToFile) => {
-    const rIB = await fs.promises.readFile(pathToFile);
+    // Function to process the image file
+    const rIB = await fs.promises.readFile(pathToFile); // Read the image buffer
 
-    const metadata = await sharp(rIB).metadata();
+    const metadata = await sharp(rIB).metadata(); // Get the image metadata
 
-    req.body.size = metadata.size;
-    req.body.width = metadata.width;
-    req.body.height = metadata.height;
-    req.body.format = metadata.format;
+    req.body.size = metadata.size; // Set the file size from metadata
+    req.body.width = metadata.width; // Set the file width from metadata
+    req.body.height = metadata.height; // Set the file height from metadata
+    req.body.format = metadata.format; // Set the file format from metadata
   };
 
   if (imageWidth !== null) {
-    await sharp(imageBuffer)
+    // If the image width is specified
+    await sharp(imageBuffer) // Resize the image with sharp
       .resize({
-        fit: sharp.fit.contain,
-        width: imageWidth,
+        fit: sharp.fit.contain, // Set the fit method to contain
+        width: imageWidth, // Set the width to resize
       })
-      .jpeg({ quality: 90 })
-      .toFile(`public/img/stock/${req.file.filename}`);
+      .jpeg({ quality: 90 }) // Convert the image to JPEG format with a quality of 90%
+      .toFile(`public/img/stock/${req.file.filename}`); // Save the file to the server
 
     try {
-      await processImage(`public/img/stock/${req.file.filename}`);
+      await processImage(`public/img/stock/${req.file.filename}`); // Process the image and set the metadata values
     } catch (error) {
-      return next(new AppError(error.message, 500));
+      return next(new AppError(error.message, 500)); // If there is an error, send an error message
     }
   } else {
-    await sharp(imageBuffer)
-      .jpeg({ quality: 90 })
-      .toFile(`public/img/stock/${req.file.filename}`);
+    await sharp(imageBuffer) // If the image width is not specified
+      .jpeg({ quality: 90 }) // Convert the image to JPEG format with a quality of 90%
+      .toFile(`public/img/stock/${req.file.filename}`); // Save the file to the server
+
     try {
-      await processImage(`public/img/stock/${req.file.filename}`);
+      await processImage(`public/img/stock/${req.file.filename}`); // Process the image and set the metadata values
     } catch (error) {
-      return next(new AppError(error.message, 500));
+      return next(new AppError(error.message, 500)); // If there is an error, send an error message
     }
   }
 
-  next();
+  next(); // Move to the next middleware
 });
 
+// create new upload object with filteredBody and upload data from multer middleware
 exports.createUpload = catchAsync(async (req, res, next) => {
+  // filter object to only include certain fields
   const filteredBody = filterObj(
     req.body,
     'title',
@@ -156,6 +185,7 @@ exports.createUpload = catchAsync(async (req, res, next) => {
     'maturity'
   );
 
+  // if file is included in request, add media data to filteredBody
   if (req.file) {
     filteredBody.media = req.file.filename;
     filteredBody.mimetype = req.file.mimetype.split('/')[0];
@@ -164,6 +194,7 @@ exports.createUpload = catchAsync(async (req, res, next) => {
     filteredBody.height = req.body.height;
     filteredBody.format = req.body.format;
   }
+  // add user id to filteredBody
   filteredBody.user = req.user._id;
 
   // Split tags and maturity by comma and create arrays
@@ -180,8 +211,10 @@ exports.createUpload = catchAsync(async (req, res, next) => {
   filteredBody.tags = trimmedTagArray;
   filteredBody.maturity = trimmedMaturityArray;
 
+  // create new upload object
   const newUpload = await Upload.create(filteredBody);
 
+  // add tag count to existing tags or create new tags
   if (filteredBody.tags) {
     filteredBody.tags.forEach(
       catchAsync(async function (tag) {
@@ -200,7 +233,7 @@ exports.createUpload = catchAsync(async (req, res, next) => {
           if (await Tag.exists({ name: tag })) {
             await Tag.findOneAndUpdate({ name: tag }, { $inc: { count: 1 } });
           } else {
-            //create new tag
+            // create new tag if it doesn't exist
             await Tag.create({ name: tag });
           }
         }
@@ -208,6 +241,7 @@ exports.createUpload = catchAsync(async (req, res, next) => {
     );
   }
 
+  // return success status
   res.status(200).json({
     status: 'success',
   });

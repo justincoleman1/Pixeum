@@ -87,3 +87,19 @@ exports.deleteDoc = (Model) =>
       data: null,
     });
   });
+
+// This code exports a set of database functions that perform CRUD operations on documents of a given Model (a Mongoose schema). The functions include createDoc, getDoc, getAllDocs, updateDoc, and deleteDoc. The functions take in the Model as an argument, and return middleware functions that can be used with an HTTP route.
+
+// The code also includes a function called checkIfDocExist, which is used to verify that a document exists before performing a certain operation on it. This function is used in the getDoc, updateDoc, and deleteDoc functions.
+
+// The createDoc function creates a new document of the given Model, and returns the created document in the response.
+
+// The getDoc function gets a single document by its ID, and returns the document in the response. If a popOptions argument is provided, the function will populate the specified fields of the document.
+
+// The getAllDocs function gets all documents of the given Model that match a certain filter (if specified in the URL query params), and returns an array of documents in the response. The response also includes the number of documents returned.
+
+// The updateDoc function updates a document by its ID, and returns the updated document in the response.
+
+// The deleteDoc function deletes a document by its ID, and returns a success status in the response.
+
+// All of these functions use the catchAsync middleware to handle any errors that might occur during the database operation. The AppError and APIFeatures modules are also imported for use in these functions.

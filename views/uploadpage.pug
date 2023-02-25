@@ -118,9 +118,11 @@ block content
 
         .side-container
             .side__container-header
-                img.profile__avatar-img(src=`/img/users/${upload.user.photo}`)
-                h4=`${upload.user.username}`
-            button.btn.btn-subscribe Subscribe
+                .side__header
+                    img.side__avatar-img(src=`/img/users/${upload.user.photo}`)
+                    h4=`${upload.user.username}`
+                .side__sub-btn
+                    button.btn.btn-subscribe Subscribe
 
             .side__container-body
                 .side__container-item
