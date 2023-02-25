@@ -60,17 +60,11 @@ exports.checkForNudity = async (req, res, next) => {
       const nsfwScore = response.data.nudity.erotica;
       if (nsfwScore > 0.5) {
         try {
-          if (
-            !req.body.maturity.includes('moderate') ||
-            !req.body.maturity.includes('strict')
-          ) {
-            // check if the first element in the maturity array is an empty string
-            if (req.body.maturity[0] === '') {
-              // remove the empty string from the array and add 'moderate' in its place
-              req.body.maturity = ['moderate'];
-              req.body.maturity.push('nudity');
-              req.body.maturity.push('sexual themes');
-            }
+          if (!req.body.maturity) {
+            // remove the empty string from the array and add 'moderate' in its place
+            req.body.maturity = ['moderate'];
+            req.body.maturity.push('nudity');
+            req.body.maturity.push('sexual themes');
           } else {
             // check if 'nudity' is an array element within the maturity array, if it isn't, then add it
             if (!req.body.maturity.includes('nudity')) {
@@ -129,7 +123,6 @@ exports.resizedUploadedImage = catchAsync(async (req, res, next) => {
 
     const metadata = await sharp(rIB).metadata();
 
-    req.body.buffer = metadata.buffer;
     req.body.size = metadata.size;
     req.body.width = metadata.width;
     req.body.height = metadata.height;
@@ -178,8 +171,6 @@ exports.createUpload = catchAsync(async (req, res, next) => {
     filteredBody.media = req.file.filename;
     filteredBody.mimetype = req.file.mimetype.split('/')[0];
     filteredBody.size = formatBytes(req.body.size);
-
-    filteredBody.data = req.body.buffer;
     filteredBody.width = req.body.width;
     filteredBody.height = req.body.height;
     filteredBody.format = req.body.format;

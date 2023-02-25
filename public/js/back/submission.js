@@ -2,34 +2,14 @@
 import axios from 'axios';
 import { showAlert } from '../front/alerts';
 
-export const submit_art = async (
-  media,
-  width,
-  title,
-  description,
-  tags,
-  maturity
-) => {
+export const submit_art = async (data) => {
   try {
     const config = {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
     };
-    const res = await axios.post(
-      '/api/v1/uploads/submission',
-      {
-        data: {
-          media,
-          width,
-          title,
-          description,
-          tags,
-          maturity,
-        },
-      },
-      config
-    );
+    const res = await axios.post('/api/v1/uploads/submission', data, config);
 
     if (res.data.status === 'success') {
       showAlert('success', 'Upload successful!');

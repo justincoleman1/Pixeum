@@ -15,7 +15,6 @@ const uploadSchema = new mongoose.Schema(
         message: 'Media may only be of type image, application, or text',
       },
     },
-    data: Buffer,
     width: Number,
     height: Number,
     format: String,

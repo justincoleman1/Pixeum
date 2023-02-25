@@ -258,27 +258,25 @@ if (uploadForm) {
     const title = document.getElementById('title').value;
     const description = document.getElementById('description').value;
 
-    const tags = Array.from(document.querySelectorAll('.tag')).map((tag) =>
-      tag.textContent.slice(0, -1)
-    );
-    const checkedMaturityOptions = document.querySelectorAll(
-      '.maturity-option:checked'
-    );
-    const maturity =
-      checkedMaturityOptions.length > 0
-        ? Array.from(checkedMaturityOptions).map((option) => option.value)
-        : [''];
+    let tags = [];
+    document.querySelectorAll('.tag').forEach((tag) => {
+      tags.push(tag.textContent.slice(0, -1));
+    });
 
-    // const data = new FormData();
-    // data.append('media', media);
-    // data.append('width', width);
-    // data.append('title', title);
-    // data.append('description', description);
-    // data.append('tags', tags);
-    // data.append('maturity', maturity);
+    let maturity = [];
+    document.querySelectorAll('.maturity-option:checked').forEach((option) => {
+      maturity.push(option);
+    });
 
-    // await submit_art(data);
-    await submit_art(media, width, title, description, tags, maturity);
+    const data = new FormData();
+    data.append('media', media);
+    data.append('width', width);
+    data.append('title', title);
+    data.append('description', description);
+    data.append('tags', tags);
+    data.append('maturity', maturity);
+
+    await submit_art(data);
   });
 }
 

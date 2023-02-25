@@ -92,7 +92,7 @@ block content
                         
                         .highlighted__maturity-tags
                             .highlighted-maturity-container
-                                if upload.maturity[0] !== ''
+                                if upload.maturity
                                     h5.highlighted-maturity R-18
                                     if upload.maturity[0] === 'strict'
                                         h5.highlighted-maturity explicit
@@ -101,7 +101,7 @@ block content
                                     each mat,i in upload.maturity
                                         if i > 0
                                             h5=mat
-                            if upload.tags[0] !== ''
+                            if upload.tags
                                 .highlighted-tags
                                     each tag in upload.tags
                                         a(href="#")
