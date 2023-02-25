@@ -5,6 +5,14 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const { timeAgo2 } = require('../utils/timeAgo');
 
+// exports.alerts = (req, res, next) => {
+//   const { alert } = req.query;
+//   if (alert === 'booking')
+//     res.locals.alert =
+//       "Your booking was successful! Please check your email for a confirmation. If your booking doesn't show up here immediatly, please come back later.";
+//   next();
+// };
+
 exports.getOverviewPage = catchAsync(async (req, res, next) => {
   //1) Get upload data from collection
   const images = await Upload.find({ mimetype: 'image' }).populate({

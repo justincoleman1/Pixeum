@@ -11,22 +11,12 @@ export const submit_art = async (
   maturity
 ) => {
   try {
-    const res = await axios({
-      method: 'POST',
-      url: '/api/v1/uploads/submission',
-      data: {
-        media,
-        width,
-        title,
-        description,
-        tags,
-        maturity,
-      },
+    const config = {
       headers: {
         'Content-Type': 'multipart/form-data',
-        // 'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
       },
-    });
+    };
+    const res = await axios.post('/api/v1/uploads/submission', data, config);
 
     if (res.data.status === 'success') {
       showAlert('success', 'Upload successful!');

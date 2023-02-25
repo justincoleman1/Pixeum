@@ -15,6 +15,7 @@ router.post(
   '/submission',
   authController.protect,
   uploadController.uploadMain,
+  uploadController.checkForNudity,
   uploadController.rawUploadedImage,
   uploadController.resizedUploadedImage,
   uploadController.createUpload

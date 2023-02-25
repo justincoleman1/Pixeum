@@ -145,14 +145,15 @@
 
     tags.input.addEventListener('keydown', function (e) {
       var str = tags.input.value.trim();
+      const regex = /^[a-zA-Z0-9]{2,30}$/;
       if (!!~[9, 13, 32, 188].indexOf(e.keyCode)) {
         e.preventDefault();
         tags.input.value = '';
-        if (str != '') tags.addTag(str.toLowerCase());
+        if (regex.test(str)) tags.addTag(str.toLowerCase());
       } else {
         if (
           !!~[8].indexOf(e.keyCode) &&
-          str == '' &&
+          !regex.test(str) &&
           document.querySelector('.tag')
         ) {
           tags.deleteLastTag();

@@ -8,6 +8,8 @@ const { upload } = require('./multerController');
 const sharp = require('sharp');
 const { makeid } = require('../utils/makeId');
 const { formatBytes } = require('../utils/formatBytes');
+const axios = require('axios');
+const FormData = require('form-data');
 
 exports.setUploadUserIds = (req, res, next) => {
   // Allow nested routes
@@ -24,6 +26,73 @@ const filterObj = (obj, ...allowedFields) => {
 };
 
 exports.uploadMain = upload.single('media');
+
+exports.checkForNudity = async (req, res, next) => {
+  if (!req.file) {
+    return next();
+  }
+
+  console.log(req.body.maturity);
+  console.log(req.body.maturity.length);
+  console.log(req.body.maturity.includes('moderate'));
+  console.log(req.body.maturity.includes('strict'));
+
+  const imageBuffer = req.file.buffer;
+
+  // Send the image buffer to the Sightengine API
+  const formData = new FormData();
+  formData.append('media', imageBuffer, {
+    filename: req.file.originalname,
+    contentType: req.file.mimetype,
+  });
+  formData.append('models', 'nudity-2.0');
+  formData.append('api_user', '204557528');
+  formData.append('api_secret', 'gsz7YJsFniemKtFx8KkL');
+
+  axios({
+    method: 'post',
+    url: 'https://api.sightengine.com/1.0/check.json',
+    data: formData,
+    headers: formData.getHeaders(),
+  })
+    .then(function (response) {
+      console.log('Sightengine API Response:', response.data);
+      const nsfwScore = response.data.nudity.erotica;
+      if (nsfwScore > 0.5) {
+        try {
+          if (
+            !req.body.maturity.includes('moderate') ||
+            !req.body.maturity.includes('strict')
+          ) {
+            // check if the first element in the maturity array is an empty string
+            if (req.body.maturity[0] === '') {
+              // remove the empty string from the array and add 'moderate' in its place
+              req.body.maturity = ['moderate'];
+              req.body.maturity.push('nudity');
+              req.body.maturity.push('sexual themes');
+            }
+          } else {
+            // check if 'nudity' is an array element within the maturity array, if it isn't, then add it
+            if (!req.body.maturity.includes('nudity')) {
+              req.body.maturity.push('nudity');
+            }
+
+            // check if 'sexual themes' is an array element within the maturity array, if it isn't, then add it
+            if (!req.body.maturity.includes('sexual themes')) {
+              req.body.maturity.push('sexual themes');
+            }
+          }
+        } catch (error) {
+          console.log('Error accessing maturity array:', error);
+        }
+      }
+      next();
+    })
+    .catch(function (error) {
+      console.log('Error:', error.message);
+      return next();
+    });
+};
 
 //Image Display Options
 //Original Image --------------Downloads,Upload's Page Main Image Display
@@ -55,10 +124,9 @@ exports.resizedUploadedImage = catchAsync(async (req, res, next) => {
   const imageWidth =
     req.body.width !== 'original' ? parseInt(req.body.width) : null;
 
-  const processImage = async () => {
-    const rIB = await fs.promises.readFile(
-      `public/img/stock/${req.file.filename}`
-    );
+  const processImage = async (pathToFile) => {
+    const rIB = await fs.promises.readFile(pathToFile);
+
     const metadata = await sharp(rIB).metadata();
 
     req.body.buffer = metadata.buffer;
@@ -78,18 +146,18 @@ exports.resizedUploadedImage = catchAsync(async (req, res, next) => {
       .toFile(`public/img/stock/${req.file.filename}`);
 
     try {
-      await processImage();
+      await processImage(`public/img/stock/${req.file.filename}`);
     } catch (error) {
-      return next(AppError(error.message, 500));
+      return next(new AppError(error.message, 500));
     }
   } else {
     await sharp(imageBuffer)
       .jpeg({ quality: 90 })
       .toFile(`public/img/stock/${req.file.filename}`);
     try {
-      await processImage();
+      await processImage(`public/img/stock/${req.file.filename}`);
     } catch (error) {
-      return next(AppError(error.message, 500));
+      return next(new AppError(error.message, 500));
     }
   }
 
@@ -97,6 +165,7 @@ exports.resizedUploadedImage = catchAsync(async (req, res, next) => {
 });
 
 exports.createUpload = catchAsync(async (req, res, next) => {
+  console.log(req.body);
   const filteredBody = filterObj(
     req.body,
     'title',
@@ -150,23 +219,6 @@ exports.createUpload = catchAsync(async (req, res, next) => {
     status: 'success',
   });
 });
-
-// exports.updateUpload = catchAsync(async (req, res, next) => {
-//   const newUpload = await Upload.findByIdAndUpdate(req.upload._id, {
-//     media_type: req.body.media_type,
-//     title: req.body.title,
-//     description: req.body.description,
-//     tags: req.body.tags,
-//     maturity: req.body.maturity,
-//   });
-
-//   res.status(200).json({
-//     status: 'success',
-//     data: {
-//       upload: newUpload,
-//     },
-//   });
-// });
 
 exports.getAllUploads = Handler.getAllDocs(Upload);
 exports.getUpload = Handler.getDoc(Upload, { path: 'comments' });

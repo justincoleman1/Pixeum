@@ -10,11 +10,10 @@ const uploadSchema = new mongoose.Schema(
     },
     mimetype: {
       type: String,
-      // required: [true, 'A upload must have a media_type'],
-      // enum: {
-      //   values: ['image', 'application', 'text'],
-      //   message: 'Media may only be of type image,application, or text',
-      // },
+      enum: {
+        values: ['image', 'application', 'text'],
+        message: 'Media may only be of type image, application, or text',
+      },
     },
     data: Buffer,
     width: Number,
@@ -24,11 +23,11 @@ const uploadSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
-      // required: [true, 'A upload must have a user!'],
+      required: [true, 'A upload must have a user!'],
     },
     title: {
       type: String,
-      // required: [true, 'A upload must have a title'],
+      required: [true, 'A upload must have a title'],
     },
     description: {
       type: String,
@@ -43,6 +42,7 @@ const uploadSchema = new mongoose.Schema(
     maturity: {
       type: [String],
       enum: [
+        '',
         'moderate',
         'strict',
         'nudity',

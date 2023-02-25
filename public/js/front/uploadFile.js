@@ -23,6 +23,10 @@ matureContentInput.addEventListener('change', (e) => {
     matureFieldSet.classList.add('hidden');
     strictInput.checked = false;
     moderateInput.checked = false;
+
+    document.querySelectorAll('.maturity-option').forEach((option) => {
+      option.checked = false;
+    });
   } else {
     // if the checkbox is checked, show the associated fieldset and check the moderate checkbox
     matureFieldSet.classList.remove('hidden');

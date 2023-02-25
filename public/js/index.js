@@ -45,19 +45,18 @@ import {
   notificationsDropDownClosed,
   closeProfileDropDown,
   closeNotificationsDropDown,
-  closeOnEscape,
   openCloseProfileDropDownMenu,
   openCloseNotificationsDropDownList,
 } from './front/navbar';
 
 import { disallowBodyScroll, allowBodyScroll } from './front/scroll';
 
-// DOM ELEMENTS
+const alertMessage = document.querySelector('body').dataset.alert;
 
+// DOM ELEMENTS
 const sideNavBtn = document.querySelector('.btn-side-nav');
 
 const searchBtn = document.querySelector('.btn-search');
-const searchIcon = document.querySelector('.search-icon');
 const searchInput = document.getElementById('search-input');
 const searchClearBtn = document.getElementById('search-clear');
 const searchRevert = document.getElementById('search-revert');
@@ -75,9 +74,6 @@ const profileBtn = document.getElementById('profile-menu-trigger');
 const notificationsBtn = document.getElementById('notifications-list-trigger');
 
 const logOutBtn = document.getElementById('logoutBtn');
-
-const userDataForm = document.querySelector('.form-user-data');
-const userPasswordForm = document.querySelector('.form-user-password');
 
 const overlay = document.querySelector('.overlay');
 
@@ -132,9 +128,6 @@ const uploadForm = document.getElementById('submit-upload');
 const updatePhotoInput = document.getElementById('input__photo');
 
 const originalProfileImage = document.getElementById('img__profile-photo');
-
-//Upload page
-const uploadPageContainer = document.querySelector('.upload-container');
 
 //WINDOW RESIZES
 window.addEventListener('load', (e) => {
@@ -258,27 +251,34 @@ if (logOutBtn) logOutBtn.addEventListener('click', logout);
 
 if (uploadForm) {
   asideDisappear();
-
-  uploadForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-
+  uploadForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
     const media = uploadInput.files[0];
     const width = document.getElementById('image-display').value;
     const title = document.getElementById('title').value;
     const description = document.getElementById('description').value;
-    let tags = [];
-    document
-      .querySelectorAll('.tag')
-      .forEach((tag) => tags.push(tag.textContent.slice(0, -1)));
 
-    let maturity = [];
-    if (document.getElementById('mature').checked) {
-      document.querySelectorAll('.maturity-option').forEach((option) => {
-        if (option.checked) maturity.push(option.value);
-      });
-    }
+    const tags = Array.from(document.querySelectorAll('.tag')).map((tag) =>
+      tag.textContent.slice(0, -1)
+    );
+    const checkedMaturityOptions = document.querySelectorAll(
+      '.maturity-option:checked'
+    );
+    const maturity =
+      checkedMaturityOptions.length > 0
+        ? Array.from(checkedMaturityOptions).map((option) => option.value)
+        : [''];
 
-    submit_art(media, width, title, description, tags, maturity);
+    // const data = new FormData();
+    // data.append('media', media);
+    // data.append('width', width);
+    // data.append('title', title);
+    // data.append('description', description);
+    // data.append('tags', tags);
+    // data.append('maturity', maturity);
+
+    // await submit_art(data);
+    await submit_art(media, width, title, description, tags, maturity);
   });
 }
 
@@ -512,11 +512,6 @@ if (updatePasswordForm) {
   });
 }
 
-// if (uploadPageContainer) {
-//   asideDisappear();
-//   navDisappear();
-// }
-const alertMessage = document.querySelector('body').dataset.alert;
 if (alertMessage) showAlert('success', alertMessage, 20);
 
 const toDataURL = (url) =>
