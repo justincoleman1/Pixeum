@@ -16,7 +16,20 @@ export const submit_art = async (
         'Content-Type': 'multipart/form-data',
       },
     };
-    const res = await axios.post('/api/v1/uploads/submission', data, config);
+    const res = await axios.post(
+      '/api/v1/uploads/submission',
+      {
+        data: {
+          media,
+          width,
+          title,
+          description,
+          tags,
+          maturity,
+        },
+      },
+      config
+    );
 
     if (res.data.status === 'success') {
       showAlert('success', 'Upload successful!');
