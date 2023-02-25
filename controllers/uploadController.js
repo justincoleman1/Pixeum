@@ -1,15 +1,15 @@
 const fs = require('fs');
-const Handler = require('./handlerFactory');
-const AppError = require('../utils/appError');
-const Upload = require('../models/uploadModel');
-const Tag = require('../models/tagModel');
-const catchAsync = require('../utils/catchAsync');
-const { upload } = require('./multerController');
 const sharp = require('sharp');
-const { makeid } = require('../utils/makeId');
-const { formatBytes } = require('../utils/formatBytes');
 const axios = require('axios');
 const FormData = require('form-data');
+const Handler = require('./handlerFactory');
+const Upload = require('../models/uploadModel');
+const Tag = require('../models/tagModel');
+const { upload } = require('./multerController');
+const AppError = require('../utils/appError');
+const catchAsync = require('../utils/catchAsync');
+const { makeid } = require('../utils/makeId');
+const { formatBytes } = require('../utils/formatBytes');
 
 exports.setUploadUserIds = (req, res, next) => {
   // Allow nested routes
@@ -32,11 +32,6 @@ exports.checkForNudity = async (req, res, next) => {
     return next();
   }
 
-  console.log(req.body.maturity);
-  console.log(req.body.maturity.length);
-  console.log(req.body.maturity.includes('moderate'));
-  console.log(req.body.maturity.includes('strict'));
-
   const imageBuffer = req.file.buffer;
 
   // Send the image buffer to the Sightengine API
@@ -57,23 +52,18 @@ exports.checkForNudity = async (req, res, next) => {
   })
     .then(function (response) {
       console.log('Sightengine API Response:', response.data);
+
       const nsfwScore = response.data.nudity.erotica;
       if (nsfwScore > 0.5) {
         try {
           if (!req.body.maturity) {
             // remove the empty string from the array and add 'moderate' in its place
-            req.body.maturity = ['moderate'];
-            req.body.maturity.push('nudity');
-            req.body.maturity.push('sexual themes');
+            req.body.maturity = 'moderate';
+            req.body.maturity += ',nudity';
           } else {
             // check if 'nudity' is an array element within the maturity array, if it isn't, then add it
             if (!req.body.maturity.includes('nudity')) {
-              req.body.maturity.push('nudity');
-            }
-
-            // check if 'sexual themes' is an array element within the maturity array, if it isn't, then add it
-            if (!req.body.maturity.includes('sexual themes')) {
-              req.body.maturity.push('sexual themes');
+              req.body.maturity += ',nudity';
             }
           }
         } catch (error) {
@@ -158,7 +148,6 @@ exports.resizedUploadedImage = catchAsync(async (req, res, next) => {
 });
 
 exports.createUpload = catchAsync(async (req, res, next) => {
-  console.log(req.body);
   const filteredBody = filterObj(
     req.body,
     'title',
@@ -175,8 +164,21 @@ exports.createUpload = catchAsync(async (req, res, next) => {
     filteredBody.height = req.body.height;
     filteredBody.format = req.body.format;
   }
-
   filteredBody.user = req.user._id;
+
+  // Split tags and maturity by comma and create arrays
+  const tagArray = filteredBody.tags ? filteredBody.tags.split(',') : [];
+  const maturityArray = filteredBody.maturity
+    ? filteredBody.maturity.split(',')
+    : [];
+
+  // Trim whitespace from tag and maturity values
+  const trimmedTagArray = tagArray.map((tag) => tag.trim());
+  const trimmedMaturityArray = maturityArray.map((maturity) => maturity.trim());
+
+  // Add tag and maturity arrays to filteredBody
+  filteredBody.tags = trimmedTagArray;
+  filteredBody.maturity = trimmedMaturityArray;
 
   const newUpload = await Upload.create(filteredBody);
 

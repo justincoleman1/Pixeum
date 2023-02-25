@@ -57,6 +57,7 @@ const alertMessage = document.querySelector('body').dataset.alert;
 const sideNavBtn = document.querySelector('.btn-side-nav');
 
 const searchBtn = document.querySelector('.btn-search');
+
 const searchInput = document.getElementById('search-input');
 const searchClearBtn = document.getElementById('search-clear');
 const searchRevert = document.getElementById('search-revert');
@@ -258,15 +259,15 @@ if (uploadForm) {
     const title = document.getElementById('title').value;
     const description = document.getElementById('description').value;
 
-    let tags = [];
-    document.querySelectorAll('.tag').forEach((tag) => {
-      tags.push(tag.textContent.slice(0, -1));
-    });
-
-    let maturity = [];
-    document.querySelectorAll('.maturity-option:checked').forEach((option) => {
-      maturity.push(option);
-    });
+    const tags = Array.from(document.querySelectorAll('.tag')).map((tag) =>
+      tag.textContent.slice(0, -1)
+    );
+    const checkedMaturityOptions = document.querySelectorAll(
+      '.maturity-option:checked'
+    );
+    const maturity = Array.from(checkedMaturityOptions).map(
+      (option) => option.value
+    );
 
     const data = new FormData();
     data.append('media', media);
