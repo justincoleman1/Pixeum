@@ -51,43 +51,36 @@ exports.checkForNudity = async (req, res, next) => {
     formData.append('api_user', '204557528');
     formData.append('api_secret', 'gsz7YJsFniemKtFx8KkL');
 
-    // Send a post request to the Sightengine API with the FormData
-    axios({
-      method: 'post',
-      url: 'https://api.sightengine.com/1.0/check.json',
-      data: formData,
-      headers: formData.getHeaders(),
-    })
-      .then(function (response) {
-        // if request was successful
-        console.log('Sightengine API Response:', response.data);
+    try {
+      // Send a post request to the Sightengine API with the FormData and wait for the response
+      const response = await axios({
+        method: 'post',
+        url: 'https://api.sightengine.com/1.0/check.json',
+        data: formData,
+        headers: formData.getHeaders(),
+      });
 
-        // Check if the nudity score is greater than 0.5
-        const nsfwScore = response.data.nudity.erotica;
-        if (nsfwScore > 0.5) {
-          try {
-            if (!req.body.maturity) {
-              // If maturity is not set, add 'moderate' and 'nudity' to the maturity string
-              req.body.maturity = 'moderate';
-              req.body.maturity += ',nudity';
-            } else {
-              // If maturity is already set, check if 'nudity' is included in the maturity string
-              if (!req.body.maturity.includes('nudity')) {
-                // If not, add 'nudity' to the maturity string
-                req.body.maturity += ',nudity';
-              }
-            }
-          } catch (error) {
-            console.log('Error accessing maturity array:', error);
+      // if request was successful
+      console.log('Sightengine API Response:', response.data);
+
+      // Check if the nudity score is greater than 0.5
+      const nsfwScore = response.data.nudity.erotica;
+      if (nsfwScore > 0.5) {
+        if (!req.body.maturity) {
+          // If maturity is not set, add 'moderate' and 'nudity' to the maturity string
+          req.body.maturity = 'moderate,nudity';
+        } else {
+          // If maturity is already set, check if 'nudity' is included in the maturity string
+          if (!req.body.maturity.includes('nudity')) {
+            // If not, add 'nudity' to the maturity string
+            req.body.maturity += ',nudity';
           }
         }
-        next(); // call the next middleware
-      })
-      .catch(function (error) {
-        // if there was an error with the request
-        console.log('Error:', error.message);
-        return next(); // call the next middleware
-      });
+      }
+    } catch (error) {
+      // if there was an error with the request
+      console.log('Error:', error.message);
+    }
   }
 
   next();
