@@ -20,7 +20,13 @@ router.post(
   uploadController.resizedUploadedImage,
   uploadController.createUpload
 );
+
 // .patch(authController.protect, uploadController.updateUpload);
+router.delete(
+  '/:username/:slug',
+  authController.protect,
+  uploadController.deleteMyUpload
+);
 
 router
   .route('/:id')

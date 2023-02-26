@@ -6,6 +6,7 @@ import { login, logout } from './back/login';
 import { signup } from './back/signup';
 import { updateSettings } from './back/updateSettings';
 import { submit_art } from './back/submission';
+import { delete_art } from './back/deleteUpload';
 import { showAlert } from './front/alerts';
 import {
   expandSideNav,
@@ -125,6 +126,11 @@ const updatePasswordForm = document.getElementById('form__profile-password');
 const uploadInput = document.getElementById('media');
 const uploadForm = document.getElementById('submit-upload');
 
+//Upload delete btn
+const uploadDeleteBtn = document.getElementById('upload-delete-btn');
+const deleteUploadYes = document.getElementById('delete-upload-yes');
+const deleteUploadNo = document.getElementById('delete-upload-no');
+const deleteUploadModal = document.getElementById('delete-upload-modal');
 //Get the modal form inputs
 const updatePhotoInput = document.getElementById('input__photo');
 
@@ -278,6 +284,42 @@ if (uploadForm) {
     data.append('maturity', maturity);
 
     await submit_art(data);
+  });
+}
+
+if (uploadDeleteBtn) {
+  uploadDeleteBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    deleteUploadModal.style.display = 'flex';
+    deleteUploadModal.style.alignItems = 'center';
+    deleteUploadModal.style.justifyContent = 'center';
+  });
+}
+
+if (deleteUploadYes) {
+  deleteUploadYes.addEventListener('click', async (e) => {
+    e.preventDefault();
+    const urlParts = window.location.pathname.split('/');
+    const username = urlParts[urlParts.length - 2];
+    const uploadSlug = urlParts[urlParts.length - 1];
+
+    const response = await delete_art(username, uploadSlug);
+
+    if (response.status === 'success') {
+      deleteUploadModal.style.display = 'none';
+      showAlert('success', 'Successfully deleted your upload!');
+      window.setTimeout(() => {
+        window.location.href = `/${username}`;
+      }, 1500);
+    }
+  });
+}
+
+if (deleteUploadNo) {
+  deleteUploadNo.addEventListener('click', (e) => {
+    e.preventDefault();
+    deleteUploadModal.style.display = 'none';
   });
 }
 

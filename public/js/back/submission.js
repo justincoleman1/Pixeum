@@ -12,9 +12,10 @@ export const submit_art = async (data) => {
     const res = await axios.post('/api/v1/uploads/submission', data, config);
 
     if (res.data.status === 'success') {
+      const { username, slug } = res.data;
       showAlert('success', 'Upload successful!');
       window.setTimeout(() => {
-        location.assign('/');
+        location.assign(`/${username}/${slug}`);
       }, 1500);
     }
   } catch (err) {

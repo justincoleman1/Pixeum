@@ -6,6 +6,7 @@ const FormData = require('form-data');
 const Handler = require('./handlerFactory');
 const Upload = require('../models/uploadModel');
 const Tag = require('../models/tagModel');
+const User = require('../models/userModel');
 const { upload } = require('./multerController');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
@@ -14,7 +15,7 @@ const { formatBytes } = require('../utils/formatBytes');
 // Middleware to set the user ID for a new upload
 exports.setUploadUserIds = (req, res, next) => {
   // Allow nested routes
-  if (!req.body.user) req.body.user = req.user.id;
+  if (!req.body.user) req.body.user = req.user._id;
   next();
 };
 
@@ -37,55 +38,59 @@ exports.checkForNudity = async (req, res, next) => {
     return next();
   }
 
-  const imageBuffer = req.file.buffer;
+  if (!req.body.maturity.includes('nudity')) {
+    const imageBuffer = req.file.buffer;
 
-  // Create FormData to send the image buffer to the Sightengine API
-  const formData = new FormData();
-  formData.append('media', imageBuffer, {
-    filename: req.file.originalname,
-    contentType: req.file.mimetype,
-  });
-  formData.append('models', 'nudity-2.0');
-  formData.append('api_user', '204557528');
-  formData.append('api_secret', 'gsz7YJsFniemKtFx8KkL');
-
-  // Send a post request to the Sightengine API with the FormData
-  axios({
-    method: 'post',
-    url: 'https://api.sightengine.com/1.0/check.json',
-    data: formData,
-    headers: formData.getHeaders(),
-  })
-    .then(function (response) {
-      // if request was successful
-      console.log('Sightengine API Response:', response.data);
-
-      // Check if the nudity score is greater than 0.5
-      const nsfwScore = response.data.nudity.erotica;
-      if (nsfwScore > 0.5) {
-        try {
-          if (!req.body.maturity) {
-            // If maturity is not set, add 'moderate' and 'nudity' to the maturity string
-            req.body.maturity = 'moderate';
-            req.body.maturity += ',nudity';
-          } else {
-            // If maturity is already set, check if 'nudity' is included in the maturity string
-            if (!req.body.maturity.includes('nudity')) {
-              // If not, add 'nudity' to the maturity string
-              req.body.maturity += ',nudity';
-            }
-          }
-        } catch (error) {
-          console.log('Error accessing maturity array:', error);
-        }
-      }
-      next(); // call the next middleware
-    })
-    .catch(function (error) {
-      // if there was an error with the request
-      console.log('Error:', error.message);
-      return next(); // call the next middleware
+    // Create FormData to send the image buffer to the Sightengine API
+    const formData = new FormData();
+    formData.append('media', imageBuffer, {
+      filename: req.file.originalname,
+      contentType: req.file.mimetype,
     });
+    formData.append('models', 'nudity-2.0');
+    formData.append('api_user', '204557528');
+    formData.append('api_secret', 'gsz7YJsFniemKtFx8KkL');
+
+    // Send a post request to the Sightengine API with the FormData
+    axios({
+      method: 'post',
+      url: 'https://api.sightengine.com/1.0/check.json',
+      data: formData,
+      headers: formData.getHeaders(),
+    })
+      .then(function (response) {
+        // if request was successful
+        console.log('Sightengine API Response:', response.data);
+
+        // Check if the nudity score is greater than 0.5
+        const nsfwScore = response.data.nudity.erotica;
+        if (nsfwScore > 0.5) {
+          try {
+            if (!req.body.maturity) {
+              // If maturity is not set, add 'moderate' and 'nudity' to the maturity string
+              req.body.maturity = 'moderate';
+              req.body.maturity += ',nudity';
+            } else {
+              // If maturity is already set, check if 'nudity' is included in the maturity string
+              if (!req.body.maturity.includes('nudity')) {
+                // If not, add 'nudity' to the maturity string
+                req.body.maturity += ',nudity';
+              }
+            }
+          } catch (error) {
+            console.log('Error accessing maturity array:', error);
+          }
+        }
+        next(); // call the next middleware
+      })
+      .catch(function (error) {
+        // if there was an error with the request
+        console.log('Error:', error.message);
+        return next(); // call the next middleware
+      });
+  }
+
+  next();
 };
 
 // Middleware to handle resizing the image and saving the original
@@ -218,7 +223,7 @@ exports.createUpload = catchAsync(async (req, res, next) => {
   if (filteredBody.tags) {
     filteredBody.tags.forEach(
       catchAsync(async function (tag) {
-        if (filteredBody.maturity) {
+        if (filteredBody.maturity.length) {
           if (
             await Tag.exists({ name: tag, maturity: filteredBody.maturity[0] })
           ) {
@@ -241,16 +246,60 @@ exports.createUpload = catchAsync(async (req, res, next) => {
     );
   }
 
+  const user = await User.findOne({ _id: req.user.id }).select('username');
+  const username = user.username;
+
   // return success status
   res.status(200).json({
     status: 'success',
+    username: username,
+    slug: newUpload.slug,
   });
 });
 
-exports.getAllUploads = Handler.getAllDocs(Upload);
-exports.getUpload = Handler.getDoc(Upload, { path: 'comments' });
-exports.updateUpload = Handler.updateDoc(Upload);
-exports.deleteUpload = Handler.deleteDoc(Upload);
+exports.deleteMyUpload = catchAsync(async (req, res, next) => {
+  const slug = req.params.slug;
+
+  // find the upload to be deleted
+  const upload = await Upload.findOne({
+    user: req.user._id,
+    slug: slug,
+  });
+
+  // check if the user is the owner of the upload
+  if (!upload || upload.user.id !== req.user.id) {
+    return next(
+      new AppError('You are not authorized to delete this upload.', 403)
+    );
+  }
+
+  // delete the upload from the Upload model
+  await Upload.findByIdAndDelete(upload._id);
+
+  // delete the tags from the Tag model
+  if (upload.tags.length) {
+    for (const tag of upload.tags) {
+      let conditions = { name: tag };
+      if (upload.maturity.length) {
+        conditions.maturity = upload.maturity[0];
+      } else {
+        conditions.maturity = { $exists: false };
+      }
+      const tagObj = await Tag.findOne(conditions);
+      if (tagObj) {
+        if (tagObj.count === 1) {
+          await Tag.findByIdAndDelete(tagObj._id);
+        } else {
+          await Tag.findByIdAndUpdate(tagObj._id, { $inc: { count: -1 } });
+        }
+      }
+    }
+  }
+  res.status(200).json({
+    status: 'success',
+    data: null,
+  });
+});
 
 exports.getUploadStats = catchAsync(async (req, res, next) => {
   const stats = await Upload.aggregate([
@@ -289,3 +338,8 @@ exports.getUploadStats = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+exports.getAllUploads = Handler.getAllDocs(Upload);
+exports.getUpload = Handler.getDoc(Upload, { path: 'comments' });
+exports.updateUpload = Handler.updateDoc(Upload);
+exports.deleteUpload = Handler.deleteDoc(Upload);

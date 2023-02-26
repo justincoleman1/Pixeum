@@ -18,7 +18,6 @@ const tagSchema = new mongoose.Schema(
     },
     maturity: {
       type: String,
-      default: 'everyone',
     },
   },
   {
