@@ -31,7 +31,7 @@ const uploadSchema = new mongoose.Schema(
     description: {
       type: String,
       trim: true,
-      maxlength: 1000,
+      maxlength: 10000,
     },
     tags: [
       {

@@ -154,16 +154,16 @@ window.addEventListener('resize', (e) => {
 });
 
 //DOCUMENT LISTENERS
-document.addEventListener(w, (e) => {
-  h(e);
-});
-document.addEventListener(g, () => {
-  s();
-});
+// document.addEventListener(w, (e) => {
+//   h(e);
+// });
+// document.addEventListener(g, () => {
+//   s();
+// });
 
-window.addEventListener(sh, (e) => {
-  p(e);
-});
+// window.addEventListener(sh, (e) => {
+//   p(e);
+// });
 
 // DELEGATION
 if (sideNavBtn) {
