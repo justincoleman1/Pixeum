@@ -1,0 +1,113 @@
+extends base
+
+append head
+  script(type='module' src='/js/front/uploadFile.js')
+  script(type='module' src='/js/front/tagsInput.js')
+block content
+  section#upload-main.upload
+    #uploadForm.upload-form
+      form#update-upload
+        .modal-lip
+          button.btn-lip(type='button')
+            h3.modal-lip-title=upload.title
+        
+        #upload.modal(data-state='0' data-ready='false')
+          
+          .modal__header
+            h2.modal__title=`Update ${upload.title}`  
+          
+          .modal__body
+            
+            .modal__content.image-processing-step
+              .upload__mature-type
+                img.uploaded-img(src=`/img/stock/raw-${upload.media}`)
+                .image-display-container
+                  label(for="image-display") Display Options:
+                  .image-display-wrapper
+                    select#image-display
+                      option#orignalSize(value=`${upload.width}`)
+                      option(value='400') Size: 400 pixels wide
+                      option(value='600') Size: 600 pixels wide
+                      option(value='800') Size: 800 pixels wide
+                      option(value='900') Size: 900 pixels wide
+                      option(value='1024') Size: 1024 pixels wide
+                      option(value='1280') size: 1280 pixels wide
+                      option(value='1600') size: 1600 pixels wide
+                      option(value='1920') size: 1920 pixels wide
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="chevron-down">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                    </svg>
+
+              .upload__title-group
+                h4=Title
+                input#title(type='text' name='title' placeholder='Give your upload a title' value=`${upload.title}`)
+              .upload__description-group
+                h4 Description
+                textarea#description(name='description' placeholder='Give your upload a description' cols='50' rows='10')=`${upload.description}`
+              .upload__tags-group
+                h4 Tags
+                input#tags(type='text' name='tags')
+              .upload__maturity-group
+                .mature-content
+                  input#mature(type='checkbox' name='maturity-checkbox' value='mature')
+                  label(for='maturity-checkbox') Mature Content
+                fieldset#maturity-field.hidden
+                  legend What level of maturity does your content contain?
+                  ul.list__maturity-type
+                    li
+                      input#moderate.maturity-option(type='checkbox' name='moderate-checkbox' value='moderate')
+                      label(for='moderate-checkbox') Moderate
+                    li
+                      input#strict.maturity-option(type='checkbox' name='strict-checkbox' value='strict')
+                      label(for='strict-checkbox') Strict
+                  ul.list__maturity-options
+                    li
+                      input.maturity-option(type='checkbox' name='nudity-checkbox' value='nudity')
+                      label(for='nudity-checkbox') Nudity
+                    li
+                      input.maturity-option(type='checkbox' name='sexual-themes-checkbox' value='sexual themes')
+                      label(for='sexual-themes-checkbox') Sexual Themes
+                    li
+                      input.maturity-option(type='checkbox' name='violence-gore-checkbox' value='violence and/or gore')
+                      label(for='violence-gore-checkbox') Violence and/or Gore
+                    li
+                      input.maturity-option(type='checkbox' name='strong-language-checkbox' value='strong language')
+                      label(for='strong-language-checkbox') Strong Language
+                    li
+                      input.maturity-option(type='checkbox' name='ideologically-sensitive-checkbox' value='ideologically sensitive')
+                      label(for='ideologically-sensitive-checkbox') Ideologically Sensitive
+        
+              button.btn.btn-upload-submit(type='submit') Submit
+            
+            .modal__actions.modal__actions--center
+              button#upload-btn.btn.modal__button.hidden(type='button' data-action='upload') Upload
+  script.
+      const selectElement = document.getElementById('image-display');
+      const options = selectElement.options;
+      const imgSource = document.querySelector('.uploaded-img').src;
+      const uploadWidth = document.getElementById('orignalSize').value.toString();
+
+      const img = new Image();
+      img.onload = function () {
+        const originalOption = options[0];
+        originalOption.textContent = `Original (${this.width} x ${this.height} pixels)`;
+        originalOption.value = 'original';
+      };
+      img.src = imgSource;
+
+      // check if the uploaded width matches one of the option values
+      let optionIndex = 0;
+      for (let i = 1; i < options.length; i++) {
+        if (options[i].value == uploadWidth) {
+          optionIndex = i;
+          break;
+        }
+      }
+
+      // pre-select the matching option or the first option
+      if (optionIndex >= 1) {
+        const selectedOption = options[optionIndex];
+        selectedOption.selected = true;
+      } else {
+        options[0].selected = true;
+      }

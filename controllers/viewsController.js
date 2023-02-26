@@ -22,6 +22,12 @@ exports.getHomePage = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.getUploadForm = (req, res) => {
+  res.status(200).render('submission', {
+    title: 'Upload your work',
+  });
+};
+
 exports.getUploadPage = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ username: req.params.username });
   const upload = await Upload.findOne({
@@ -50,6 +56,28 @@ exports.getUploadPage = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.getUpdateUploadForm = catchAsync(async (req, res) => {
+  //Get the slug of the upload we want to update
+  const slug = req.params.slug;
+
+  // find the upload to be updated
+  const upload = await Upload.findOne({
+    user: req.user._id,
+    slug: slug,
+  });
+
+  // check if the user is the owner of the upload
+  if (!upload || upload.user.id !== req.user.id) {
+    return next(
+      new AppError('You are not authorized to update this upload.', 403)
+    );
+  }
+  res.status(200).render('update-submission', {
+    title: 'Update your work',
+    upload: upload,
+  });
+});
+
 exports.getUserProfile = (req, res, next) => {
   res.status(200).render('profile', {
     title: 'Profile page',
@@ -71,11 +99,5 @@ exports.getSignUpForm = (req, res, next) => {
 exports.getAccount = (req, res) => {
   res.status(200).render('account', {
     title: 'Your account',
-  });
-};
-
-exports.getUploadForm = (req, res) => {
-  res.status(200).render('submission', {
-    title: 'Upload your work',
   });
 };

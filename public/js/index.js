@@ -122,15 +122,21 @@ const updateBirthdayForm = document.getElementById('form__profile-birthday');
 const updateGenderForm = document.getElementById('form__profile-gender');
 const updatePasswordForm = document.getElementById('form__profile-password');
 
-//Upload page Form
+//Upload page form
 const uploadInput = document.getElementById('media');
 const uploadForm = document.getElementById('submit-upload');
+
+//Update upload form
+const updateUploadForm = document.getElementById('update-upload');
 
 //Upload delete btn
 const uploadDeleteBtn = document.getElementById('upload-delete-btn');
 const deleteUploadYes = document.getElementById('delete-upload-yes');
 const deleteUploadNo = document.getElementById('delete-upload-no');
 const deleteUploadModal = document.getElementById('delete-upload-modal');
+//Upload edit btn
+const uploadEditBtn = document.getElementById('upload-edit-btn');
+
 //Get the modal form inputs
 const updatePhotoInput = document.getElementById('input__photo');
 
@@ -255,6 +261,13 @@ if (loginForm) {
 }
 
 if (logOutBtn) logOutBtn.addEventListener('click', logout);
+
+if (updateUploadForm) {
+  asideDisappear();
+  updateUploadForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+  });
+}
 
 if (uploadForm) {
   asideDisappear();

@@ -21,5 +21,10 @@ router.get('/submission', authController.protect, viewController.getUploadForm);
 router.get('/:username', viewController.getUserProfile);
 
 router.get('/:username/:slug', viewController.getUploadPage);
+router.get(
+  '/:username/:slug/update',
+  authController.protect,
+  viewController.getUpdateUploadForm
+);
 
 module.exports = router;
