@@ -206,7 +206,7 @@ document.querySelectorAll('.drop-zone__input').forEach((inputElement) => {
       inputElement.files = e.dataTransfer.files;
       document.querySelector('.modal-lip-title').innerHTML =
         inputElement.files[0].name;
-      document.updateThumbnail(inputElement.files[0]);
+      updateThumbnail(inputElement.files[0]);
       const fileValue = document.querySelector('[data-file]');
       if (fileValue)
         fileValue.textContent = `Uploading: ${inputElement.files[0].name}`;
