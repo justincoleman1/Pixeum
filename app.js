@@ -41,6 +41,7 @@ const scriptSources = [
   'www.google-analytics.com',
   'cdnjs.cloudflare.com',
   'unpkg.com',
+  'code.jquery.com',
 ];
 const styleSources = [
   "'self'",

@@ -13,13 +13,13 @@ const imageWidth = document
 
 const zoomInOnMax = (image, maxZoomFactor) => {
   image.onclick = function () {
-    if (image.classList.contains('W8uuV')) {
-      image.classList.remove('W8uuV');
-      image.classList.add('_28Iam');
+    if (image.classList.contains('zoom-in')) {
+      image.classList.remove('zoom-in');
+      image.classList.add('zoom-out');
       image.style.maxWidth = maxZoomFactor + 'px';
     } else {
-      image.classList.add('W8uuV');
-      image.classList.remove('_28Iam');
+      image.classList.add('zoom-in');
+      image.classList.remove('zoom-out');
       image.style.maxWidth = null;
     }
   };

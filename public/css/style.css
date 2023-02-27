@@ -915,24 +915,110 @@ section.main.disappear {
   background-color: aqua;
   min-height: 1000px;
 }
-
-.tags__header-carousel {
-  /* background-color: blue; */
+.carouselContainer {
+  padding: 0 24px;
   display: flex;
   justify-content: center;
-  align-items: center;
-  margin-top: 1em;
-  gap: 0.5em;
-  flex-wrap: wrap;
-  padding: 0 24px;
+  align-items: stretch;
+}
+.carouselOfTags {
+  position: relative;
+  margin: auto;
+  /* overflow: visible; */
+  width: 100%;
+  display: flex;
 }
 
-.hashtag {
-  display: inline-block;
-  background-color: #47b1f5;
-  color: white;
-  border-radius: 40px;
+.carouselOfTags::before,
+.carouselOfTags::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  background: linear-gradient(to left, rgba(255, 255, 255, 0), #2e2d2d);
+  z-index: 1; /* Add a z-index value to make sure the pseudo-elements are on top */
+}
+
+.carouselOfTags::after {
+  right: 0;
+  transform: scaleX(-1);
+  background: linear-gradient(to left, rgba(255, 255, 255, 0), #2e2d2d);
+  z-index: 1; /* Add a z-index value to make sure the pseudo-elements are on top */
+}
+
+.carouselTag {
   padding: 6px 12px;
+  border-radius: 25px;
+  border: 1.5px solid #47b1f5;
+  background-color: #47b1f5;
+  counter-increment: carousel-cell;
+  text-align: center;
+  vertical-align: center;
+  transition: transform 0.5s;
+  font-size: 0.75em;
+  margin-left: 0.625em;
+  cursor: grab;
+}
+
+.carouselTag.is-selected {
+  z-index: 10;
+  transform: scale(1);
+}
+.carouselTag.nextToSelectedLeft,
+.carouselTag.nextToSelectedRight {
+  transform: scale(1);
+  z-index: 5;
+}
+
+/*! Flickity v2.0.5
+https://flickity.metafizzy.co
+---------------------------------------------- */
+
+.flickity-enabled {
+  position: relative;
+}
+
+.flickity-enabled:focus {
+  outline: none;
+}
+
+.flickity-viewport {
+  overflow: hidden;
+  position: relative;
+  height: 100%;
+}
+
+.flickity-slider {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+/* draggable */
+
+.flickity-enabled.is-draggable {
+  -webkit-tap-highlight-color: transparent;
+  /*           tap-highlight-color: transparent; */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.flickity-enabled.is-draggable .flickity-viewport {
+  cursor: move;
+  cursor: -webkit-grab;
+  cursor: grab;
+}
+
+.flickity-enabled.is-draggable .flickity-viewport.is-pointer-down {
+  cursor: -webkit-grabbing;
+  cursor: grabbing;
+}
+.flickity-viewport {
+  margin: 0px;
+  width: 100%;
 }
 
 /* 
@@ -2273,18 +2359,18 @@ img.modal-image {
   max-height: 100%;
 }
 
-.modal-image.W8uuV {
+.modal-image.zoom-in {
   cursor: zoom-in;
   margin: auto;
   /* pointer-events: all; */
 }
 
-.modal-image._28Iam {
+.modal-image.zoom-out {
   cursor: zoom-out;
   max-width: none;
   max-height: none;
   position: relative;
-  margin: auto auto 24px auto;
+  margin: auto;
   top: 0;
   left: 0;
   /* pointer-events: all; */

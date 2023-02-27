@@ -12,7 +12,7 @@ exports.getHomePage = catchAsync(async (req, res, next) => {
     fields: 'username',
   });
   //2) Get most used tags
-  const tags = await Tags.find().limit(20);
+  const tags = await Tags.find();
   //2) Build Template
   //3) Render that template using upload data from 1)
   res.status(200).render('home', {
