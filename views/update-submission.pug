@@ -2,10 +2,11 @@ extends base
 
 append head
   script(type='module' src='/js/front/uploadFile.js')
+  script(type='module' src='/js/front/updateUpload.js')
   script(type='module' src='/js/front/tagsInput.js')
+  script(type='module' src='/js/front/matureContentSelection.js')
 block content
-  section#upload-main.upload
-    #uploadForm.upload-form
+  section#upload-main.upload(data-upload=uploadData)
       form#update-upload
         .modal-lip
           button.btn-lip(type='button')
@@ -20,7 +21,11 @@ block content
             
             .modal__content.image-processing-step
               .upload__mature-type
-                button.btn.btn-update-file(type='button')
+                input#media.drop-zone__input(type='file' name='myFile' hidden='' )
+                button#edit-upload.btn.btn-update-file(type='button')
+                  svg.btn-update-file__icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
+                    path(stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125")
+
                 img.uploaded-img(src=`/img/stock/raw-${upload.media}`)
                 .image-display-container
                   label(for="image-display") Display Options:
@@ -79,36 +84,3 @@ block content
                       label(for='ideologically-sensitive-checkbox') Ideologically Sensitive
         
               button.btn.btn-upload-submit(type='submit') Submit
-            
-            .modal__actions.modal__actions--center
-              button#upload-btn.btn.modal__button.hidden(type='button' data-action='upload') Upload
-  script.
-      const selectElement = document.getElementById('image-display');
-      const options = selectElement.options;
-      const imgSource = document.querySelector('.uploaded-img').src;
-      const uploadWidth = document.getElementById('orignalSize').value.toString();
-
-      const img = new Image();
-      img.onload = function () {
-        const originalOption = options[0];
-        originalOption.textContent = `Original (${this.width} x ${this.height} pixels)`;
-        originalOption.value = 'original';
-      };
-      img.src = imgSource;
-
-      // check if the uploaded width matches one of the option values
-      let optionIndex = 0;
-      for (let i = 1; i < options.length; i++) {
-        if (options[i].value == uploadWidth) {
-          optionIndex = i;
-          break;
-        }
-      }
-
-      // pre-select the matching option or the first option
-      if (optionIndex >= 1) {
-        const selectedOption = options[optionIndex];
-        selectedOption.selected = true;
-      } else {
-        options[0].selected = true;
-      }

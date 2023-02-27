@@ -75,6 +75,7 @@ exports.getUpdateUploadForm = catchAsync(async (req, res) => {
   res.status(200).render('update-submission', {
     title: 'Update your work',
     upload: upload,
+    uploadData: JSON.stringify(upload), // add the upload data as a JSON string
   });
 });
 

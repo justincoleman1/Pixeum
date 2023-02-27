@@ -147,7 +147,8 @@ input[data-autocompleted] {
   overflow: auto;
 }
 
-.btn-return__home {
+.btn-return__home,
+.btn-update-file {
   position: absolute;
   top: 1em;
   left: 1em;
@@ -158,7 +159,12 @@ input[data-autocompleted] {
   justify-content: center;
 }
 
-.btn-return__icon {
+.btn-update-file {
+  background-color: transparent;
+}
+
+.btn-return__icon,
+.btn-update-file__icon {
   stroke: #fff;
   fill: #fff;
   width: 32px;

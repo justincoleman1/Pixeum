@@ -3,7 +3,7 @@ extends base
 append head
   script(type='module' src='/js/front/uploadFile.js')
   script(type='module' src='/js/front/tagsInput.js')
-
+  script(type='module' src='/js/front/matureContentSelection.js')
 block content
   section#upload-main.upload
     #uploadForm.upload-form
@@ -29,7 +29,7 @@ block content
                 
             .modal__content.loading-step(hidden='')
               .upload__mature-type
-                img.uploading-img(src='img/no-img-available.jpg')
+                img.uploading-img
                 .modal__actions.progress
                   .modal__progress
                     .progress-row-container
@@ -45,6 +45,10 @@ block content
             
             .modal__content.image-processing-step(hidden='')
               .upload__mature-type
+                button.btn.btn-update-file(type='button')
+                  svg.btn-update-file__icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
+                    path(stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125")
+
                 img.uploaded-img
                 .image-display-container
                   label(for="image-display") Display Options:
@@ -103,7 +107,4 @@ block content
                       label(for='ideologically-sensitive-checkbox') Ideologically Sensitive
         
               button.btn.btn-upload-submit(type='submit') Submit
-            
-            .modal__actions.modal__actions--center
-              button#upload-btn.btn.modal__button.hidden(type='button' data-action='upload') Upload
         

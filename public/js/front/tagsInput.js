@@ -174,8 +174,20 @@
   window.TagsInput = TagsInput;
 })();
 
+//Prefill the tags
 var tagInput1 = new TagsInput({
   selector: 'tags',
   duplicate: false,
   max: 30,
 });
+
+const uploadData = document
+  .querySelector('section#upload-main')
+  .getAttribute('data-upload');
+const upload = JSON.parse(uploadData);
+
+if (upload) {
+  tagInput1.addData(upload.tags);
+}
+
+// export default TagsInput;
