@@ -171,50 +171,48 @@ window.addEventListener('DOMContentLoaded', () => {
   const upload = new UploadModal('#upload');
 });
 
-//Set up to possibly to upload multiple files
-document.querySelectorAll('.drop-zone__input').forEach((inputElement) => {
-  const dropZoneElement = inputElement.closest('.drop-zone');
+const inputElement = document.querySelector('.drop-zone__input');
+const dropZoneElement = document.querySelector('.modal__actions.drop-zone');
 
-  dropZoneElement.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    dropZoneElement.classList.add('drop-zone--over');
+dropZoneElement.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  dropZoneElement.classList.add('drop-zone--over');
+});
+
+['dragleave', 'dragend'].forEach((type) => {
+  dropZoneElement.addEventListener(type, (e) => {
+    dropZoneElement.classList.remove('drop-zone--over');
   });
+});
 
-  ['dragleave', 'dragend'].forEach((type) => {
-    dropZoneElement.addEventListener(type, (e) => {
-      dropZoneElement.classList.remove('drop-zone--over');
-    });
-  });
+//click area to select files
+dropZoneElement.addEventListener('click', (e) => {
+  inputElement.click();
+});
 
-  //click area to select files
-  dropZoneElement.addEventListener('click', (e) => {
-    inputElement.click();
-  });
+//drop file into area
+dropZoneElement.addEventListener('drop', (e) => {
+  e.preventDefault();
 
-  //drop file into area
-  dropZoneElement.addEventListener('drop', (e) => {
-    e.preventDefault();
+  if (e.dataTransfer.files.length) {
+    inputElement.files = e.dataTransfer.files;
+    document.querySelector('.modal-lip-title').innerHTML =
+      inputElement.files[0].name;
+    updateThumbnail(inputElement.files[0]);
+    const fileValue = document.querySelector('[data-file]');
+    if (fileValue)
+      fileValue.textContent = `Uploading: ${inputElement.files[0].name}`;
+  }
+});
 
-    if (e.dataTransfer.files.length) {
-      inputElement.files = e.dataTransfer.files;
-      document.querySelector('.modal-lip-title').innerHTML =
-        inputElement.files[0].name;
-      updateThumbnail(inputElement.files[0]);
-      const fileValue = document.querySelector('[data-file]');
-      if (fileValue)
-        fileValue.textContent = `Uploading: ${inputElement.files[0].name}`;
-    }
-  });
+inputElement.addEventListener('change', (e) => {
+  if (inputElement.files.length) {
+    document.querySelector('.modal-lip-title').innerHTML =
+      inputElement.files[0].name;
+    updateThumbnail(inputElement.files[0]);
+  }
+});
 
-  inputElement.addEventListener('change', (e) => {
-    if (inputElement.files.length) {
-      document.querySelector('.modal-lip-title').innerHTML =
-        inputElement.files[0].name;
-      updateThumbnail(inputElement.files[0]);
-    }
-  });
-
-  editUploadBtn.addEventListener('click', (e) => {
-    e.preventDefault();
-  });
+editUploadBtn.addEventListener('click', (e) => {
+  inputElement.click();
 });

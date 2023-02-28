@@ -21,7 +21,17 @@ router.post(
   uploadController.createUpload
 );
 
-// .patch(authController.protect, uploadController.updateUpload);
+router.patch(
+  '/:username/:slug/update',
+  authController.protect,
+  uploadController.updateUpload,
+  (err, req, res, next) => {
+    // handle error
+    console.error(err);
+    res.status(500).json({ status: 'error', message: 'Internal server error' });
+  }
+);
+
 router.delete(
   '/:username/:slug',
   authController.protect,

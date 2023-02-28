@@ -5,7 +5,7 @@ import Cropper from 'cropperjs';
 import { login, logout } from './back/login';
 import { signup } from './back/signup';
 import { updateSettings } from './back/updateSettings';
-import { submit_art } from './back/submission';
+import { submit_art, update_art } from './back/submission';
 import { delete_art } from './back/deleteUpload';
 import { showAlert } from './front/alerts';
 import {
@@ -264,8 +264,37 @@ if (logOutBtn) logOutBtn.addEventListener('click', logout);
 
 if (updateUploadForm) {
   asideDisappear();
-  updateUploadForm.addEventListener('submit', (e) => {
+  updateUploadForm.addEventListener('submit', async (e) => {
     e.preventDefault();
+    const urlParts = window.location.pathname.split('/');
+    const username = urlParts[urlParts.length - 3];
+    const updateSlug = urlParts[urlParts.length - 2];
+    console.log(username, ':', updateSlug);
+
+    const media = uploadInput.files[0];
+    const width = document.getElementById('image-display').value;
+    const title = document.getElementById('title').value;
+    const description = document.getElementById('description').value;
+
+    const tags = Array.from(document.querySelectorAll('.tag')).map((tag) =>
+      tag.textContent.slice(0, -1)
+    );
+    const checkedMaturityOptions = document.querySelectorAll(
+      '.maturity-option:checked'
+    );
+    const maturity = Array.from(checkedMaturityOptions).map(
+      (option) => option.value
+    );
+
+    const data = new FormData();
+    data.append('media', media);
+    data.append('width', width);
+    data.append('title', title);
+    data.append('description', description);
+    data.append('tags', tags);
+    data.append('maturity', maturity);
+
+    await update_art(data, username, updateSlug);
   });
 }
 

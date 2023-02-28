@@ -33,8 +33,10 @@ exports.uploadMain = upload.single('media');
 
 // Middleware to check for nudity using the Sightengine API
 exports.checkForNudity = async (req, res, next) => {
+  console.log('Checking for nudity Middleware');
   if (!req.file) {
     // if there is no file, pass to the next middleware
+    console.log('No file present');
     return next();
   }
 
@@ -88,8 +90,12 @@ exports.checkForNudity = async (req, res, next) => {
 
 // Middleware to handle resizing the image and saving the original
 exports.rawUploadedImage = catchAsync(async (req, res, next) => {
+  console.log('Raw Upload Middleware');
   // If no file is present, skip this middleware and move on to the next one
-  if (!req.file) return next();
+  if (!req.file) {
+    console.log('No file present');
+    return next();
+  }
 
   // Generate a unique filename for the uploaded image
   // Generate a unique identifier using the current timestamp and namespace
@@ -115,13 +121,18 @@ exports.rawUploadedImage = catchAsync(async (req, res, next) => {
     `public/img/stock/raw-${req.file.filename}`
   );
 
+  console.log('END Raw Upload Middleware');
   // Move on to the next middleware
   next();
 });
 
 // Middleware to resize uploaded images
 exports.resizedUploadedImage = catchAsync(async (req, res, next) => {
-  if (!req.file) return next(); // If there is no uploaded file, move to next middleware
+  console.log('Resize Upload Middleware');
+  if (!req.file) {
+    console.log('No file present');
+    return next(); // If there is no uploaded file, move to next middleware
+  }
 
   req.file.filename = req.body.filename; // Set filename from request body
 
@@ -168,7 +179,7 @@ exports.resizedUploadedImage = catchAsync(async (req, res, next) => {
       return next(new AppError(error.message, 500)); // If there is an error, send an error message
     }
   }
-
+  console.log('End Resize Upload Middleware');
   next(); // Move to the next middleware
 });
 
@@ -247,6 +258,152 @@ exports.createUpload = catchAsync(async (req, res, next) => {
     status: 'success',
     username: username,
     slug: newUpload.slug,
+  });
+});
+
+exports.updateUpload = catchAsync(async (req, res, next) => {
+  console.log('In updateUpload middleware');
+
+  const slug = req.params.slug;
+
+  // find the upload to be deleted
+  const upload = await Upload.findOne({
+    user: req.user._id,
+    slug: slug,
+  });
+
+  // check if the user is the owner of the upload
+  if (!upload || upload.user.id !== req.user.id) {
+    return next(
+      new AppError('You are not authorized to update this upload.', 403)
+    );
+  }
+
+  // filter object to only include certain fields
+  const filteredBody = filterObj(
+    req.body,
+    'title',
+    'description',
+    'tags',
+    'maturity'
+  );
+
+  // if file is included in request, add media data to filteredBody
+  if (req.file) {
+    filteredBody.media = req.file.filename;
+    filteredBody.mimetype = req.file.mimetype.split('/')[0];
+    filteredBody.size = formatBytes(req.body.size);
+    filteredBody.width = req.body.width;
+    filteredBody.height = req.body.height;
+    filteredBody.format = req.body.format;
+  }
+  // add user id to filteredBody
+  filteredBody.user = req.user._id;
+
+  // Split tags and maturity by comma and create arrays
+  const tagArray = filteredBody.tags ? filteredBody.tags.split(',') : [];
+  const maturityArray = filteredBody.maturity
+    ? filteredBody.maturity.split(',')
+    : [];
+
+  // Trim whitespace from tag and maturity values
+  const trimmedTagArray = tagArray.map((tag) => tag.trim());
+  const trimmedMaturityArray = maturityArray.map((maturity) => maturity.trim());
+
+  // Add tag and maturity arrays to filteredBody
+  filteredBody.tags = trimmedTagArray;
+  filteredBody.maturity = trimmedMaturityArray;
+
+  // create new upload object
+  const updatedUpload = await Upload.findByIdAndUpdate(
+    upload._id,
+    filteredBody
+  );
+
+  const areTagsEqual =
+    filteredBody.tags.length === upload.tags.length &&
+    filteredBody.tags.every((tag) => upload.tags.includes(tag));
+
+  if (!areTagsEqual) {
+    const newTags = filteredBody.tags.filter(
+      (value) => !upload.tags.includes(value)
+    );
+
+    const oldTags = upload.tags.filter(
+      (value) => !filteredBody.tags.includes(value)
+    );
+
+    const newMaturity = filteredBody.maturity.filter(
+      (value) => !upload.maturity.includes(value)
+    );
+
+    const oldMaturity = upload.maturity.filter(
+      (value) => !filteredBody.maturity.includes(value)
+    );
+
+    //For the values in filteredBody.tags that arent in upload.tags
+    if (newTags) {
+      newTags.forEach(
+        catchAsync(async function (tag) {
+          if (newMaturity.length) {
+            if (
+              await Tag.exists({
+                name: tag,
+                maturity: newMaturity[0],
+              })
+            ) {
+              await Tag.findOneAndUpdate(
+                { name: tag, maturity: newMaturity[0] },
+                { $inc: { count: 1 } }
+              );
+            } else {
+              await Tag.create({
+                name: tag,
+                maturity: newMaturity[0],
+              });
+            }
+          } else {
+            if (await Tag.exists({ name: tag })) {
+              await Tag.findOneAndUpdate({ name: tag }, { $inc: { count: 1 } });
+            } else {
+              // create new tag if it doesn't exist
+              await Tag.create({ name: tag });
+            }
+          }
+        })
+      );
+    }
+    console.log('Passing the username and slug ', username, ':', slug);
+    //for the values in upload.tags that arent in filteredBody.tags
+    if (oldTags.length) {
+      for (const tag of oldTags) {
+        let conditions = { name: tag };
+        if (oldMaturity.length) {
+          conditions.maturity = oldMaturity[0];
+        } else {
+          conditions.maturity = { $exists: false };
+        }
+        const tagObj = await Tag.findOne(conditions);
+        if (tagObj) {
+          if (tagObj.count === 1) {
+            await Tag.findByIdAndDelete(tagObj._id);
+          } else {
+            await Tag.findByIdAndUpdate(tagObj._id, { $inc: { count: -1 } });
+          }
+        }
+      }
+    }
+  }
+  const user = await User.findOne({ _id: req.user.id }).select('username');
+  const username = user.username;
+
+  console.log('Passing the username and slug ', username, ':', slug);
+
+  // return success status
+  res.status(200).json({
+    status: 'success',
+    username: username,
+    slug: updatedUpload.slug,
   });
 });
 

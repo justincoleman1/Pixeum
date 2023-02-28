@@ -12,13 +12,13 @@ block content
           button.btn-lip(type='button')
             h3.modal-lip-title=upload.title
         
-        #upload.modal(data-state='0' data-ready='false')
+        #upload.modal(data-state='3' data-ready='false')
           
           .modal__header
             h2.modal__title=`Update ${upload.title}`  
           
           .modal__body
-            
+
             .modal__content.image-processing-step
               .upload__mature-type
                 input#media.drop-zone__input(type='file' name='myFile' hidden='' )
@@ -31,7 +31,7 @@ block content
                   label(for="image-display") Display Options:
                   .image-display-wrapper
                     select#image-display
-                      option#orignalSize(value=`${upload.width}`)
+                      option#orignalSize(value='original')
                       option(value='400') Size: 400 pixels wide
                       option(value='600') Size: 600 pixels wide
                       option(value='800') Size: 800 pixels wide
@@ -82,5 +82,28 @@ block content
                     li
                       input.maturity-option(type='checkbox' name='ideologically-sensitive-checkbox' value='ideologically sensitive')
                       label(for='ideologically-sensitive-checkbox') Ideologically Sensitive
-        
+
               button.btn.btn-upload-submit(type='submit') Submit
+            .modal__content.drop_zone.hide
+              .modal__actions.drop-zone.hide
+                .span-prompts
+                  span.drop-zone__prompt Drop image, pdf, or text here
+                  span.drop-zone__prompt OR
+                  span.drop-zone__prompt Click to upload 
+                input#media.drop-zone__input(type='file' name='myFile' hidden='' )
+                
+            .modal__content.loading-step(hidden='')
+              .upload__mature-type
+                img.uploading-img
+                .modal__actions.progress
+                  .modal__progress
+                    .progress-row-container
+                      .modal__progress-bar
+                        .modal__progress-fill(data-progress-fill)
+                      button.btn.btn-upload-cancel(type='button' data-action='cancel')
+                        svg.clear-icon.s24(xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='2' stroke='currentColor' cursor='pointer' data-action='cancel')
+                          path(stroke-linecap='round' stroke-linejoin='round' d='M6 18L18 6M6 6l12 12')
+                    .modal__file(data-file)
+
+            .modal__content(hidden='')
+                img.uploading-img
