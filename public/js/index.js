@@ -5,7 +5,9 @@ import Cropper from 'cropperjs';
 import { login, logout } from './back/login';
 import { signup } from './back/signup';
 import { updateSettings } from './back/updateSettings';
-import { submit_art, update_art } from './back/submission';
+import { submit_art } from './back/uploadArt';
+import { update_art } from './back/updateArt';
+
 import { delete_art } from './back/deleteUpload';
 import { showAlert } from './front/alerts';
 import {
@@ -264,18 +266,12 @@ if (logOutBtn) logOutBtn.addEventListener('click', logout);
 
 if (updateUploadForm) {
   asideDisappear();
-  updateUploadForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const urlParts = window.location.pathname.split('/');
-    const username = urlParts[urlParts.length - 3];
-    const updateSlug = urlParts[urlParts.length - 2];
-    console.log(username, ':', updateSlug);
-
+  updateUploadForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
     const media = uploadInput.files[0];
     const width = document.getElementById('image-display').value;
     const title = document.getElementById('title').value;
     const description = document.getElementById('description').value;
-
     const tags = Array.from(document.querySelectorAll('.tag')).map((tag) =>
       tag.textContent.slice(0, -1)
     );
@@ -294,7 +290,11 @@ if (updateUploadForm) {
     data.append('tags', tags);
     data.append('maturity', maturity);
 
-    await update_art(data, username, updateSlug);
+    const urlParts = window.location.pathname.split('/');
+    const username = urlParts[urlParts.length - 3];
+    const slug = urlParts[urlParts.length - 2];
+
+    await update_art(data, username, slug);
   });
 }
 
@@ -304,6 +304,15 @@ if (uploadForm) {
     event.preventDefault();
     const media = uploadInput.files[0];
     const width = document.getElementById('image-display').value;
+    const originalWidthInt =
+      width === 'original'
+        ? parseInt(
+            document
+              .getElementById('image-display')
+              .textContent.split('(')[1]
+              .split(' ')[0]
+          )
+        : null;
     const title = document.getElementById('title').value;
     const description = document.getElementById('description').value;
 
@@ -316,10 +325,11 @@ if (uploadForm) {
     const maturity = Array.from(checkedMaturityOptions).map(
       (option) => option.value
     );
-
+    console.log(media, width, title, description, tags, maturity);
     const data = new FormData();
     data.append('media', media);
     data.append('width', width);
+    data.append('orginalWidthInt', originalWidthInt);
     data.append('title', title);
     data.append('description', description);
     data.append('tags', tags);

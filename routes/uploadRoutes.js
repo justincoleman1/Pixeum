@@ -24,12 +24,11 @@ router.post(
 router.patch(
   '/:username/:slug/update',
   authController.protect,
-  uploadController.updateUpload,
-  (err, req, res, next) => {
-    // handle error
-    console.error(err);
-    res.status(500).json({ status: 'error', message: 'Internal server error' });
-  }
+  uploadController.uploadMain,
+  uploadController.checkForNudity,
+  uploadController.rawUploadedImage,
+  uploadController.updateResizedUploadedImage,
+  uploadController.updateMyUpload
 );
 
 router.delete(
