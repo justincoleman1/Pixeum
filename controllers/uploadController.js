@@ -38,55 +38,58 @@ exports.checkForNudity = async (req, res, next) => {
   console.log('Checking for nudity Middleware');
   if (!req.file) {
     // if there is no file, pass to the next middleware
-    console.log('No file present');
+    console.log('No file present...Skipping');
     return next();
   }
 
-  if (!req.body.maturity.includes('nudity')) {
-    const imageBuffer = req.file.buffer;
-
-    // Create FormData to send the image buffer to the Sightengine API
-    const formData = new FormData();
-    formData.append('media', imageBuffer, {
-      filename: req.file.originalname,
-      contentType: req.file.mimetype,
-    });
-    formData.append('models', 'nudity-2.0');
-    formData.append('api_user', '204557528');
-    formData.append('api_secret', 'gsz7YJsFniemKtFx8KkL');
-
-    try {
-      // Send a post request to the Sightengine API with the FormData and wait for the response
-      const response = await axios({
-        method: 'post',
-        url: 'https://api.sightengine.com/1.0/check.json',
-        data: formData,
-        headers: formData.getHeaders(),
-      });
-
-      // if request was successful
-      console.log('Sightengine API Response:', response.data);
-
-      // Check if the nudity score is greater than 0.5
-      const nsfwScore = response.data.nudity.erotica;
-      if (nsfwScore > 0.5) {
-        if (!req.body.maturity) {
-          // If maturity is not set, add 'moderate' and 'nudity' to the maturity string
-          req.body.maturity = 'moderate,nudity';
-        } else {
-          // If maturity is already set, check if 'nudity' is included in the maturity string
-          if (!req.body.maturity.includes('nudity')) {
-            // If not, add 'nudity' to the maturity string
-            req.body.maturity += ',nudity';
-          }
-        }
-      }
-    } catch (error) {
-      // if there was an error with the request
-      console.log('Error:', error.message);
-    }
+  if (req.body.maturity.includes('nudity')) {
+    console.log('Nudity Marked...Skipping');
+    return next();
   }
 
+  const imageBuffer = req.file.buffer;
+
+  // Create FormData to send the image buffer to the Sightengine API
+  const formData = new FormData();
+  formData.append('media', imageBuffer, {
+    filename: req.file.originalname,
+    contentType: req.file.mimetype,
+  });
+  formData.append('models', 'nudity-2.0');
+  formData.append('api_user', '204557528');
+  formData.append('api_secret', 'gsz7YJsFniemKtFx8KkL');
+
+  try {
+    // Send a post request to the Sightengine API with the FormData and wait for the response
+    const response = await axios({
+      method: 'post',
+      url: 'https://api.sightengine.com/1.0/check.json',
+      data: formData,
+      headers: formData.getHeaders(),
+    });
+
+    // if request was successful
+    console.log('Sightengine API Response:', response.data);
+
+    // Check if the nudity score is greater than 0.5
+    const nsfwScore = response.data.nudity.erotica;
+    if (nsfwScore > 0.5) {
+      if (!req.body.maturity) {
+        // If maturity is not set, add 'moderate' and 'nudity' to the maturity string
+        req.body.maturity = 'moderate,nudity';
+      } else {
+        // If maturity is already set, check if 'nudity' is included in the maturity string
+        if (!req.body.maturity.includes('nudity')) {
+          // If not, add 'nudity' to the maturity string
+          req.body.maturity += ',nudity';
+        }
+      }
+    }
+  } catch (error) {
+    // if there was an error with the request
+    console.log('Error:', error.message);
+  }
+  console.log('Ending Nudity Check Middleware');
   next();
 };
 
@@ -95,7 +98,7 @@ exports.rawUploadedImage = catchAsync(async (req, res, next) => {
   console.log('Raw Upload Middleware');
   // If no file is present, skip this middleware and move on to the next one
   if (!req.file) {
-    console.log('No file present');
+    console.log('No file present...Skipping');
     return next();
   }
 
@@ -123,7 +126,7 @@ exports.rawUploadedImage = catchAsync(async (req, res, next) => {
     `public/img/stock/raw-${req.file.filename}`
   );
 
-  console.log('END Raw Upload Middleware');
+  console.log('Ending Raw Upload Middleware');
   // Move on to the next middleware
   next();
 });
@@ -132,7 +135,7 @@ exports.rawUploadedImage = catchAsync(async (req, res, next) => {
 exports.resizedUploadedImage = catchAsync(async (req, res, next) => {
   console.log('Resize Upload Middleware');
   if (!req.file) {
-    console.log('No file present');
+    console.log('No file present...Skipping');
     return next(); // If there is no uploaded file, move to next middleware
   }
 
@@ -181,7 +184,7 @@ exports.resizedUploadedImage = catchAsync(async (req, res, next) => {
       return next(new AppError(error.message, 500)); // If there is an error, send an error message
     }
   }
-  console.log('End Resize Upload Middleware');
+  console.log('Ending Resize Upload Middleware');
   next(); // Move to the next middleware
 });
 
@@ -309,22 +312,24 @@ exports.deleteMyUpload = catchAsync(async (req, res, next) => {
 
 // Middleware to resize uploaded images
 exports.updateResizedUploadedImage = catchAsync(async (req, res, next) => {
-  console.log('Update resized Upload Middleware', req.body);
+  console.log('Update resized Upload Middleware');
 
-  //There is no file but there is a re
-
-  if (!req.file && req.body.orginalWidthInt === upload.width) {
-    console.log('No changees in the updateResizedUploadedImage needed');
+  if (
+    !req.file &&
+    (req.body.orginalWidthInt === upload.width ||
+      parseInt(req.body.width) === upload.width)
+  ) {
+    console.log('No File Present...Skipping');
     return next(); // If there is no uploaded file, move to next middleware
   }
 
   const filePath = req.file
-    ? `public/img/stock/raw-${req.file.filename}`
-    : `public/img/stock/raw-${upload.media}`;
+    ? `public/img/stock/${req.file.filename}`
+    : `public/img/stock/${upload.media}`;
 
   const imageBuffer = req.file
     ? req.file.buffer
-    : await fs.promises.readFile(filePath); // Get the buffer of the uploaded file
+    : await fs.promises.readFile(`public/img/stock/raw-${upload.media}`); // Get the buffer of the uploaded file
 
   const imageWidth =
     req.body.width !== 'original' ? parseInt(req.body.width) : null; // Get the width of the image to resize
@@ -412,8 +417,9 @@ exports.updateMyUpload = catchAsync(async (req, res, next) => {
   }
 
   if (
-    req.body.orginalWidthInt === upload.width ||
-    parseInt(req.body.width) === upload.width
+    req.file ||
+    req.body.orginalWidthInt !== upload.width ||
+    parseInt(req.body.width) !== upload.width
   ) {
     filteredBody.size = formatBytes(req.body.size);
     filteredBody.width = req.body.width;

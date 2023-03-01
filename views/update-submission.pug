@@ -1,7 +1,7 @@
 extends base
 
 append head
-  script(type='module' src='/js/front/uploadFile.js')
+  script(type='module' src='/js/front/updateUploadFile.js')
   script(type='module' src='/js/front/updateUpload.js')
   script(type='module' src='/js/front/tagsInput.js')
   script(type='module' src='/js/front/matureContentSelection.js')
@@ -12,15 +12,28 @@ block content
           button.btn-lip(type='button')
             h3.modal-lip-title=upload.title
         
-        #upload.modal(data-state='0' data-ready='false')
+        #upload.modal
           
           .modal__header
             h2.modal__title=`Update ${upload.title}`  
           
           .modal__body
 
-            .modal__content.image-processing-step
-              .upload__mature-type
+            .modal__content.image-processing-step(data-state='0' data-ready='false')
+              
+              #uploading.upload__mature-type
+                img.uploading-img
+                .modal__actions.progress
+                  .modal__progress
+                    .progress-row-container
+                      .modal__progress-bar
+                        .modal__progress-fill(data-progress-fill)
+                      button.btn.btn-upload-cancel(type='button' data-action='cancel')
+                        svg.clear-icon.s24(xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='2' stroke='currentColor' cursor='pointer' data-action='cancel')
+                          path(stroke-linecap='round' stroke-linejoin='round' d='M6 18L18 6M6 6l12 12')
+                    .modal__file(data-file)
+              
+              #finished.upload__mature-type
                 input#media.drop-zone__input(type='file' name='myFile' hidden='' )
                 button#edit-upload.btn.btn-update-file(type='button')
                   svg.btn-update-file__icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor")
@@ -58,7 +71,7 @@ block content
                   input#mature(type='checkbox' name='maturity-checkbox' value='mature')
                   label(for='maturity-checkbox') Mature Content
                 fieldset#maturity-field.hidden
-                  legend What level of maturity does your content contain?
+                  legend Select a maturity that best describes your content?
                   ul.list__maturity-type
                     li
                       input#moderate.maturity-option(type='checkbox' name='moderate-checkbox' value='moderate')
@@ -84,26 +97,3 @@ block content
                       label(for='ideologically-sensitive-checkbox') Ideologically Sensitive
 
               button.btn.btn-upload-submit(type='submit') Submit
-            .modal__content.drop_zone.hide
-              .modal__actions.drop-zone.hide
-                .span-prompts
-                  span.drop-zone__prompt Drop image, pdf, or text here
-                  span.drop-zone__prompt OR
-                  span.drop-zone__prompt Click to upload 
-                input#media.drop-zone__input(type='file' name='myFile' hidden='' )
-                
-            .modal__content.loading-step(hidden='')
-              .upload__mature-type
-                img.uploading-img
-                .modal__actions.progress
-                  .modal__progress
-                    .progress-row-container
-                      .modal__progress-bar
-                        .modal__progress-fill(data-progress-fill)
-                      button.btn.btn-upload-cancel(type='button' data-action='cancel')
-                        svg.clear-icon.s24(xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='2' stroke='currentColor' cursor='pointer' data-action='cancel')
-                          path(stroke-linecap='round' stroke-linejoin='round' d='M6 18L18 6M6 6l12 12')
-                    .modal__file(data-file)
-
-            .modal__content(hidden='')
-                img.uploading-img
