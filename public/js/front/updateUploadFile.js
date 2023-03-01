@@ -6,6 +6,8 @@ const selectImageDisplaySize = document.getElementById('image-display');
 // get the first option element of the "image-display" select element
 const firstOption = selectImageDisplaySize.options[0];
 
+let upload;
+
 // a class representing the upload modal
 class UploadModal {
   // initialize instance variables
@@ -24,9 +26,21 @@ class UploadModal {
       ?.querySelector('#media')
       ?.addEventListener('change', this.fileHandle.bind(this));
   }
+
+  reset() {
+    this.filename = '';
+    this.isCopying = false;
+    this.isUploading = false;
+    this.progress = 0;
+    this.progressTimeout = null;
+    this.state = 0;
+    this.stateDisplay();
+    this.progressDisplay();
+    this.fileReset();
+  }
+
   action(e) {
     this[e.target?.getAttribute('data-action')]?.();
-    this.stateDisplay();
   }
   // method to cancel the upload
   cancel() {
@@ -37,7 +51,6 @@ class UploadModal {
     this.stateDisplay();
     this.progressDisplay();
     this.fileReset();
-    document.querySelector('.modal-lip-title').innerHTML = 'New upload';
   }
   // method to initiate file selection
   file() {
@@ -47,8 +60,16 @@ class UploadModal {
 
     this.el?.querySelector('#media').click();
   }
+
+  showFile() {
+    this.el?.setAttribute('data-ready', this.filename ? 'true' : 'false');
+    this.state = 0; // reset the state to "finished" (0) when a new file is selected
+    this.stateDisplay();
+  }
   // method to display the selected file
   fileDisplay(name = '') {
+    console.log(name);
+
     // update the filename instance variable
     this.filename = name;
 
@@ -57,11 +78,14 @@ class UploadModal {
     if (fileValue) fileValue.textContent = `Uploading: ${this.filename}`;
 
     // show the file
-    this.el?.setAttribute('data-ready', this.filename ? 'true' : 'false');
+    this.showFile();
   }
 
   // method to handle file selection
   fileHandle(e) {
+    console.log('file handling...');
+    this.state = 0; // reset the state to "finished" (0) when a new file is selected
+    this.stateDisplay();
     return new Promise(() => {
       const { target } = e;
       if (target?.files.length) {
@@ -69,6 +93,7 @@ class UploadModal {
         reader.onload = (e2) => {
           this.fileDisplay(target.files[0].name);
           this.upload();
+          this.stateDisplay();
         };
         reader.readAsDataURL(target.files[0]);
       }
@@ -81,6 +106,8 @@ class UploadModal {
     this.fileDisplay();
   }
   progressDisplay() {
+    console.log('progressing...');
+
     const progressValue = this.el?.querySelector('[data-progress-value]');
     const progressFill = this.el?.querySelector('[data-progress-fill]');
     const progressTimes100 = Math.floor(this.progress * 100);
@@ -107,8 +134,8 @@ class UploadModal {
       } else if (this.progress >= 1) {
         this.progressTimeout = setTimeout(() => {
           if (this.isUploading) {
-            // when progress is 100%, set state to 2 (finished state)
-            this.state = 2;
+            // when progress is 100%, set state to 0 (finished state)
+            this.state = 0;
             this.stateDisplay();
             this.progressTimeout = null;
           }
@@ -117,23 +144,26 @@ class UploadModal {
     }
   }
   stateDisplay() {
+    console.log('state display');
+
     const uploadingEl = this.el.querySelector('#uploading');
     const finishedEl = this.el.querySelector('#finished');
 
     switch (this.state) {
       case 0:
-        uploadingEl.style.display = 'none';
-        finishedEl.style.display = 'block';
+        uploadingEl.classList.add('hidden');
+        finishedEl.classList.remove('hidden');
         break;
       case 1:
-        uploadingEl.style.display = 'block';
-        finishedEl.style.display = 'none';
+        uploadingEl.classList.remove('hidden');
+        finishedEl.classList.add('hidden');
         break;
       default:
         throw new Error(`Invalid state: ${this.state}`);
     }
   }
   upload() {
+    console.log('uploading');
     if (!this.isUploading) {
       this.isUploading = true;
       this.progress = 0;
@@ -182,7 +212,7 @@ function updateThumbnail(file) {
 // set up an event listener for the window's load event
 window.addEventListener('DOMContentLoaded', () => {
   // create a new UploadModal object with a reference to the modal HTML element
-  const upload = new UploadModal('#uploadBody');
+  upload = new UploadModal('.image-processing-step');
 });
 
 const inputElement = document.querySelector('.drop-zone__input');
@@ -197,5 +227,6 @@ inputElement.addEventListener('change', (e) => {
 });
 
 editUploadBtn.addEventListener('click', (e) => {
+  upload.reset();
   inputElement.click();
 });
