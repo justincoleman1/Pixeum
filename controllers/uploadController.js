@@ -314,6 +314,14 @@ exports.deleteMyUpload = catchAsync(async (req, res, next) => {
 exports.updateResizedUploadedImage = catchAsync(async (req, res, next) => {
   console.log('Update resized Upload Middleware');
 
+  const slug = req.params.slug;
+
+  // find the upload to be deleted
+  const upload = await Upload.findOne({
+    user: req.user._id,
+    slug: slug,
+  });
+
   if (
     !req.file &&
     (req.body.orginalWidthInt === upload.width ||

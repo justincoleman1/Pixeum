@@ -19,11 +19,11 @@ const zoomInOnMax = (image, maxZoomFactor) => {
       image.style.maxWidth = maxZoomFactor + 'px';
       image.style.width = 'auto';
       image.style.height = 'auto';
-      const modalBodyHeight = modalBody.offsetHeight;
-      const imageHeight = image.offsetHeight;
-      const verticalPadding = (modalBodyHeight - imageHeight) / 2;
-      modalBody.style.paddingTop = verticalPadding + 'px';
-      modalBody.style.paddingBottom = verticalPadding + 'px';
+      // const modalBodyHeight = modalBody.offsetHeight;
+      // const imageHeight = image.offsetHeight;
+      // const verticalPadding = (modalBodyHeight - imageHeight) / 2;
+      // modalBody.style.paddingTop = verticalPadding + 'px';
+      // modalBody.style.paddingBottom = verticalPadding + 'px';
     } else {
       image.classList.add('zoom-in');
       image.classList.remove('zoom-out');
