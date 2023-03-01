@@ -110,6 +110,18 @@ input[data-autocompleted] {
   background-color: #eb4d4b;
 }
 
+.error {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
+}
+
 /* 
 =========================Login CSS========================================
 */
@@ -744,8 +756,8 @@ ul.profile-item-list li > a:hover,
 
 .nav__user-img {
   background-color: #2e2d2d;
-  height: 42px;
-  width: 42px;
+  height: 52px;
+  width: 52px;
   border-radius: 50%;
 }
 
@@ -2235,6 +2247,8 @@ section.upload {
   display: flex;
   flex-wrap: wrap;
   gap: 0.625em;
+  /* align-items: center;
+  justify-content: center; */
 }
 
 .image-gallery > li {

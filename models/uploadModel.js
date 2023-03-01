@@ -65,11 +65,11 @@ const uploadSchema = new mongoose.Schema(
     },
     view_count: {
       type: Number,
-      default: 1,
+      default: 0,
     },
     like_count: {
       type: Number,
-      default: 1,
+      default: 0,
     },
     comments_count: {
       type: Number,

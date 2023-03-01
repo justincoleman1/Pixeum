@@ -1,15 +1,17 @@
-const path = require('path');
-const express = require('express');
-const morgan = require('morgan');
-const rateLimit = require('express-rate-limit');
-const helmet = require('helmet');
-const mongoSanitize = require('express-mongo-sanitize');
-const xss = require('xss-clean');
-const hpp = require('hpp');
-const cookieParser = require('cookie-parser');
+const path = require('path'); // built-in Node module for working with file and directory paths
+const express = require('express'); // popular Node framework for building web applications
+const morgan = require('morgan'); // middleware for logging HTTP requests
+const rateLimit = require('express-rate-limit'); // middleware for limiting the number of requests to an API
+const helmet = require('helmet'); // middleware for setting HTTP headers to improve security
+const mongoSanitize = require('express-mongo-sanitize'); // middleware for preventing MongoDB query injection attacks
+const xss = require('xss-clean'); // middleware for preventing cross-site scripting (XSS) attacks
+const hpp = require('hpp'); // middleware for preventing HTTP parameter pollution attacks
+const cookieParser = require('cookie-parser'); // middleware for parsing cookies from HTTP requests
+const session = require('express-session'); // middleware for managing sessions in Express.js
+const MongoStore = require('connect-mongo'); // session store for MongoDB
+const AppError = require('./utils/appError'); // custom error class for handling errors in the application
+const globalErrorHandler = require('./controllers/errorController'); // middleware for handling errors in the application```
 
-const AppError = require('./utils/appError');
-const globalErrorHandler = require('./controllers/errorController');
 const uploadRouter = require('./routes/uploadRoutes');
 const userRouter = require('./routes/userRoutes');
 const commentRouter = require('./routes/commentRoutes');
@@ -91,6 +93,21 @@ app.use('/api', limiter);
 //Body, parser, reading data from the body into req.body
 app.use(express.json({ limit: '10kb' }));
 app.use(cookieParser());
+
+// Session middleware
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+      mongoUrl: process.env.DATABASE.replace(
+        '<password>',
+        process.env.DATABASE_PASSWORD
+      ),
+    }),
+  })
+);
 
 //Data sanitization against nosql query injection
 app.use(mongoSanitize());

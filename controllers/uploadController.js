@@ -42,11 +42,6 @@ exports.checkForNudity = async (req, res, next) => {
     return next();
   }
 
-  if (req.body.maturity.includes('nudity')) {
-    console.log('Nudity Marked...Skipping');
-    return next();
-  }
-
   const imageBuffer = req.file.buffer;
 
   // Create FormData to send the image buffer to the Sightengine API
@@ -82,6 +77,40 @@ exports.checkForNudity = async (req, res, next) => {
         if (!req.body.maturity.includes('nudity')) {
           // If not, add 'nudity' to the maturity string
           req.body.maturity += ',nudity';
+        }
+      }
+    }
+    const sexualDisplayScore = response.data.nudity.sexual_display;
+    if (sexualDisplayScore > 0.5) {
+      if (!req.body.maturity) {
+        // If maturity is not set, add 'moderate' and 'nudity' to the maturity string
+        req.body.maturity = 'strict,nudity';
+      } else {
+        // If maturity is already set, check if 'nudity' is included in the maturity string
+        if (!req.body.maturity.includes('nudity')) {
+          // If not, add 'nudity' to the maturity string
+          req.body.maturity += ',nudity';
+        }
+        if (req.body.maturity.includes('moderate')) {
+          req.body.maturity.replace('moderate', 'strict');
+        }
+      }
+    }
+
+    const sexualActivityScore = response.data.nudity.sexual_activity;
+    if (sexualActivityScore > 0.5) {
+      if (!req.body.maturity) {
+        // If maturity is not set, add 'moderate' and 'nudity' to the maturity string
+        req.body.maturity = 'strict,nudity';
+      } else {
+        // If maturity is already set, check if 'nudity' is included in the maturity string
+        if (!req.body.maturity.includes('nudity')) {
+          // If not, add 'nudity' to the maturity string
+          req.body.maturity += ',nudity';
+        }
+
+        if (req.body.maturity.includes('moderate')) {
+          req.body.maturity.replace('moderate', 'strict');
         }
       }
     }

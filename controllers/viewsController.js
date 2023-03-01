@@ -30,6 +30,7 @@ exports.getUploadForm = (req, res) => {
 
 exports.getUploadPage = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ username: req.params.username });
+
   const upload = await Upload.findOne({
     user: user._id,
     slug: req.params.slug,
@@ -37,6 +38,7 @@ exports.getUploadPage = catchAsync(async (req, res, next) => {
     path: 'user',
     fields: 'username photo',
   });
+
   const recents = await Upload.find({ user: user._id, mimetype: 'image' })
     .where('slug')
     .ne(req.params.slug)
@@ -44,7 +46,20 @@ exports.getUploadPage = catchAsync(async (req, res, next) => {
 
   if (!upload)
     return next(new AppError('There is no upload with that name.', 404));
-  console.log(upload.createdAt);
+
+  // check if the user has viewed the upload within the past hour
+  const viewedUploads = req.session ? req.session.viewedUploads || {} : {};
+
+  const viewedTime = viewedUploads[upload._id];
+  const currentTime = Date.now();
+  if (!viewedTime || currentTime - viewedTime > 3600000) {
+    // increment the view count and save the upload
+    upload.view_count += 1;
+    await upload.save();
+    // set the viewed time in the session
+    viewedUploads[upload._id] = currentTime;
+    req.session.viewedUploads = viewedUploads;
+  }
 
   const date = timeAgo2(upload.createdAt);
 
