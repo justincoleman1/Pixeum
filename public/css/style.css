@@ -1759,6 +1759,7 @@ section.upload {
   height: 5em;
   gap: 1.5em;
 }
+
 .modal__icon {
   display: block;
   width: 36px;
@@ -1888,7 +1889,7 @@ section.upload {
   font-size: 1.25em;
   cursor: pointer;
   color: #cccccc;
-  border: 0.25em dashed #47b1f5;
+  border: 0.25em dashed #2e2d2d;
   border-radius: 0.625em;
 }
 

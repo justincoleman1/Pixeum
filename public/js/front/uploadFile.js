@@ -1,5 +1,6 @@
 //esversion: 6
 // get references to HTML elements
+let upload;
 const editUploadBtn = document.getElementById('edit-upload');
 
 const selectImageDisplaySize = document.getElementById('image-display');
@@ -168,7 +169,7 @@ function updateThumbnail(file) {
 // set up an event listener for the window's load event
 window.addEventListener('DOMContentLoaded', () => {
   // create a new UploadModal object with a reference to the modal HTML element
-  const upload = new UploadModal('#upload');
+  upload = new UploadModal('#upload');
 });
 
 const inputElement = document.querySelector('.drop-zone__input');
@@ -184,17 +185,12 @@ dropZoneElement.addEventListener('dragover', (e) => {
     dropZoneElement.classList.remove('drop-zone--over');
   });
 });
-
-//click area to select files
-dropZoneElement.addEventListener('click', (e) => {
-  inputElement.click();
-});
-
 //drop file into area
 dropZoneElement.addEventListener('drop', (e) => {
   e.preventDefault();
 
   if (e.dataTransfer.files.length) {
+    console.log(e.dataTransfer.files);
     inputElement.files = e.dataTransfer.files;
     document.querySelector('.modal-lip-title').innerHTML =
       inputElement.files[0].name;
@@ -202,7 +198,13 @@ dropZoneElement.addEventListener('drop', (e) => {
     const fileValue = document.querySelector('[data-file]');
     if (fileValue)
       fileValue.textContent = `Uploading: ${inputElement.files[0].name}`;
+    upload.upload();
   }
+});
+
+//click area to select files
+dropZoneElement.addEventListener('click', (e) => {
+  inputElement.click();
 });
 
 inputElement.addEventListener('change', (e) => {
