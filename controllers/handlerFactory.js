@@ -24,11 +24,12 @@ exports.createDoc = (Model) =>
 
 exports.getDoc = (Model, popOptions) =>
   catchAsync(async (req, res, next) => {
+    console.log('getting doc...');
     let query = Model.findById(req.params.id);
     if (popOptions) query = query.populate(popOptions);
     const doc = await query;
     checkIfDocExist(doc);
-
+    console.log('doc found');
     res.status(200).json({
       status: 'success',
       data: {

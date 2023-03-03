@@ -137,7 +137,6 @@ exports.rawUploadedImage = catchAsync(async (req, res, next) => {
   const uniqueFilename =
     uuidv5(`${process.env.NAME_SPACE}-${timestamp}`, process.env.NAME_SPACE) +
     '.jpeg';
-  // const uniqueFilename = ${makeid(5)}` + `-${req.user._id}-${Date.now()}.jpeg`;
   req.body.filename = uniqueFilename;
   req.file.filename = req.body.filename;
 
@@ -481,7 +480,7 @@ exports.updateMyUpload = catchAsync(async (req, res, next) => {
 
   if (filteredBody.title !== upload.title) {
     filteredBody.slug = slugify(
-      filteredBody.title + '-' + upload.media.split('-')[0] + makeid(5),
+      filteredBody.title,
 
       { lower: true }
     );
@@ -591,8 +590,8 @@ exports.getUploadStats = catchAsync(async (req, res, next) => {
       $group: {
         _id: { $toUpper: '$media_type' },
         numUploads: { $sum: 1 },
-        numLikes: { $sum: '$like_count' },
-        avgLikes: { $avg: '$like_count' },
+        numLikes: { $sum: '$favorite_count' },
+        avgLikes: { $avg: '$favorite_count' },
         numComments: { $sum: '$comment_count' },
         avgComments: { $avg: '$comment_count' },
         numSales: { $sum: '$sale_count' },

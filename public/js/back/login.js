@@ -15,9 +15,17 @@ export const login = async (email, password) => {
 
     if (res.data.status === 'success') {
       showAlert('success', 'Logged in successfully!');
-      window.setTimeout(() => {
-        location.assign('/');
-      }, 1500);
+      const redirect = new URLSearchParams(window.location.search).get(
+        'redirect'
+      );
+      if (redirect) {
+        window.location.href = redirect;
+      } else {
+        // No redirect parameter, go to home page
+        window.setTimeout(() => {
+          location.assign('/');
+        }, 1500);
+      }
     }
   } catch (err) {
     showAlert('error', err.response.data.message);

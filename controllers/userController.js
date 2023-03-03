@@ -37,6 +37,7 @@ const filterObj = (obj, ...allowedFields) => {
 
 // Middleware to get the user with the current token
 exports.getMe = (req, res, next) => {
+  console.log('populating req params with id...');
   req.params.id = req.user._id;
   next();
 };

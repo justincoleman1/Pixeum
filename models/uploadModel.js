@@ -67,7 +67,7 @@ const uploadSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    like_count: {
+    favorite_count: {
       type: Number,
       default: 0,
     },
@@ -132,7 +132,7 @@ uploadSchema.virtual('Users', {
 
 //DOCUMENT MIDDLEWARE: runs before .save() and .create()
 uploadSchema.pre('save', function (next) {
-  this.slug = slugify(this.title + '-' + this.media.split('-')[0] + makeid(5), {
+  this.slug = slugify(this.title, {
     lower: true,
   });
   next();

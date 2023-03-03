@@ -10,6 +10,7 @@ import { update_art } from './back/updateArt';
 
 import { delete_art } from './back/deleteUpload';
 import { showAlert } from './front/alerts';
+import { handleFavorite } from './back/favorite.js';
 import {
   expandSideNav,
   collapseSideNav,
@@ -138,6 +139,9 @@ const deleteUploadNo = document.getElementById('delete-upload-no');
 const deleteUploadModal = document.getElementById('delete-upload-modal');
 //Upload edit btn
 const uploadEditBtn = document.getElementById('upload-edit-btn');
+
+//favorite Button
+const favoriteBtn = document.querySelector('button#favorite-btn');
 
 //Get the modal form inputs
 const updatePhotoInput = document.getElementById('input__photo');
@@ -372,6 +376,29 @@ if (deleteUploadNo) {
   deleteUploadNo.addEventListener('click', (e) => {
     e.preventDefault();
     deleteUploadModal.style.display = 'none';
+  });
+}
+
+if (favoriteBtn) {
+  const favoriteIcon = document.querySelector('.favorite-icon');
+  const favoritedData = document
+    .querySelector('#imageModal-content')
+    .getAttribute('upload-isFavorited');
+
+  let isFavorited = JSON.parse(favoritedData);
+
+  if (isFavorited) {
+    favoriteIcon.classList.add('favorited');
+  }
+
+  favoriteBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    await handleFavorite('unfavorited');
+    if (favoriteIcon.classList.contains('favorited')) {
+      favoriteIcon.classList.remove('favorited');
+    } else {
+      favoriteIcon.classList.add('favorited');
+    }
   });
 }
 

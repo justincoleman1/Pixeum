@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const Upload = require('./uploadModel');
+const User = require('./userModel');
 
 const favoriteSchema = new mongoose.Schema(
   {
@@ -20,51 +22,23 @@ const favoriteSchema = new mongoose.Schema(
   }
 );
 
-// We use a static method to calculate and update the like count
-// of the referenced upload when a favorite is created or deleted.
-// We pass the user ID and upload ID as arguments to the method.
-favoriteSchema.statics.updateLikeCount = async function (userId, uploadId) {
-  // We use the `aggregate` method of the model to calculate the
-  // sum of all likes for the given upload ID.
-  const stats = await this.aggregate([
-    {
-      $match: { upload: uploadId },
-    },
-    {
-      $group: {
-        _id: '$upload',
-        nLikes: { $sum: 1 },
-      },
-    },
-  ]);
-
-  // If there are any likes for the given upload, we update the
-  // `like_count` property of the upload with the sum of all likes.
-  if (stats.length > 0) {
-    await mongoose.model('Upload').findByIdAndUpdate(uploadId, {
-      like_count: stats[0].nLikes,
-    });
-  } else {
-    // If there are no likes for the given upload, we set the
-    // `like_count` property of the upload to 0.
-    await mongoose.model('Upload').findByIdAndUpdate(uploadId, {
-      like_count: 0,
-    });
-  }
-
-  // We return the updated like count.
-  const upload = await mongoose.model('Upload').findById(uploadId);
-  return upload.like_count;
+// Static method to update the favorite count of an upload
+favoriteSchema.statics.updateFavoriteCount = async function (uploadId) {
+  const favoriteCount = await this.countDocuments({ upload: uploadId });
+  await Upload.findByIdAndUpdate(uploadId, { favorite_count: favoriteCount });
 };
 
-// We use a middleware to update the like count of the referenced
-// upload when a favorite is created or deleted.
+// Middleware function to update the favorite count when a favorite is created
 favoriteSchema.post('save', async function () {
-  await this.constructor.updateLikeCount(this.user, this.upload);
+  console.log('Saving');
+  await this.constructor.updateFavoriteCount(this.upload);
 });
 
+// Middleware function to update the favorite count when a favorite is deleted
+
 favoriteSchema.pre('remove', async function () {
-  await this.constructor.updateLikeCount(this.user, this.upload);
+  console.log('Deleting');
+  await this.constructor.updateFavoriteCount(this);
 });
 
 const Favorite = mongoose.model('Favorite', favoriteSchema);

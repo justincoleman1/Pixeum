@@ -127,6 +127,52 @@ exports.protect = catchAsync(async (req, res, next) => {
   next();
 });
 
+//AUTHENTICATION
+exports.checkIfUser = catchAsync(async (req, res, next) => {
+  //1) Get token and check if it's there
+  let token;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer ')
+  ) {
+    // eslint-disable-next-line no-unused-vars
+    token = req.headers.authorization.split(' ')[1];
+  } else if (req.cookies.jwt) {
+    token = req.cookies.jwt;
+  }
+
+  // console.log('token', token);
+
+  if (!token) {
+    req.user = null;
+    return next();
+  }
+
+  //2) Verify token
+  //this promise returns a decoded payload
+  const decodedPayload = await promisify(jwt.verify)(
+    token,
+    process.env.JWT_SECRET
+  );
+
+  //3) Check if user still exists
+  const currentUser = await User.findById(decodedPayload.id);
+  if (!currentUser) {
+    req.user = null;
+    return next();
+  }
+
+  //4) Check if user changed password after the token was issued
+  if (currentUser.changedPasswordAfter(decodedPayload.iat)) {
+    req.user = null;
+    return next();
+  }
+
+  //GRANT ACCESS TO PROTECTED ROUTE
+  req.user = currentUser;
+  next();
+});
+
 //Only for rendered pages, No Errors
 exports.isLoggedIn = async (req, res, next) => {
   try {
@@ -153,6 +199,13 @@ exports.isLoggedIn = async (req, res, next) => {
     return next();
   }
   next();
+};
+
+exports.getLoggedInUser = (req, res) => {
+  res.status(200).json({
+    status: 'success',
+    user: req.user,
+  });
 };
 
 //AUTHORIZATION

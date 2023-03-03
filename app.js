@@ -1,5 +1,6 @@
 const path = require('path'); // built-in Node module for working with file and directory paths
 const express = require('express'); // popular Node framework for building web applications
+const session = require('express-session');
 const morgan = require('morgan'); // middleware for logging HTTP requests
 const rateLimit = require('express-rate-limit'); // middleware for limiting the number of requests to an API
 const helmet = require('helmet'); // middleware for setting HTTP headers to improve security
@@ -7,8 +8,6 @@ const mongoSanitize = require('express-mongo-sanitize'); // middleware for preve
 const xss = require('xss-clean'); // middleware for preventing cross-site scripting (XSS) attacks
 const hpp = require('hpp'); // middleware for preventing HTTP parameter pollution attacks
 const cookieParser = require('cookie-parser'); // middleware for parsing cookies from HTTP requests
-const session = require('express-session'); // middleware for managing sessions in Express.js
-const MongoStore = require('connect-mongo'); // session store for MongoDB
 const AppError = require('./utils/appError'); // custom error class for handling errors in the application
 const globalErrorHandler = require('./controllers/errorController'); // middleware for handling errors in the application```
 
@@ -94,18 +93,11 @@ app.use('/api', limiter);
 app.use(express.json({ limit: '10kb' }));
 app.use(cookieParser());
 
-// Session middleware
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({
-      mongoUrl: process.env.DATABASE.replace(
-        '<password>',
-        process.env.DATABASE_PASSWORD
-      ),
-    }),
   })
 );
 

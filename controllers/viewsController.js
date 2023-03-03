@@ -1,6 +1,7 @@
 const User = require('../models/userModel');
 const Upload = require('../models/uploadModel');
 const Tags = require('../models/tagModel');
+const Favorite = require('../models/favoriteModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const { timeAgo2 } = require('../utils/timeAgo');
@@ -29,15 +30,8 @@ exports.getUploadForm = (req, res) => {
 };
 
 exports.getUploadPage = catchAsync(async (req, res, next) => {
-  const user = await User.findOne({ username: req.params.username });
-
-  const upload = await Upload.findOne({
-    user: user._id,
-    slug: req.params.slug,
-  }).populate({
-    path: 'user',
-    fields: 'username photo',
-  });
+  const user = req.uploadsUser;
+  const upload = req.upload;
 
   const recents = await Upload.find({ user: user._id, mimetype: 'image' })
     .where('slug')
@@ -47,19 +41,7 @@ exports.getUploadPage = catchAsync(async (req, res, next) => {
   if (!upload)
     return next(new AppError('There is no upload with that name.', 404));
 
-  // check if the user has viewed the upload within the past hour
-  const viewedUploads = req.session ? req.session.viewedUploads || {} : {};
-
-  const viewedTime = viewedUploads[upload._id];
-  const currentTime = Date.now();
-  if (!viewedTime || currentTime - viewedTime > 3600000) {
-    // increment the view count and save the upload
-    upload.view_count += 1;
-    await upload.save();
-    // set the viewed time in the session
-    viewedUploads[upload._id] = currentTime;
-    req.session.viewedUploads = viewedUploads;
-  }
+  // check if the upload is favorited by the current user
 
   const date = timeAgo2(upload.createdAt);
 
@@ -68,6 +50,7 @@ exports.getUploadPage = catchAsync(async (req, res, next) => {
     upload,
     date,
     recents,
+    isFavorited: JSON.stringify(req.isFavorited),
   });
 });
 

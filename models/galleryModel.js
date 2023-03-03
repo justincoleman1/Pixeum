@@ -19,17 +19,9 @@ const gallerySchema = new Schema({
     type: Date,
     default: Date.now,
   },
-  isDefault: {
-    type: Boolean,
-    default: false,
-  },
   is_favorite: {
     type: Boolean,
     default: false,
-  },
-  parent_gallery: {
-    type: Schema.Types.ObjectId,
-    ref: 'Gallery',
   },
   uploads: [
     {

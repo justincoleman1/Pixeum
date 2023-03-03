@@ -2,6 +2,7 @@ const express = require('express');
 
 const uploadController = require('../controllers/uploadController');
 const authController = require('../controllers/authController');
+const favoriteController = require('../controllers/favoriteController');
 const commentRouter = require('./commentRoutes');
 
 const router = express.Router();
@@ -30,6 +31,13 @@ router.patch(
   uploadController.updateResizedUploadedImage,
   uploadController.updateMyUpload
 );
+router
+  .route('/:username/:slug/favorite')
+  .post(
+    authController.protect,
+    authController.restrictTo('user'),
+    favoriteController.toggleFavorite
+  );
 
 router.delete(
   '/:username/:slug',

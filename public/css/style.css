@@ -642,6 +642,33 @@ a.nav-btn__upload {
   width: 32px;
 }
 
+.favorite-icon {
+  stroke: #fff;
+  fill: none;
+  width: 32px;
+}
+
+.favorite-icon.favorited {
+  stroke: red;
+  fill: red;
+}
+
+#favorite-btn:hover .favorite-icon {
+  animation: heartbeat 1s infinite;
+}
+
+@keyframes heartbeat {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
 .upload-icon {
   margin-top: 3px;
 }

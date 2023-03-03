@@ -40,14 +40,6 @@ const userSchema = new mongoose.Schema(
       enum: ['user', 'admin'],
       default: 'user',
     },
-    encompassingFavoritesGallery: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Gallery',
-    },
-    encompassingUserGallery: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Gallery',
-    },
     password: {
       type: String,
       required: [true, 'Please provide a password'],
@@ -119,28 +111,14 @@ userSchema.pre('save', async function (next) {
 
 userSchema.pre('save', async function (next) {
   if (this.isNew) {
-    // create user's encompassing Favorites gallery and its default child gallery 'All Favorites'
-    const favGallery = new Gallery({
-      name: 'Favorites',
-      user: this._id,
-    });
-    await favGallery.save();
     const allFavGallery = new Gallery({
       name: 'All Favorites',
-      parentGallery: favGallery._id,
       user: this._id,
     });
     await allFavGallery.save();
 
-    // create user's encompassing User gallery and its default child gallery 'All Uploads'
-    const userGallery = new Gallery({
-      name: 'User Gallery',
-      user: this._id,
-    });
-    await userGallery.save();
     const allUploadsGallery = new Gallery({
       name: 'All Uploads',
-      parentGallery: userGallery._id,
       user: this._id,
     });
     await allUploadsGallery.save();

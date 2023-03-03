@@ -7,7 +7,7 @@ block content
     button#imageModal-close-btn
                 svg.modal-close-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor")
                     path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
-    #imageModal-content.image-modal-content
+    #imageModal-content.image-modal-content(upload-isFavorited=isFavorited)
         img#modal-image.modal-image.selectable-image(src=`/img/stock/raw-${upload.media}`)
   section#main.main
     .upload-container
@@ -18,8 +18,8 @@ block content
                 .highlighted-container-bottom-wrapper
                     .highlighted-panel
                         .highlighted-actions-l
-                            button.btn.btn__highlighted-favorites(type='button' title='Favorite')
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="highlighted-icons">
+                            button#favorite-btn.btn.btn__highlighted-favorites(type='button' title='Favorite')
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="favorite-icon">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                                 </svg>
                                 | Add to Favorites 
@@ -79,7 +79,7 @@ block content
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="#c3c3c3" viewBox="0 0 24 24" stroke-width="0" stroke="currentColor" width="24" height="24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                                         </svg>
-                                    p.hc=`${upload.like_count} Favorites`
+                                    p.hc=`${upload.favorite_count} Favorites`
                                 
                                 .highlighted__comment-count
                                     span.hc
@@ -161,7 +161,6 @@ block content
                                     img.grid-image(src=`/img/stock/${recents[7].media}`)
                             if recents[8]
                                 a.el.el-9(href=`/${upload.user.username}/${recents[8].slug}`)
-                                    img.grid-image(src=`/img/stock/${recents[8].media}`)
-                                
+                                    img.grid-image(src=`/img/stock/${recents[8].media}`)                  
                     
 
