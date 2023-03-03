@@ -52,7 +52,20 @@ exports.toggleFavorite = catchAsync(async (req, res, next) => {
 
   if (favorite) {
     console.log('deleting favorite');
-    await Favorite.findOneAndDelete(options);
+    await Favorite.findOne(options, function (err, deleteFavorited) {
+      if (err) console.log(err);
+      if (!deleteFavorited) {
+        console.log('Favorite not found');
+        res.status(201).json({
+          status: 'Fail',
+          message: 'Failed to delete favorite!',
+        });
+      }
+      deleteFavorited.$__remove(function (err) {
+        if (err) console.log(err);
+        console.log('Favorite deleted!');
+      });
+    });
   } else {
     console.log('creating favorite');
     await Favorite.create(options);

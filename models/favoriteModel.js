@@ -25,7 +25,9 @@ const favoriteSchema = new mongoose.Schema(
 // Static method to update the favorite count of an upload
 favoriteSchema.statics.updateFavoriteCount = async function (uploadId) {
   const favoriteCount = await this.countDocuments({ upload: uploadId });
-  await Upload.findByIdAndUpdate(uploadId, { favorite_count: favoriteCount });
+  await Upload.findByIdAndUpdate(uploadId, {
+    favorite_count: favoriteCount || 0,
+  });
 };
 
 // Middleware function to update the favorite count when a favorite is created
@@ -36,7 +38,7 @@ favoriteSchema.post('save', async function () {
 
 // Middleware function to update the favorite count when a favorite is deleted
 
-favoriteSchema.pre('remove', async function () {
+favoriteSchema.pre('remove', { doc: true }, async function () {
   console.log('Deleting');
   await this.constructor.updateFavoriteCount(this);
 });
