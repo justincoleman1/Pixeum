@@ -2,6 +2,55 @@ extends base
 
 append head
     script(type='module' src='/js/front/cycleImageSize.js')
+    style.
+        .hidden { display: none; }
+        .ml-8 { margin-left: 50px; }
+
+mixin renderComment(comment, depth=0)
+    li(class=depth > 0 ? 'comment-item ml-8': 'comment-item')
+        img.comment-user-icon(src=`/img/users/${comment.user.photo}`)
+        .comment
+            .comment-header
+                h4.comment-username=`${comment.user.username}`
+                .comment-reply
+                    if comment.parentComment
+                        img.comment-reply-icon(src=`/img/svg/reply-arrow-grey.svg`)
+                        h4.comment-reply-to-username=`${comment.parentComment.user.username}`
+            p.comment-date
+                | Posted on #{new Date(comment.createdAt).toLocaleDateString()}
+                if comment.updatedAt && comment.updatedAt !== comment.createdAt
+                    |  (Edited on #{new Date(comment.updatedAt).toLocaleDateString()})
+                if comment.reply_count
+                    |  | #{comment.reply_count} #{comment.reply_count === 1 ? 'Reply' : 'Replies'}
+            p.comment-content=`${comment.content}`
+            .comment-footer
+                button.comment-upvote-button
+                    img.comment-vote-icon(src='/img/svg/thumbs-up.svg', alt='Thumbs Up Icon')
+                    p.comment-vote-count=`${comment.like_count}`
+                button.comment-downvote-button
+                    img.comment-vote-icon(src='/img/svg/thumbs-down.svg', alt='Thumbs Down Icon')
+                    .comment-vote-count=`${comment.dislike_count}`
+                if depth < 3                                                     
+                    button.comment-reply-button(data-comment-id=comment._id) Reply
+                button.comment-share-button Share
+                if user && user.id === comment.user._id.toString()
+                    button.comment-edit-button(data-comment-id=comment._id) Edit
+                    button.comment-delete-button(data-comment-id=comment._id) Delete
+            .comments-edit-section.hidden(data-comment-id=comment._id, id=`edit-section-${comment._id}`)
+                form.edit-comment-form.comments-post(data-comment-id=comment._id, id=`edit-form-${comment._id}`)
+                    textarea.comments-input(name='content' rows='3' required maxlength='255')= comment.content
+                    hr
+                    button.edit-submit-button(type='submit') Save
+            .comments-reply-section.hidden(data-comment-id=comment._id, id=`reply-section-${comment._id}`)
+                img.comment-user-icon(src=`/img/users/${comment.user.photo}`)
+                form.reply-form.comments-post(data-comment-id=comment._id, id=`reply-form-${comment._id}`)
+                    textarea.comments-input(name='content' placeholder='Write a reply...' rows='3' required maxlength='255')
+                    hr
+                    button.reply-submit-button(type='submit') Submit Reply
+        if comment.comments && comment.comments.length && depth < 3
+            each reply in comment.comments
+                +renderComment(reply, depth + 1)
+
 block content
   #imageModal.image-modal
     button#imageModal-close-btn
@@ -131,47 +180,10 @@ block content
                                             hr
                                             button#post-comment-btn.comments-submit-button(type='submit') Comment
                                     ul#messages.comments-list
-                                        if upload.comments.length
+                                        if upload.comments && upload.comments.length
                                             each comment in upload.comments
-                                                li.comment-item
-                                                    img.comment-user-icon(src=`/img/users/${comment.user.photo}`)
-                                                    .comment
-                                                        .comment-header
-                                                            h4.comment-username=`${comment.user.username}`
-                                                            .comment-reply
-                                                                if comment.parentComment
-                                                                    img.comment-reply-icon(src=`/img/svg/reply-arrow-grey.svg`)
-                                                                    h4.comment-reply-to-username=`${comment.parentComment.user.username}`
-                                                        p.comment-date
-                                                            | Posted on #{new Date(comment.createdAt).toLocaleDateString()}
-                                                            if comment.updatedAt && comment.updatedAt !== comment.createdAt
-                                                                |  (Edited on #{new Date(comment.updatedAt).toLocaleDateString()})
-                                                            if comment.reply_count
-                                                                |  | #{comment.reply_count} #{comment.reply_count === 1 ? 'Reply' : 'Replies'}
-                                                        p.comment-content=`${comment.content}`
-                                                        .comment-footer
-                                                            button.comment-upvote-button
-                                                                img.comment-vote-icon(src='/img/svg/thumbs-up.svg', alt='Thumbs Up Icon')
-                                                                p.comment-vote-count=`${comment.like_count}`
-                                                            button.comment-downvote-button
-                                                                img.comment-vote-icon(src='/img/svg/thumbs-down.svg', alt='Thumbs Down Icon')
-                                                                .comment-vote-count=`${comment.dislike_count}`                                                     
-                                                            button.comment-reply-button(data-comment-id=comment._id) Reply
-                                                            button.comment-share-button Share
-                                                            if user && user.id === comment.user._id.toString()
-                                                                button.comment-edit-button(data-comment-id=comment._id) Edit
-                                                                button.comment-delete-button(data-comment-id=comment._id) Delete
-                                                        .comments-edit-section.hidden(data-comment-id=comment._id, id=`edit-section-${comment._id}`)
-                                                            form.edit-comment-form.comments-post(data-comment-id=comment._id, id=`edit-form-${comment._id}`)
-                                                                textarea.comments-input(name='content' rows='3' required maxlength='255')= comment.content
-                                                                hr
-                                                                button.edit-submit-button(type='submit') Save
-                                                        .comments-reply-section.hidden(data-comment-id=comment._id, id=`reply-section-${comment._id}`)
-                                                            img.comment-user-icon(src=`/img/users/${comment.user.photo}`)
-                                                            form.reply-form.comments-post(data-comment-id=comment._id, id=`reply-form-${comment._id}`)
-                                                                textarea.comments-input(name='content' placeholder='Write a reply...' rows='3' required maxlength='255')
-                                                                hr
-                                                                button.reply-submit-button(type='submit') Submit Reply
+                                                if !comment.parentComment
+                                                    +renderComment(comment)
                                         else
                                             p.comment-befirst-cotent='Be the first to comment'
         .side-container

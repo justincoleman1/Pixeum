@@ -23,10 +23,10 @@ exports.setCommentUserIds = catchAsync(async (req, res, next) => {
   next();
 });
 
+// Validate parentComment if provided
 exports.giveComment = catchAsync(async (req, res, next) => {
   const { content, parentComment } = req.body;
 
-  // Validate parentComment if provided
   if (parentComment) {
     const parent = await Comment.findById(parentComment);
     if (!parent) {
@@ -35,6 +35,18 @@ exports.giveComment = catchAsync(async (req, res, next) => {
     if (parent.upload.toString() !== req.body.upload.toString()) {
       return next(
         new AppError('Parent comment does not belong to this upload', 400)
+      );
+    }
+    // Check nesting level
+    let depth = 0;
+    let current = parent;
+    while (current.parentComment && depth < 3) {
+      current = await Comment.findById(current.parentComment);
+      depth++;
+    }
+    if (depth >= 2) {
+      return next(
+        new AppError('Maximum reply nesting level reached (3 levels)', 400)
       );
     }
   }
