@@ -4,16 +4,7 @@ const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
 exports.trackViews = catchAsync(async (req, res, next) => {
-  const uploadsUser = await User.findOne({ username: req.params.username });
-
-  const upload = await Upload.findOne({
-    user: uploadsUser._id,
-    slug: req.params.slug,
-  }).populate({
-    path: 'user',
-    fields: 'username photo',
-  });
-
+  const upload = req.upload;
   if (upload) {
     const viewedUploads = req.session.viewedUploads || {};
     const lastVisit = viewedUploads[upload._id];
@@ -27,8 +18,6 @@ exports.trackViews = catchAsync(async (req, res, next) => {
       req.session.viewedUploads = viewedUploads;
     }
   }
-
-  req.uploadsUser = uploadsUser;
   req.upload = upload;
   next();
 });

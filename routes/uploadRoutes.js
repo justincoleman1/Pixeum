@@ -7,7 +7,7 @@ const commentRouter = require('./commentRoutes');
 
 const router = express.Router();
 
-router.use('/:uploadId/comments', commentRouter);
+router.use('/:username/:slug/comments', commentRouter);
 // router.param('id', uploadController.checkID);
 
 router.route('/').get(uploadController.getAllUploads);

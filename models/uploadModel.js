@@ -71,7 +71,7 @@ const uploadSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    comments_count: {
+    comment_count: {
       type: Number,
       default: 0,
     },
@@ -119,12 +119,12 @@ uploadSchema.pre(/^find/, function (next) {
 });
 
 //Virtual Populate
-uploadSchema.virtual('Comments', {
+uploadSchema.virtual('comments', {
   ref: 'Comment',
   foreignField: 'upload',
   localField: '_id',
 });
-uploadSchema.virtual('Users', {
+uploadSchema.virtual('users', {
   ref: 'User',
   foreignField: 'upload',
   localField: '_id',

@@ -6,10 +6,8 @@ const overlay = document.querySelector('.overlay');
 const el = document.getElementById('main');
 const el1 = document.getElementById('aside');
 const el2 = document.getElementById('upload-main');
-const el4 = document.getElementById('sidenavitem3');
-const el5 = document.getElementById('sidenavitem4');
-const el6 = document.getElementById('sidenavitem5');
-const el7 = document.getElementById('sidenavitem6');
+const el3 = document.getElementById('sidenavitem3');
+const el4 = document.getElementById('sidenavitem4');
 
 export const asideDisappear = () => {
   el1.classList.add('disappear');
@@ -64,32 +62,8 @@ const expandSideNavChildren = () => {
   if (el2) el2.classList.add('shrink-main');
   else el.classList.add('shrink-main');
   el1.classList.add('expand-aside');
-
-  if (el4) el4.classList.remove('hidden');
-  el5.classList.remove('hidden');
-  el6.classList.remove('hidden');
-  el7.classList.remove('hidden');
-
-  for (let i = 0; i < 4; i++) {
-    if (i < 3) {
-      document
-        .getElementById('sidenavitem1')
-        .firstChild.children[i].classList.remove('center-side-nav-link');
-      document
-        .getElementById('sidenavitem1')
-        .firstChild.children[i].firstChild.classList.remove(
-          'shrink-side-nav-link'
-        );
-    }
-    document
-      .getElementById('sidenavitem2')
-      .firstChild.children[i].classList.remove('center-side-nav-link');
-    document
-      .getElementById('sidenavitem2')
-      .firstChild.children[i].firstChild.classList.remove(
-        'shrink-side-nav-link'
-      );
-  }
+  el3.classList.remove('hidden');
+  el4.classList.remove('hidden');
 };
 
 const collapseSideNavChildren = () => {
@@ -97,30 +71,8 @@ const collapseSideNavChildren = () => {
   else el.classList.remove('shrink-main');
 
   el1.classList.remove('expand-aside');
-
-  if (el4) el4.classList.add('hidden');
-  el5.classList.add('hidden');
-  el6.classList.add('hidden');
-  el7.classList.add('hidden');
-
-  for (let i = 0; i < 4; i++) {
-    if (i < 3) {
-      document
-        .getElementById('sidenavitem1')
-        .firstChild.children[i].classList.add('center-side-nav-link');
-      document
-        .getElementById('sidenavitem1')
-        .firstChild.children[i].firstChild.classList.add(
-          'shrink-side-nav-link'
-        );
-    }
-    document
-      .getElementById('sidenavitem2')
-      .firstChild.children[i].classList.add('center-side-nav-link');
-    document
-      .getElementById('sidenavitem2')
-      .firstChild.children[i].firstChild.classList.add('shrink-side-nav-link');
-  }
+  el3.classList.add('hidden');
+  el4.classList.add('hidden');
 };
 
 export const expandSideNav = () => {

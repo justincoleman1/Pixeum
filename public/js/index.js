@@ -7,7 +7,7 @@ import { signup } from './back/signup';
 import { updateSettings } from './back/updateSettings';
 import { submit_art } from './back/uploadArt';
 import { update_art } from './back/updateArt';
-
+import { postComment } from './back/comments.js';
 import { delete_art } from './back/deleteUpload';
 import { showAlert } from './front/alerts';
 import { handleFavorite } from './back/favorite.js';
@@ -143,6 +143,9 @@ const uploadEditBtn = document.getElementById('upload-edit-btn');
 //favorite Button
 const favoriteBtn = document.querySelector('button#favorite-btn');
 
+//Comment form
+const commentForm = document.getElementById('comment-form');
+const postCommentBtn = document.getElementById('post-comment-btn');
 //Get the modal form inputs
 const updatePhotoInput = document.getElementById('input__photo');
 
@@ -340,6 +343,19 @@ if (uploadForm) {
     data.append('maturity', maturity);
 
     await submit_art(data);
+  });
+}
+
+if (commentForm) {
+  commentForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    console.log('Doing something in the Frontend.');
+    const content = document.getElementById('post-comment').value;
+    const urlParts = window.location.pathname.split('/');
+    const username = urlParts[1];
+    const slug = urlParts[2];
+    console.log(username + ' ' + slug + ' ' + content + ' : the comment');
+    await postComment(content, username, slug);
   });
 }
 

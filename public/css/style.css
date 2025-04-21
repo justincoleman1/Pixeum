@@ -2266,6 +2266,114 @@ section.upload {
     margin-left: 1.875em;
   }
 }
+.comments-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid beige;
+}
+
+.comments-header {
+  width: 100%;
+  background-color: red;
+}
+
+.comments-body {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: #20bf6b;
+}
+
+.comments-post {
+  background-color: orange;
+  border: 2px solid #fff;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+textarea.comments-input {
+  margin: 10px;
+  resize: none;
+}
+
+.comments-submit-button {
+  margin: 10px 10px 10px 0px;
+  padding: 10px;
+  width: 7rem;
+  font-size: 0.8rem;
+  color: #ffffff;
+  background-color: #2e2d2d;
+  border: none;
+  align-self: flex-end;
+}
+
+.comments-list {
+  margin: 10px;
+  background-color: palevioletred;
+}
+
+.comment-item {
+  display: flex;
+  flex-direction: row;
+}
+.comment {
+  padding: 5px;
+  background-color: #39f;
+}
+
+.comment-user-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  padding: 5px;
+}
+
+.comment-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+}
+
+.comment-username {
+  font-size: 12px;
+  padding-top: 5px;
+}
+
+.comment-reply {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+}
+
+.comment-reply-to-username {
+  font-size: 11px;
+  padding-top: 5px;
+  color: #c3c3c3;
+}
+
+.comment-reply-icon {
+  padding-top: 2.5px;
+  margin-left: 10px;
+  width: 20px;
+  height: 20px;
+}
+
+.comment-date {
+  padding-top: 5px;
+  font-size: 10px;
+}
+
+.comment-content {
+  padding-top: 5px;
+  font-size: 12px;
+}
+
+.comment-befirst-cotent {
+  text-align: center;
+}
 /*======================END UPLOAD PAGE CSS=========================*/
 
 /*======================RESPONSIVE IMAGE GRID 1=====================*/
@@ -2915,7 +3023,7 @@ img.grid-image {
 
 .tags-input-wrapper {
   background: transparent;
-  padding: 10px;
+  padding: 1px;
   border-radius: 4px;
   width: 100%;
   border: 1px solid #ccc;
@@ -2932,16 +3040,108 @@ img.grid-image {
 }
 .tags-input-wrapper .tag {
   display: inline-block;
-  background-color: #47b1f5;
+  background-color: #2e2d2d;
+  border: 1px solid #47b1f5;
+  border-radius: 4px;
   color: white;
-  border-radius: 40px;
-  padding: 0px 3px 0px 7px;
-  margin-right: 5px;
-  margin-bottom: 5px;
+  margin-right: 2.5px;
+  transition: all 0.3s;
+  padding: 5px 10px;
+  font-size: 14px;
+  height: 100%;
 }
 
 .tags-input-wrapper .tag a {
-  margin: 0 7px 3px;
   display: inline-block;
   cursor: pointer;
+  font-size: 1.2em;
+  margin: -2px 5px 0;
+  padding: 2px;
 }
+
+/*==========================================PROFILE PAGE CSS=======================================================*/
+/* Set the initial height of the cover image */
+.cover-image {
+  position: relative;
+  height: 18em;
+  background-color: #47b1f5;
+}
+
+.avatar-container {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 50%);
+  width: 200px;
+  height: 200px;
+  border: 5px solid #fff;
+  border-radius: 50%;
+  background-color: #ccc;
+  display: flex;
+  /* justify-content: center;
+  align-items: center; */
+  /* add your background image or color here */
+}
+
+.avatar-img {
+  width: 200px;
+  border-radius: 50%;
+}
+
+.user-page-nav {
+  height: 3.25em;
+  background-color: #343a40;
+}
+
+/* Set the initial height of the optional container */
+.optional-container {
+  margin-top: 1em;
+  height: 14em;
+  background-color: pink;
+}
+
+.user-page-nav {
+  margin-top: 6em;
+  height: auto;
+  padding: 1em 0.5em;
+  background-color: #343a40;
+  display: flex;
+  gap: 1em;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+a.user-nav-item {
+  font-size: 1.125em;
+}
+
+/* Set the width of the left and right side of the content container */
+.content-container {
+  display: flex;
+  flex-direction: row;
+  background-color: #20bf6b;
+}
+
+.content-container .left-side {
+  width: 60%;
+  background-color: red;
+}
+
+.content-container .right-side {
+  width: 40%;
+  background-color: blue;
+}
+
+/* Set the height of the content container to span to the bottom of the page */
+.content-container {
+  height: calc(100% - (17.52em + 17.25em));
+}
+
+/* Allow the content container to grow vertically based on its content */
+.content-container .left-side,
+.content-container .right-side {
+  height: 100%;
+  overflow-y: auto;
+}
+/*=================================================================================================================*/

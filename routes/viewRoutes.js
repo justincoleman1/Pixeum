@@ -3,6 +3,7 @@ const viewController = require('../controllers/viewsController');
 const authController = require('../controllers/authController');
 const favoriteController = require('../controllers/favoriteController');
 const trackingController = require('../controllers/trackingController');
+const uploadController = require('../controllers/uploadController');
 
 const router = express.Router();
 
@@ -25,6 +26,7 @@ router.get('/:username', viewController.getUserProfile);
 
 router.get(
   '/:username/:slug',
+  uploadController.getUpload,
   trackingController.trackViews,
   favoriteController.isFavorited,
   viewController.getUploadPage

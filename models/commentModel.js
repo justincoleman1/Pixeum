@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const commentSchema = new mongoose.Schema(
   {
-    comment: {
+    content: {
       type: String,
       minlength: 1,
       maxlength: 255,
@@ -18,7 +18,16 @@ const commentSchema = new mongoose.Schema(
       ref: 'Upload',
       required: [true, 'A comment must have an upload!'],
     },
+    parentComment: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Comment',
+      default: null,
+    },
     like_count: {
+      type: Number,
+      default: 0,
+    },
+    dislike_count: {
       type: Number,
       default: 0,
     },
@@ -42,7 +51,7 @@ commentSchema.pre(/^find/, function (next) {
 
   this.populate({
     path: 'user',
-    select: 'name photo',
+    select: 'username photo',
   });
 
   next();
@@ -52,6 +61,12 @@ commentSchema.pre(/^findOneAnd/, async function (next) {
   this.r = await this.findOne();
   // console.log(this.r);
   next();
+});
+
+commentSchema.virtual('comments', {
+  ref: 'Comment',
+  foreignField: 'parentComment',
+  localField: '_id',
 });
 
 // commentSchema.post(/^findOneAnd/, async function () {

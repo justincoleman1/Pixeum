@@ -86,14 +86,14 @@ block content
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="#c3c3c3" viewBox="0 0 24 24" stroke-width="0" stroke="currentColor" width="24" height="24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 011.037-.443 48.282 48.282 0 005.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
                                         </svg>
-                                    p.hc=`${upload.comments_count} Comments`
+                                    p.hc=`${upload.comment_count} Comments`
 
 
                                 .highlighted__view-count
                                     span.hc
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
                                         <path fill="none" d="M0 0h24v24H0V0z"/>
-                                        <path fill="#c3c3c3" d="M12 4C7 4 2.73 7.11 1 11.5 2.73 15.89 7 19 12 19s9.27-3.11 11-7.5C21.27 7.11 17 4 12 4zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                                        <path fill=""#c3c3c3 d="M12 4C7 4 2.73 7.11 1 11.5 2.73 15.89 7 19 12 19s9.27-3.11 11-7.5C21.27 7.11 17 4 12 4zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
                                         </svg>   
                                     p.hc= `${upload.view_count} Views`
                             if upload.maturity.length > 0 || upload.tags.length > 0
@@ -120,8 +120,40 @@ block content
                             .image-details-container
                                 span IMAGE SIZE:  
                                 p.image-details=`${upload.width} x ${upload.height}px ${upload.size}`
-
-
+                            .comments-container
+                                .comments-header
+                                    h2(class='text-xl font-bold mb-4') Comments
+                                .comments-body
+                                    form#comment-form.comments-post
+                                        textarea#post-comment.comments-input(name='content' placeholder="What's on your mind..." rows='2' required maxlength='500')
+                                        hr
+                                        button#post-comment-btn.comments-submit-button(type='submit') Comment
+                                    ul#messages.comments-list
+                                        if upload.comments.length
+                                            each comment in upload.comments
+                                                li.comment-item
+                                                    img.comment-user-icon(src=`/img/users/${comment.user.photo}`)
+                                                    .comment
+                                                        .comment-header
+                                                            h4.comment-username=`${comment.user.username}`
+                                                            .comment-reply
+                                                                if comment.parentComment
+                                                                    img.comment-reply-icon(src=`/img/svg/reply-arrow-grey.svg`)
+                                                                    h4.comment-reply-to-username=`${comment.parentComment.user.username}`
+                                                        p.comment-date=`${comment.createdAt}`
+                                                        p.comment-content=`${comment.content}`
+                                        else
+                                            p.comment-befirst-cotent='Be the first to comment'
+                                        li.comment-item
+                                            img.comment-user-icon(src=`/img/users/default.jpg`)
+                                            .comment
+                                                .comment-header
+                                                    h4.comment-username Rimuru Tempest
+                                                    .comment-reply
+                                                        img.comment-reply-icon(src=`/img/svg/reply-arrow-grey.svg`)
+                                                        h4.comment-reply-to-username Kobe Bryant
+                                                p.comment-date 4 months ago
+                                                p.comment-content Exercitationem numquam explicabo quas illum. Repellat culpa quia facere sit blanditiis et. Voluptatem non animi similique omnis. At facere sunt pariatur commodi rerum iste quae perspiciatis. Illo et molestiae debitis et et labore. Non incidunt consequatur ea vel.Nihil eveniet iure corrupti recusandae optio quia quo. Laboriosam quod libero et magni sapiente nihil quasi delectus. Provident delectus non vel temporibus dolorem et.Quos non sunt unde suscipit. Sequi placeat modi nisi cum consequatur neque. In aspernatur in necessitatibus id. Quos cumque sint labore ullam nobis. Omnis quis quidem ducimus.Sit expedita ipsum et. Suscipit distinctio sunt sed dolores qui eius. Praesentium dolorem rerum adipisci odio sint cumque.Dolores enim fuga nesciunt quis tempore. Rem atque et facere praesentium. Voluptatum totam et et tempore est.
         .side-container
             .side__container-header
                 .side__header
@@ -164,3 +196,4 @@ block content
                                     img.grid-image(src=`/img/stock/${recents[8].media}`)                  
                     
 
+    script(type='module' src='/js/front/commentBar.js')

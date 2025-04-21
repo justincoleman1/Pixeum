@@ -2,7 +2,6 @@ const crypto = require('crypto');
 const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
-const Gallery = require('./galleryModel');
 
 const userSchema = new mongoose.Schema(
   {
@@ -106,23 +105,6 @@ userSchema.pre('save', async function (next) {
   //Delete password confirm field
   this.passwordConfirm = undefined;
 
-  next();
-});
-
-userSchema.pre('save', async function (next) {
-  if (this.isNew) {
-    const allFavGallery = new Gallery({
-      name: 'All Favorites',
-      user: this._id,
-    });
-    await allFavGallery.save();
-
-    const allUploadsGallery = new Gallery({
-      name: 'All Uploads',
-      user: this._id,
-    });
-    await allUploadsGallery.save();
-  }
   next();
 });
 

@@ -12,8 +12,6 @@ const { upload } = require('./multerController');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 const { formatBytes } = require('../utils/formatBytes');
-const { makeid } = require('../utils/makeid');
-
 // Middleware to set the user ID for a new upload
 exports.setUploadUserIds = (req, res, next) => {
   // Allow nested routes
@@ -39,6 +37,15 @@ exports.checkForNudity = async (req, res, next) => {
   if (!req.file) {
     // if there is no file, pass to the next middleware
     console.log('No file present...Skipping');
+    return next();
+  }
+
+  if (
+    req.body.maturity[0] === 'moderate' ||
+    req.body.maturity[0] === 'strict'
+  ) {
+    // if there is no file, pass to the next middleware
+    console.log('No check necessary...Skipping');
     return next();
   }
 
@@ -619,7 +626,32 @@ exports.getUploadStats = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.getUpload = catchAsync(async (req, res, next) => {
+  console.log('Inside the getUploadPage Function');
+  const uploadsUser = await User.findOne({ username: req.params.username });
+  const upload = await Upload.findOne({
+    user: uploadsUser._id,
+    slug: req.params.slug,
+  })
+    .populate({
+      path: 'user',
+      fields: 'username photo',
+    })
+    .populate({
+      path: 'comments',
+      fields: 'comment user like_count dislike_count reply_count',
+    });
+  if (!upload || !uploadsUser) {
+    res.status(404).json({
+      status: 'fail',
+      message: 'Upload does not exist',
+    });
+  }
+  req.uploadsUser = uploadsUser;
+  req.upload = upload;
+  next();
+});
+
 exports.getAllUploads = Handler.getAllDocs(Upload);
-exports.getUpload = Handler.getDoc(Upload, { path: 'comments' });
 exports.updateUpload = Handler.updateDoc(Upload);
 exports.deleteUpload = Handler.deleteDoc(Upload);

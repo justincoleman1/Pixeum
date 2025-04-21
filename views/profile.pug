@@ -1,7 +1,37 @@
 extends base
 
 append head
-
+    script(type='module' src='/js/front/cycleImageSize.js')
 block content
   section#main.main
-      h1 USER PROFILE PAGE
+    .cover-image
+      // Add cover image here
+      .avatar-container
+        img.avatar-img(src=`/img/users/${pageOwner.photo}`)
+    .user-page-nav
+      a.user-nav-item Post
+      a.user-nav-item Recent
+      a.user-nav-item Galleries
+      a.user-nav-item Favorites
+      a.user-nav-item Bookmarks
+      a.user-nav-item Models
+      a.user-nav-item Lora
+      a.user-nav-item Embeddings/Textual Inversions
+      a.user-nav-item AI
+      a.user-nav-item Digital Art
+      a.user-nav-item Drawings
+      a.user-nav-item Paintings
+      a.user-nav-item Manga
+      a.user-nav-item Manhua/Manwha
+      a.user-nav-item Comics
+      a.user-nav-item Novels
+      
+    .optional-container.hidden
+      // Add optional container here
+    .content-container
+      .left-side
+        // Add main content here
+        h1 Left
+      .right-side
+        // Add information section here
+        h1 Right         

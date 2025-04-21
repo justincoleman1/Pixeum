@@ -33,6 +33,8 @@ exports.getUploadPage = catchAsync(async (req, res, next) => {
   const user = req.uploadsUser;
   const upload = req.upload;
 
+  console.log(req.upload);
+
   const recents = await Upload.find({ user: user._id, mimetype: 'image' })
     .where('slug')
     .ne(req.params.slug)
@@ -77,11 +79,13 @@ exports.getUpdateUploadForm = catchAsync(async (req, res) => {
   });
 });
 
-exports.getUserProfile = (req, res, next) => {
+exports.getUserProfile = catchAsync(async (req, res, next) => {
+  const pageOwner = await User.findOne({ username: req.params.username });
   res.status(200).render('profile', {
     title: 'Profile page',
+    pageOwner: pageOwner,
   });
-};
+});
 
 exports.getLoginForm = (req, res, next) => {
   res.status(200).render('login', {
