@@ -77,12 +77,13 @@ exports.updateComment = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.deleteComment = catchAsync(async (req, res, next) => {
+exports.deleteMyComment = catchAsync(async (req, res, next) => {
   const comment = await Comment.findById(req.params.id);
   if (!comment) {
     return next(new AppError('Comment not found', 404));
   }
-  if (comment.user.toString() !== req.user.id) {
+  if (comment.user.id !== req.user.id) {
+    console.log(comment.user._id + ': !!!!!!!! :' + req.user.id);
     return next(new AppError('You can only delete your own comments', 403));
   }
 

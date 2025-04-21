@@ -14,6 +14,6 @@ router
 router
   .route('/:id')
   .patch(commentController.updateComment)
-  .delete(commentController.deleteComment);
+  .delete(commentController.deleteMyComment);
 
 module.exports = router;
