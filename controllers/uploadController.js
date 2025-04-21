@@ -643,16 +643,21 @@ exports.getUpload = catchAsync(async (req, res, next) => {
   })
     .populate({
       path: 'user',
-      fields: 'username photo',
+      select: 'username photo',
     })
     .populate({
       path: 'comments',
-      fields:
-        'content user like_count dislike_count reply_count createdAt updatedAt',
-      populate: {
-        path: 'user',
-        select: 'username photo',
-      },
+      select:
+        'content user like_count dislike_count reply_count createdAt updatedAt parentComment',
+      populate: [
+        { path: 'user', select: 'username photo' },
+        {
+          path: 'parentComment',
+          select:
+            'content user like_count dislike_count reply_count createdAt updatedAt parentComment',
+          populate: { path: 'user', select: 'username photo' },
+        },
+      ],
     });
 
   if (!upload) {

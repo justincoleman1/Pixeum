@@ -2286,12 +2286,22 @@ section.upload {
   background-color: #20bf6b;
 }
 
+.comments-post-section,
+.comments-reply-section,
+.comments-edit-section {
+  margin: 10px 0px;
+  background-color: purple;
+  display: flex;
+  flex-direction: row;
+}
+
 .comments-post {
   background-color: orange;
   border: 2px solid #fff;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
+  width: 100%;
 }
 
 textarea.comments-input {
@@ -2299,7 +2309,9 @@ textarea.comments-input {
   resize: none;
 }
 
-.comments-submit-button {
+.comments-submit-button,
+.reply-submit-button,
+.edit-submit-button {
   margin: 10px 10px 10px 0px;
   padding: 10px;
   width: 7rem;
@@ -2311,7 +2323,7 @@ textarea.comments-input {
 }
 
 .comments-list {
-  margin: 10px;
+  margin: 10px 0px;
   background-color: palevioletred;
 }
 
@@ -2322,6 +2334,7 @@ textarea.comments-input {
 .comment {
   padding: 5px;
   background-color: #39f;
+  width: 100%;
 }
 
 .comment-user-icon {

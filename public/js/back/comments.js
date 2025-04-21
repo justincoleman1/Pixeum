@@ -104,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.comment-reply-button').forEach((button) => {
     button.addEventListener('click', () => {
       const commentId = button.dataset.commentId;
-      const replyForm = document.getElementById(`reply-form-${commentId}`);
+      const replyForm = document.getElementById(`reply-section-${commentId}`);
       if (replyForm) {
         replyForm.classList.toggle('hidden');
         commentForm.dataset.parentId = commentId;
@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('.comment-edit-button').forEach((button) => {
     button.addEventListener('click', () => {
       const commentId = button.dataset.commentId;
-      const editForm = document.getElementById(`edit-form-${commentId}`);
+      const editForm = document.getElementById(`edit-section-${commentId}`);
       if (editForm) {
         editForm.classList.toggle('hidden');
         const textarea = editForm.querySelector('textarea');
