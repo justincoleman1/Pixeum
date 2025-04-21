@@ -1,4 +1,6 @@
+// models/commentModel.js
 const mongoose = require('mongoose');
+const Upload = require('./uploadModel');
 
 const commentSchema = new mongoose.Schema(
   {
@@ -6,7 +8,7 @@ const commentSchema = new mongoose.Schema(
       type: String,
       minlength: 1,
       maxlength: 255,
-      require: [true, 'Comment can not be empty!'],
+      required: [true, 'Comment cannot be empty!'],
     },
     user: {
       type: mongoose.Schema.ObjectId,
@@ -45,21 +47,19 @@ const commentSchema = new mongoose.Schema(
 commentSchema.set('timestamps', true);
 
 commentSchema.index({ upload: 1, user: 1 });
+commentSchema.index({ parentComment: 1 });
 
 commentSchema.pre(/^find/, function (next) {
   this.sort({ createdAt: -1 });
-
   this.populate({
     path: 'user',
     select: 'username photo',
   });
-
   next();
 });
-//get access to the current comment document
+
 commentSchema.pre(/^findOneAnd/, async function (next) {
   this.r = await this.findOne();
-  // console.log(this.r);
   next();
 });
 
@@ -69,9 +69,49 @@ commentSchema.virtual('comments', {
   localField: '_id',
 });
 
-// commentSchema.post(/^findOneAnd/, async function () {
-//   await this.findOne(); does not work here, query is already executed
-// });
+// Increment comment_count for top-level comments, reply_count for replies
+commentSchema.post('save', async function (doc, next) {
+  try {
+    if (!doc.parentComment) {
+      await Upload.findByIdAndUpdate(doc.upload, {
+        $inc: { comment_count: 1 },
+      });
+    } else {
+      await this.model('Comment').findByIdAndUpdate(doc.parentComment, {
+        $inc: { reply_count: 1 },
+      });
+    }
+    next();
+  } catch (err) {
+    console.error('Error updating counts:', err);
+    next(err);
+  }
+});
+
+// Decrement comment_count or reply_count on deletion
+commentSchema.pre(
+  'deleteOne',
+  { document: true, query: false },
+  async function (next) {
+    try {
+      if (!this.parentComment) {
+        await Upload.findByIdAndUpdate(this.upload, {
+          $inc: { comment_count: -1 },
+        });
+      } else {
+        await this.model('Comment').findByIdAndUpdate(this.parentComment, {
+          $inc: { reply_count: -1 },
+        });
+      }
+      // Delete replies to this comment
+      await this.model('Comment').deleteMany({ parentComment: this._id });
+      next();
+    } catch (err) {
+      console.error('Error updating counts:', err);
+      next(err);
+    }
+  }
+);
 
 const Comment = mongoose.model('Comment', commentSchema);
 module.exports = Comment;

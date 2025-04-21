@@ -29,6 +29,7 @@ exports.getUploadForm = (req, res) => {
   });
 };
 
+// controllers/viewsController.js
 exports.getUploadPage = catchAsync(async (req, res, next) => {
   const user = req.uploadsUser;
   const upload = req.upload;
@@ -40,10 +41,9 @@ exports.getUploadPage = catchAsync(async (req, res, next) => {
     .ne(req.params.slug)
     .limit(9);
 
-  if (!upload)
+  if (!upload) {
     return next(new AppError('There is no upload with that name.', 404));
-
-  // check if the upload is favorited by the current user
+  }
 
   const date = timeAgo2(upload.createdAt);
 

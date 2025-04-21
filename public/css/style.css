@@ -2325,8 +2325,8 @@ textarea.comments-input {
 }
 
 .comment-user-icon {
-  width: 50px;
-  height: 50px;
+  width: 55px;
+  height: 55px;
   border-radius: 10px;
   padding: 5px;
 }
@@ -2338,7 +2338,7 @@ textarea.comments-input {
 }
 
 .comment-username {
-  font-size: 12px;
+  font-size: 14px;
   padding-top: 5px;
 }
 
@@ -2361,18 +2361,52 @@ textarea.comments-input {
   height: 20px;
 }
 
-.comment-date {
-  padding-top: 5px;
-  font-size: 10px;
+.comment-vote-icon {
+  width: 20px;
+  height: 20px;
 }
 
-.comment-content {
+.comment-date {
   padding-top: 5px;
   font-size: 12px;
 }
 
+.comment-content {
+  padding-top: 5px;
+  font-size: 15px;
+}
+
+.comment-upvote-button {
+  display: flex;
+  justify-content: center;
+}
+
+.comment-downvote-button {
+  display: flex;
+  justify-content: center;
+}
+
 .comment-befirst-cotent {
   text-align: center;
+}
+
+.comment-vote-count {
+  margin-left: 5px;
+}
+
+.comment-reply-button,
+.comment-share-button,
+.comment-edit-button,
+.comment-delete-button,
+.comment-downvote-button {
+  margin-left: 15px;
+}
+
+.comment-footer {
+  display: flex;
+  flex-direction: row;
+  margin-top: 20px;
+  align-content: space-between;
 }
 /*======================END UPLOAD PAGE CSS=========================*/
 

@@ -346,19 +346,6 @@ if (uploadForm) {
   });
 }
 
-if (commentForm) {
-  commentForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    console.log('Doing something in the Frontend.');
-    const content = document.getElementById('post-comment').value;
-    const urlParts = window.location.pathname.split('/');
-    const username = urlParts[1];
-    const slug = urlParts[2];
-    console.log(username + ' ' + slug + ' ' + content + ' : the comment');
-    await postComment(content, username, slug);
-  });
-}
-
 if (uploadDeleteBtn) {
   uploadDeleteBtn.addEventListener('click', (e) => {
     e.preventDefault();

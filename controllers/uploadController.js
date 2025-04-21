@@ -626,9 +626,17 @@ exports.getUploadStats = catchAsync(async (req, res, next) => {
   });
 });
 
+// controllers/uploadController.js
 exports.getUpload = catchAsync(async (req, res, next) => {
-  console.log('Inside the getUploadPage Function');
+  console.log('Inside the getUpload Function');
   const uploadsUser = await User.findOne({ username: req.params.username });
+  if (!uploadsUser) {
+    return res.status(404).json({
+      status: 'fail',
+      message: 'User does not exist',
+    });
+  }
+
   const upload = await Upload.findOne({
     user: uploadsUser._id,
     slug: req.params.slug,
@@ -639,14 +647,21 @@ exports.getUpload = catchAsync(async (req, res, next) => {
     })
     .populate({
       path: 'comments',
-      fields: 'comment user like_count dislike_count reply_count',
+      fields:
+        'content user like_count dislike_count reply_count createdAt updatedAt',
+      populate: {
+        path: 'user',
+        select: 'username photo',
+      },
     });
-  if (!upload || !uploadsUser) {
-    res.status(404).json({
+
+  if (!upload) {
+    return res.status(404).json({
       status: 'fail',
       message: 'Upload does not exist',
     });
   }
+
   req.uploadsUser = uploadsUser;
   req.upload = upload;
   next();
