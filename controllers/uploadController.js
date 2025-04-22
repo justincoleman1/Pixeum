@@ -672,6 +672,12 @@ exports.getUpload = catchAsync(async (req, res, next) => {
                 },
               ],
             },
+            {
+              path: 'parentComment',
+              select:
+                'content user like_count dislike_count reply_count createdAt updatedAt parentComment deleted deletedAt',
+              populate: { path: 'user', select: 'username photo' },
+            },
           ],
         },
         {
