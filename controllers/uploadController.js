@@ -647,7 +647,7 @@ exports.getUpload = catchAsync(async (req, res, next) => {
     })
     .populate({
       path: 'comments',
-      match: { parentComment: null, deleted: false }, //Only top-level
+      match: { parentComment: null }, //Only top-level
       select:
         'content user like_count dislike_count reply_count createdAt updatedAt parentComment deleted deletedAt',
       populate: [

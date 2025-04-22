@@ -118,51 +118,64 @@ commentSchema.pre(
         'Upload:',
         this.upload
       );
-      // Calculate total comments to decrement (this comment + all nested replies)
-      let totalCommentsToDecrement = 1;
-      const replies = await this.model('Comment').find({
-        parentComment: this._id,
-      });
-      const stack = [...replies];
-      while (stack.length > 0) {
-        const reply = stack.pop();
-        totalCommentsToDecrement += 1;
-        const nestedReplies = await this.model('Comment').find({
-          parentComment: reply._id,
-        });
-        stack.push(...nestedReplies);
-      }
-      // Fetch the current comment_count and calculate the new value
-      const upload = await Upload.findById(this.upload);
-      const currentCount = upload ? upload.comment_count || 0 : 0;
-      const newCount = Math.max(currentCount - totalCommentsToDecrement, 0);
-      // Update comment_count on the Upload
-      await Upload.findByIdAndUpdate(
-        this.upload,
-        {
-          $set: { comment_count: newCount },
-        },
-        { strict: false }
-      );
-      // If it's a reply, decrement reply_count on the parent comment
-      if (this.parentComment) {
-        const parentComment = await this.model('Comment').findById(
-          this.parentComment
-        );
-        const currentReplyCount = parentComment
-          ? parentComment.reply_count || 0
-          : 0;
-        const newReplyCount = Math.max(currentReplyCount - 1, 0);
-        await this.model('Comment').findByIdAndUpdate(
-          this.parentComment,
+      const ageInMs = Date.now() - this.createdAt.getTime();
+      const softDeleteThreshold = 60 * 1000; // 24 hours in milliseconds
+
+      if (ageInMs >= softDeleteThreshold) {
+        // Soft delete: mark as deleted, keep counts unchanged
+        await this.model('Comment').updateOne(
+          { _id: this._id },
           {
-            $set: { reply_count: newReplyCount },
+            $set: {
+              deleted: true,
+              deletedAt: new Date(),
+              content: '[deleted]',
+            },
+          }
+        );
+      } else {
+        // Hard delete: remove comment and update counts
+        let totalCommentsToDecrement = 1;
+        const replies = await this.model('Comment').find({
+          parentComment: this._id,
+        });
+        const stack = [...replies];
+        while (stack.length > 0) {
+          const reply = stack.pop();
+          totalCommentsToDecrement += 1;
+          const nestedReplies = await this.model('Comment').find({
+            parentComment: reply._id,
+          });
+          stack.push(...nestedReplies);
+        }
+        const upload = await Upload.findById(this.upload);
+        const currentCount = upload ? upload.comment_count || 0 : 0;
+        const newCount = Math.max(currentCount - totalCommentsToDecrement, 0);
+        await Upload.findByIdAndUpdate(
+          this.upload,
+          {
+            $set: { comment_count: newCount },
           },
           { strict: false }
         );
+        if (this.parentComment) {
+          const parentComment = await this.model('Comment').findById(
+            this.parentComment
+          );
+          const currentReplyCount = parentComment
+            ? parentComment.reply_count || 0
+            : 0;
+          const newReplyCount = Math.max(currentReplyCount - 1, 0);
+          await this.model('Comment').findByIdAndUpdate(
+            this.parentComment,
+            {
+              $set: { reply_count: newReplyCount },
+            },
+            { strict: false }
+          );
+        }
+        await this.model('Comment').deleteMany({ parentComment: this._id });
       }
-      // Delete all replies to this comment
-      await this.model('Comment').deleteMany({ parentComment: this._id });
       next();
     } catch (err) {
       console.error('Error updating counts on delete:', err);

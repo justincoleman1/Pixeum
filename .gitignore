@@ -2,4 +2,4 @@ node_modules/
 *.env
 .parcel-cache/
 Feature Notes
-# public/img/
+public/img/
