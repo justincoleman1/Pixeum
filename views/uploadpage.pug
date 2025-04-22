@@ -21,9 +21,9 @@ mixin renderComment(comment, depth=0)
                             img.comment-reply-icon(src=`/img/svg/reply-arrow-grey.svg`)
                             h4.comment-reply-to-username=`${comment.parentComment.user.username}`
                 p.comment-date
-                    | Posted on #{new Date(comment.createdAt).toLocaleDateString()}
+                    | #{timeAgo(comment.createdAt)}
                     if comment.updatedAt && comment.updatedAt !== comment.createdAt
-                        |  (Edited on #{new Date(comment.updatedAt).toLocaleDateString()})
+                        |  (Edited: #{timeAgo(comment.updatedAt)})
                     if comment.reply_count
                         |  | #{comment.reply_count} #{comment.reply_count === 1 ? 'Reply' : 'Replies'}
                 p.comment-content=comment.deleted ? '[deleted]' : `${comment.content}`

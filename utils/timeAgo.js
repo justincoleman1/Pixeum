@@ -17,7 +17,7 @@ exports.timeAgo2 = (before) => {
   } else if (mins <= 60) {
     return `${mins} mins ago`;
   } else if (mins <= 90) {
-    return `1 hour ago`;
+    return `an hour ago`;
   } else if (hours <= 24) {
     return `${hours} hours ago`;
   } else if (hours <= 36) {

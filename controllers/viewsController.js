@@ -53,6 +53,7 @@ exports.getUploadPage = catchAsync(async (req, res, next) => {
     date,
     recents,
     isFavorited: JSON.stringify(req.isFavorited),
+    timeAgo: timeAgo2,
   });
 });
 
