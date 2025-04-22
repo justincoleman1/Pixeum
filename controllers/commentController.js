@@ -71,20 +71,20 @@ exports.updateComment = catchAsync(async (req, res, next) => {
   if (!comment) {
     return next(new AppError('Comment not found', 404));
   }
-  if (comment.user.toString() !== req.user.id) {
+  if (comment.user.id.toString() !== req.user.id) {
     return next(new AppError('You can only edit your own comments', 403));
   }
 
   const updatedComment = await Comment.findByIdAndUpdate(
     req.params.id,
-    { content: req.body.content, updatedAt: Date.now() },
+    { content: req.body.content, isEdited: true, updatedAt: Date.now() },
     { new: true, runValidators: true }
   );
 
   res.status(200).json({
     status: 'success',
     data: {
-      data: updatedComment,
+      updatedComment,
     },
   });
 });
@@ -123,5 +123,4 @@ exports.deleteMyComment = catchAsync(async (req, res, next) => {
 
 exports.getAllComments = factory.getAllDocs(Comment);
 exports.getComment = factory.getDoc(Comment);
-exports.updateComment = factory.updateDoc(Comment);
 exports.deleteComment = factory.deleteDoc(Comment);

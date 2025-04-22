@@ -22,7 +22,7 @@ mixin renderComment(comment, depth=0)
                             h4.comment-reply-to-username=`${comment.parentComment.user.username}`
                 p.comment-date
                     | #{timeAgo(comment.createdAt)}
-                    if comment.updatedAt && comment.updatedAt !== comment.createdAt
+                    if comment.isEdited
                         |  (Edited: #{timeAgo(comment.updatedAt)})
                     if comment.reply_count
                         |  | #{comment.reply_count} #{comment.reply_count === 1 ? 'Reply' : 'Replies'}

@@ -649,25 +649,25 @@ exports.getUpload = catchAsync(async (req, res, next) => {
       path: 'comments',
       match: { parentComment: null }, //Only top-level
       select:
-        'content user like_count dislike_count reply_count createdAt updatedAt parentComment deleted deletedAt',
+        'content user like_count dislike_count reply_count createdAt updatedAt parentComment isEdited deleted deletedAt',
       populate: [
         { path: 'user', select: 'username photo' },
         {
           path: 'comments', // Populate replies
           select:
-            'content user like_count dislike_count reply_count createdAt updatedAt parentComment deleted deletedAt',
+            'content user like_count dislike_count reply_count createdAt updatedAt parentComment isEdited deleted deletedAt',
           populate: [
             { path: 'user', select: 'username photo' },
             {
               path: 'comments',
               select:
-                'content user like_count dislike_count reply_count createdAt updatedAt parentComment deleted deletedAt',
+                'content user like_count dislike_count reply_count createdAt updatedAt parentComment isEdited deleted deletedAt',
               populate: [
                 { path: 'user', select: 'username photo' },
                 {
                   path: 'parentComment',
                   select:
-                    'content user like_count dislike_count reply_count createdAt updatedAt parentComment deleted deletedAt',
+                    'content user like_count dislike_count reply_count createdAt updatedAt parentComment isEdited deleted deletedAt',
                   populate: { path: 'user', select: 'username photo' },
                 },
               ],
@@ -675,7 +675,7 @@ exports.getUpload = catchAsync(async (req, res, next) => {
             {
               path: 'parentComment',
               select:
-                'content user like_count dislike_count reply_count createdAt updatedAt parentComment deleted deletedAt',
+                'content user like_count dislike_count reply_count createdAt updatedAt parentComment isEdited deleted deletedAt',
               populate: { path: 'user', select: 'username photo' },
             },
           ],

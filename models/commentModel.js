@@ -37,6 +37,10 @@ const commentSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    isEdited: {
+      type: Boolean,
+      default: false,
+    },
     deleted: {
       type: Boolean,
       default: false,
