@@ -647,46 +647,32 @@ exports.getUpload = catchAsync(async (req, res, next) => {
     })
     .populate({
       path: 'comments',
-      match: { parentComment: null }, //Only top-level comments
+      match: { parentComment: null }, //Only top-level
       select:
         'content user like_count dislike_count reply_count createdAt updatedAt parentComment',
       populate: [
         { path: 'user', select: 'username photo' },
         {
-          path: 'comments',
+          path: 'comments', // Populate replies
           select:
             'content user like_count dislike_count reply_count createdAt updatedAt parentComment',
           populate: [
             { path: 'user', select: 'username photo' },
             {
-              path: 'parentComment',
+              path: 'comments',
               select:
                 'content user like_count dislike_count reply_count createdAt updatedAt parentComment',
               populate: [
                 { path: 'user', select: 'username photo' },
                 {
-                  path: 'comments',
+                  path: 'parentComment',
                   select:
                     'content user like_count dislike_count reply_count createdAt updatedAt parentComment',
-                  populate: [
-                    { path: 'user', select: 'username photo' },
-                    {
-                      path: 'parentComment',
-                      select:
-                        'content user like_count dislike_count reply_count createdAt updatedAt',
-                      populate: [{ path: 'user', select: 'username photo' }],
-                    },
-                  ],
+                  populate: { path: 'user', select: 'username photo' },
                 },
               ],
             },
           ],
-        },
-        {
-          path: 'parentComment',
-          select:
-            'content user like_count dislike_count reply_count createdAt updatedAt parentComment',
-          populate: { path: 'user', select: 'username photo' },
         },
       ],
     });
