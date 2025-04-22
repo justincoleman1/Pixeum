@@ -33,6 +33,20 @@ const commentSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    likedBy: [
+      // Track users who upvoted
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+      },
+    ],
+    dislikedBy: [
+      // Track users who downvoted
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+      },
+    ],
     reply_count: {
       type: Number,
       default: 0,

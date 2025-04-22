@@ -9,11 +9,16 @@ router.use(authController.protect);
 
 router
   .route('/')
+  .get(commentController.getAllComments)
   .post(commentController.setCommentUserIds, commentController.giveComment);
 
 router
   .route('/:id')
+  .get(commentController.getComment)
   .patch(commentController.updateComment)
   .delete(commentController.deleteMyComment);
+
+router.route('/:id/likeComment').post(commentController.likeComment);
+router.route('/:id/dislikeComment').post(commentController.dislikeComment);
 
 module.exports = router;

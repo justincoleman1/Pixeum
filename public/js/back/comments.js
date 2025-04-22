@@ -155,4 +155,74 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+
+  // Upvote and Downvote Functionality
+  const likeButtons = document.querySelectorAll('.comment-like-button');
+  likeButtons.forEach((button) => {
+    button.addEventListener('click', async (e) => {
+      console.log('Like Button Clicked');
+      const commentId = e.target.closest('button').dataset.commentId;
+      const uploadPath = window.location.pathname;
+      console.log('Whats This');
+      try {
+        const res = await fetch(
+          `/api/v1${uploadPath}/comments/${commentId}/likeComment`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        const data = await res.json();
+        if (data.status === 'success') {
+          document.querySelector(
+            `#comment-like_count-${commentId}`
+          ).textContent = data.data.like_count;
+          document.querySelector(
+            `#comment-dislike_count-${commentId}`
+          ).textContent = data.data.dislike_count;
+        } else {
+          console.error('Error liking comment:', data.message);
+        }
+      } catch (err) {
+        console.error('Error:', err);
+      }
+    });
+  });
+
+  const dislikeButtons = document.querySelectorAll('.comment-dislike-button');
+  dislikeButtons.forEach((button) => {
+    button.addEventListener('click', async (e) => {
+      const commentId = e.target.closest('button').dataset.commentId;
+      const uploadPath = window.location.pathname;
+
+      try {
+        const res = await fetch(
+          `/api/v1${uploadPath}/comments/${commentId}/dislikeComment`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        const data = await res.json();
+        if (data.status === 'success') {
+          document.querySelector(
+            `#comment-like_count-${commentId}`
+          ).textContent = data.data.like_count;
+          document.querySelector(
+            `#comment-dislike_count-${commentId}`
+          ).textContent = data.data.dislike_count;
+        } else {
+          console.error('Error disliking comment:', data.message);
+        }
+      } catch (err) {
+        console.error('Error:', err);
+      }
+    });
+  });
 });

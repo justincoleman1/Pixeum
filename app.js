@@ -132,6 +132,7 @@ app.use((req, res, next) => {
 app.use('/api/v1/uploads', uploadRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/comments', commentRouter);
+app.use('/api/v1/:username/:slug/comments', commentRouter);
 app.use('/api/v1/stock', stockRouter);
 app.use('/', viewRouter);
 

@@ -2389,12 +2389,12 @@ textarea.comments-input {
   font-size: 15px;
 }
 
-.comment-upvote-button {
+.comment-like-button {
   display: flex;
   justify-content: center;
 }
 
-.comment-downvote-button {
+.comment-dislike-button {
   display: flex;
   justify-content: center;
 }
@@ -2411,7 +2411,7 @@ textarea.comments-input {
 .comment-share-button,
 .comment-edit-button,
 .comment-delete-button,
-.comment-downvote-button {
+.comment-dislike-button {
   margin-left: 15px;
 }
 

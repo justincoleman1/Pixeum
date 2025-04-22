@@ -29,12 +29,12 @@ mixin renderComment(comment, depth=0)
                 p.comment-content=comment.deleted ? '[deleted]' : `${comment.content}`
                 .comment-footer
                     if !comment.deleted
-                        button.comment-upvote-button
+                        button.comment-like-button(data-comment-id=comment._id)
                             img.comment-vote-icon(src='/img/svg/thumbs-up.svg', alt='Thumbs Up Icon')
-                            p.comment-vote-count=`${comment.like_count}`
-                        button.comment-downvote-button
+                            p.comment-vote-count(id=`comment-like_count-${comment._id}`)=`${comment.like_count}`
+                        button.comment-dislike-button(data-comment-id=comment._id)
                             img.comment-vote-icon(src='/img/svg/thumbs-down.svg', alt='Thumbs Down Icon')
-                            .comment-vote-count=`${comment.dislike_count}`
+                            p.comment-vote-count(id=`comment-dislike_count-${comment._id}`)=`${comment.dislike_count}`
                         if depth < 3                                                     
                             button.comment-reply-button(data-comment-id=comment._id) Reply
                         button.comment-share-button Share

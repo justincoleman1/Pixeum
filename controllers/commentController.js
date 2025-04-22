@@ -66,6 +66,91 @@ exports.giveComment = catchAsync(async (req, res, next) => {
   });
 });
 
+exports.likeComment = catchAsync(async (req, res, next) => {
+  console.log('HERE');
+  const comment = await Comment.findById(req.params.id);
+  if (!comment) {
+    return next(new AppError('Comment not found', 404));
+  }
+
+  const userId = req.user.id;
+  const alreadyLiked = comment.likedBy.includes(userId);
+  const alreadyDisliked = comment.dislikedBy.includes(userId);
+
+  if (alreadyLiked) {
+    // Undo upvote
+    comment.likedBy = comment.dislikedBy.filter(
+      (id) => id.toString() !== userId
+    );
+    comment.like_count = Math.max(comment.like_count - 1, 0);
+  } else {
+    // Add upvote
+    comment.likedBy.push(userId);
+    comment.like_count += 1;
+    // If user previously downvoted, remove the downvote
+    if (alreadyDisliked) {
+      comment.dislikedBy = comment.dislikedBy.filter(
+        (id) => id.toString() !== userId
+      );
+      comment.dislike_count = Math.max(comment.dislike_count - 1, 0);
+    }
+  }
+
+  await comment.save({ validateBeforeSave: false });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      like_count: comment.like_count,
+      dislike_count: comment.dislike_count,
+      liked: !alreadyLiked,
+      disliked: false,
+    },
+  });
+});
+
+exports.dislikeComment = catchAsync(async (req, res, next) => {
+  const comment = await Comment.findById(req.params.id);
+  if (!comment) {
+    return next(new AppError('Comment not found', 404));
+  }
+
+  const userId = req.user.id;
+  const alreadyDisliked = comment.dislikedBy.includes(userId); // Updated from downvotedBy
+  const alreadyLiked = comment.likedBy.includes(userId); // Updated from upvotedBy
+
+  if (alreadyDisliked) {
+    // Undo downvote
+    comment.dislikedBy = comment.dislikedBy.filter(
+      (id) => id.toString() !== userId
+    );
+    comment.dislike_count = Math.max(comment.dislike_count - 1, 0);
+  } else {
+    // Add downvote
+    comment.dislikedBy.push(userId);
+    comment.dislike_count += 1;
+    // If user previously upvoted, remove the upvote
+    if (alreadyLiked) {
+      comment.likedBy = comment.likedBy.filter(
+        (id) => id.toString() !== userId
+      );
+      comment.like_count = Math.max(comment.like_count - 1, 0);
+    }
+  }
+
+  await comment.save({ validateBeforeSave: false });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      like_count: comment.like_count,
+      dislike_count: comment.dislike_count,
+      liked: false,
+      disliked: !alreadyDisliked,
+    },
+  });
+});
+
 exports.updateComment = catchAsync(async (req, res, next) => {
   const comment = await Comment.findById(req.params.id);
   if (!comment) {
