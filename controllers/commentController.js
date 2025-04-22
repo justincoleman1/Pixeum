@@ -90,16 +90,30 @@ exports.updateComment = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteMyComment = catchAsync(async (req, res, next) => {
-  const comment = await Comment.findById(req.params.id);
+  const comment = await Comment.findById(req.params.id).populate('user');
   if (!comment) {
     return next(new AppError('Comment not found', 404));
   }
+  console.log(
+    'Comment user ID:',
+    comment.user.id,
+    'Request user ID:',
+    req.user.id
+  );
   if (comment.user.id !== req.user.id) {
-    console.log(comment.user._id + ': !!!!!!!! :' + req.user.id);
     return next(new AppError('You can only delete your own comments', 403));
   }
 
-  await comment.deleteOne();
+  const ageInMs = Date.now() - comment.createdAt.getTime();
+  const softDeleteThreshold = 60 * 1000; // 24 hours in milliseconds 24 60 60 1000 - 1min 60* 1000
+
+  if (ageInMs >= softDeleteThreshold) {
+    // Soft delete
+    await comment.softDelete();
+  } else {
+    // Hard delete
+    await comment.deleteOne();
+  }
 
   res.status(204).json({
     status: 'success',

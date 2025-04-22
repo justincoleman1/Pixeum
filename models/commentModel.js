@@ -105,6 +105,21 @@ commentSchema.post('save', async function (doc, next) {
   }
 });
 
+// Custom method for soft deletion
+commentSchema.methods.softDelete = async function () {
+  await this.model('Comment').updateOne(
+    { _id: this._id },
+    {
+      $set: {
+        deleted: true,
+        deletedAt: new Date(),
+        content: '[deleted]',
+      },
+    }
+  );
+  return { status: 'soft-deleted' };
+};
+
 commentSchema.pre(
   'deleteOne',
   { document: true, query: false },
@@ -119,67 +134,63 @@ commentSchema.pre(
         this.upload
       );
       const ageInMs = Date.now() - this.createdAt.getTime();
-      const softDeleteThreshold = 60 * 1000; // 24 hours in milliseconds
+      const softDeleteThreshold = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
 
       if (ageInMs >= softDeleteThreshold) {
-        // Soft delete: mark as deleted, keep counts unchanged
-        await this.model('Comment').updateOne(
-          { _id: this._id },
-          {
-            $set: {
-              deleted: true,
-              deletedAt: new Date(),
-              content: '[deleted]',
-            },
-          }
-        );
-      } else {
-        // Hard delete: remove comment and update counts
-        let totalCommentsToDecrement = 1;
-        const replies = await this.model('Comment').find({
-          parentComment: this._id,
+        // Soft delete: handled in controller, throw error to stop hard deletion
+        throw new Error('Soft deletion required');
+      }
+
+      // Hard delete: remove comment and update counts
+      let totalCommentsToDecrement = 1;
+      const replies = await this.model('Comment').find({
+        parentComment: this._id,
+      });
+      const stack = [...replies];
+      while (stack.length > 0) {
+        const reply = stack.pop();
+        totalCommentsToDecrement += 1;
+        const nestedReplies = await this.model('Comment').find({
+          parentComment: reply._id,
         });
-        const stack = [...replies];
-        while (stack.length > 0) {
-          const reply = stack.pop();
-          totalCommentsToDecrement += 1;
-          const nestedReplies = await this.model('Comment').find({
-            parentComment: reply._id,
-          });
-          stack.push(...nestedReplies);
-        }
-        const upload = await Upload.findById(this.upload);
-        const currentCount = upload ? upload.comment_count || 0 : 0;
-        const newCount = Math.max(currentCount - totalCommentsToDecrement, 0);
-        await Upload.findByIdAndUpdate(
-          this.upload,
+        stack.push(...nestedReplies);
+      }
+      const upload = await Upload.findById(this.upload);
+      const currentCount = upload ? upload.comment_count || 0 : 0;
+      const newCount = Math.max(currentCount - totalCommentsToDecrement, 0);
+      await Upload.findByIdAndUpdate(
+        this.upload,
+        {
+          $set: { comment_count: newCount },
+        },
+        { strict: false }
+      );
+      if (this.parentComment) {
+        const parentComment = await this.model('Comment').findById(
+          this.parentComment
+        );
+        const currentReplyCount = parentComment
+          ? parentComment.reply_count || 0
+          : 0;
+        const newReplyCount = Math.max(currentReplyCount - 1, 0);
+        await this.model('Comment').findByIdAndUpdate(
+          this.parentComment,
           {
-            $set: { comment_count: newCount },
+            $set: { reply_count: newReplyCount },
           },
           { strict: false }
         );
-        if (this.parentComment) {
-          const parentComment = await this.model('Comment').findById(
-            this.parentComment
-          );
-          const currentReplyCount = parentComment
-            ? parentComment.reply_count || 0
-            : 0;
-          const newReplyCount = Math.max(currentReplyCount - 1, 0);
-          await this.model('Comment').findByIdAndUpdate(
-            this.parentComment,
-            {
-              $set: { reply_count: newReplyCount },
-            },
-            { strict: false }
-          );
-        }
-        await this.model('Comment').deleteMany({ parentComment: this._id });
       }
+      await this.model('Comment').deleteMany({ parentComment: this._id });
       next();
     } catch (err) {
-      console.error('Error updating counts on delete:', err);
-      next(err);
+      if (err.message === 'Soft deletion required') {
+        // Stop hard deletion, handled in controller
+        next();
+      } else {
+        console.error('Error updating counts on delete:', err);
+        next(err);
+      }
     }
   }
 );
