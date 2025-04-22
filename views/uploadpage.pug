@@ -12,12 +12,12 @@ append head
 mixin renderComment(comment, depth=0)
     li(class=['comment-item ml-8',`depth-${depth}`])
         if comment.user && comment.user.username
-            img.comment-user-icon(src=`/img/users/${comment.user.photo}`)
+            img.comment-user-icon(src=`/img/users/${comment.user.photo || 'default.jpg'}`)
             .comment
                 .comment-header
                     h4.comment-username=`${comment.user.username}`
                     .comment-reply
-                        if comment.parentComment && comment.parentComment.user
+                        if comment.parentComment && comment.parentComment.user && comment.parentComment.user.username
                             img.comment-reply-icon(src=`/img/svg/reply-arrow-grey.svg`)
                             h4.comment-reply-to-username=`${comment.parentComment.user.username}`
                 p.comment-date
@@ -26,37 +26,39 @@ mixin renderComment(comment, depth=0)
                         |  (Edited on #{new Date(comment.updatedAt).toLocaleDateString()})
                     if comment.reply_count
                         |  | #{comment.reply_count} #{comment.reply_count === 1 ? 'Reply' : 'Replies'}
-                p.comment-content=`${comment.content}`
+                p.comment-content=comment.deleted ? '[deleted]' : `${comment.content}`
                 .comment-footer
-                    button.comment-upvote-button
-                        img.comment-vote-icon(src='/img/svg/thumbs-up.svg', alt='Thumbs Up Icon')
-                        p.comment-vote-count=`${comment.like_count}`
-                    button.comment-downvote-button
-                        img.comment-vote-icon(src='/img/svg/thumbs-down.svg', alt='Thumbs Down Icon')
-                        .comment-vote-count=`${comment.dislike_count}`
-                    if depth < 3                                                     
-                        button.comment-reply-button(data-comment-id=comment._id) Reply
-                    button.comment-share-button Share
-                    if user && user.id === comment.user._id.toString()
-                        button.comment-edit-button(data-comment-id=comment._id) Edit
-                        button.comment-delete-button(data-comment-id=comment._id) Delete
-                .comments-edit-section.hidden(data-comment-id=comment._id, id=`edit-section-${comment._id}`)
-                    form.edit-comment-form.comments-post(data-comment-id=comment._id, id=`edit-form-${comment._id}`)
-                        textarea.comments-input(name='content' rows='3' required maxlength='255')= comment.content
-                        hr
-                        button.edit-submit-button(type='submit') Save
-                .comments-reply-section.hidden(data-comment-id=comment._id, id=`reply-section-${comment._id}`)
-                    img.comment-user-icon(src=`/img/users/${comment.user.photo}`)
-                    form.reply-form.comments-post(data-comment-id=comment._id, id=`reply-form-${comment._id}`)
-                        textarea.comments-input(name='content' placeholder='Write a reply...' rows='3' required maxlength='255')
-                        hr
-                        button.reply-submit-button(type='submit') Submit Reply
+                    if !comment.deleted
+                        button.comment-upvote-button
+                            img.comment-vote-icon(src='/img/svg/thumbs-up.svg', alt='Thumbs Up Icon')
+                            p.comment-vote-count=`${comment.like_count}`
+                        button.comment-downvote-button
+                            img.comment-vote-icon(src='/img/svg/thumbs-down.svg', alt='Thumbs Down Icon')
+                            .comment-vote-count=`${comment.dislike_count}`
+                        if depth < 3                                                     
+                            button.comment-reply-button(data-comment-id=comment._id) Reply
+                        button.comment-share-button Share
+                        if user && user.id === comment.user._id.toString()
+                            button.comment-edit-button(data-comment-id=comment._id) Edit
+                            button.comment-delete-button(data-comment-id=comment._id) Delete
+                if !comment.deleted
+                    .comments-edit-section.hidden(data-comment-id=comment._id, id=`edit-section-${comment._id}`)
+                        form.edit-comment-form.comments-post(data-comment-id=comment._id, id=`edit-form-${comment._id}`)
+                            textarea.comments-input(name='content' rows='3' required maxlength='255')= comment.content
+                            hr
+                            button.edit-submit-button(type='submit') Save
+                    .comments-reply-section.hidden(data-comment-id=comment._id, id=`reply-section-${comment._id}`)
+                        img.comment-user-icon(src=`/img/users/${comment.user.photo}`)
+                        form.reply-form.comments-post(data-comment-id=comment._id, id=`reply-form-${comment._id}`)
+                            textarea.comments-input(name='content' placeholder='Write a reply...' rows='3' required maxlength='255')
+                            hr
+                            button.reply-submit-button(type='submit') Submit Reply
             if comment.comments && comment.comments.length && depth < 3
                 each reply in comment.comments
                     +renderComment(reply, depth + 1)
         else
             .comment
-                h4.comment-header [Comment by deleted user: #{comment.content}]
+                h4.comment-header [Comment by deleted user: #{comment.deleted ? '[deleted]' : comment.content}]
                 p.comment-date
                     | Posted on #{new Date(comment.createdAt).toLocaleDateString()}     
 
