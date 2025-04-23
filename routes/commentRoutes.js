@@ -10,7 +10,11 @@ router.use(authController.protect);
 router
   .route('/')
   .get(commentController.getAllComments)
-  .post(commentController.setCommentUserIds, commentController.giveComment);
+  .post(
+    commentController.setCommentUserIds,
+    commentController.giveComment,
+    commentController.resizeCommentImage
+  );
 
 router
   .route('/:id')
