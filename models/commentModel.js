@@ -10,6 +10,17 @@ const commentSchema = new mongoose.Schema(
       maxlength: 255,
       required: [true, 'Comment cannot be empty!'],
     },
+    media: {
+      // New field for media URL or path
+      type: String,
+      default: null,
+    },
+    mediaType: {
+      // New field to specify media type (e.g., "image", "gif")
+      type: String,
+      enum: ['image', 'gif', null],
+      default: null,
+    },
     user: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
@@ -132,12 +143,13 @@ commentSchema.methods.softDelete = async function () {
         deleted: true,
         deletedAt: new Date(),
         content: '[deleted]',
+        media: null, // Clear media on soft delete
+        mediaType: null,
       },
     }
   );
   return { status: 'soft-deleted' };
 };
-
 commentSchema.pre(
   'deleteOne',
   { document: true, query: false },

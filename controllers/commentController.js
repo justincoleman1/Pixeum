@@ -5,6 +5,9 @@ const User = require('../models/userModel');
 const Upload = require('../models/uploadModel');
 const AppError = require('../utils/appError');
 const factory = require('./handlerFactory');
+const multerCommentController = require('./multerCommentController');
+const sharp = require('sharp');
+const fs = require('fs').promises;
 
 exports.setCommentUserIds = catchAsync(async (req, res, next) => {
   const uploadsUser = await User.findOne({ username: req.params.username });
@@ -23,46 +26,93 @@ exports.setCommentUserIds = catchAsync(async (req, res, next) => {
   next();
 });
 
-// Validate parentComment if provided
-exports.giveComment = catchAsync(async (req, res, next) => {
-  const { content, parentComment } = req.body;
-
-  if (parentComment) {
-    const parent = await Comment.findById(parentComment);
-    if (!parent) {
-      return next(new AppError('Parent comment not found', 404));
-    }
-    if (parent.upload.toString() !== req.body.upload.toString()) {
-      return next(
-        new AppError('Parent comment does not belong to this upload', 400)
-      );
-    }
-    // Check nesting level
-    let depth = 0;
-    let current = parent;
-    while (current.parentComment && depth < 3) {
-      current = await Comment.findById(current.parentComment);
-      depth++;
-    }
-    if (depth >= 2) {
-      return next(
-        new AppError('Maximum reply nesting level reached (3 levels)', 400)
-      );
-    }
+// Middleware to resize comment images
+exports.resizeCommentImage = catchAsync(async (req, res, next) => {
+  console.log('Resize Comment Image Middleware');
+  if (!req.file) {
+    console.log('No file present...Skipping');
+    return next();
   }
 
-  const comment = await Comment.create({
-    content,
-    user: req.body.user,
-    upload: req.body.upload,
-    parentComment: parentComment || null,
-  });
+  // Skip resizing for GIFs to preserve animation
+  if (req.file.mimetype === 'image/gif') {
+    console.log('GIF detected, skipping resize...');
+    return next();
+  }
 
-  res.status(201).json({
-    status: 'success',
-    data: {
-      data: comment,
-    },
+  // Resize images to a max width of 300px
+  const maxWidth = 300;
+  await sharp(`public/img/stock/${req.file.filename}`)
+    .resize({
+      fit: sharp.fit.contain,
+      width: maxWidth,
+    })
+    .jpeg({ quality: 90 })
+    .toFile(`public/img/stock/temp-${req.file.filename}`);
+
+  // Replace the original file with the resized one
+  await fs.rename(
+    `public/img/stock/temp-${req.file.filename}`,
+    `public/img/stock/${req.file.filename}`
+  );
+
+  console.log('Ending Resize Comment Image Middleware');
+  next();
+});
+
+// Validate parentComment if provided
+exports.giveComment = catchAsync(async (req, res, next) => {
+  //Handle file upload using the centralized Multer middleware
+  multerCommentController.uploadCommentMedia(req, res, async (err) => {
+    if (err) {
+      return next(new AppError(err.message, 400));
+    }
+    const { content, parentComment } = req.body;
+
+    if (parentComment) {
+      const parent = await Comment.findById(parentComment);
+      if (!parent) {
+        return next(new AppError('Parent comment not found', 404));
+      }
+      if (parent.upload.toString() !== req.body.upload.toString()) {
+        return next(
+          new AppError('Parent comment does not belong to this upload', 400)
+        );
+      }
+      // Check nesting level
+      let depth = 0;
+      let current = parent;
+      while (current.parentComment && depth < 3) {
+        current = await Comment.findById(current.parentComment);
+        depth++;
+      }
+      if (depth >= 2) {
+        return next(
+          new AppError('Maximum reply nesting level reached (3 levels)', 400)
+        );
+      }
+    }
+
+    const commentData = {
+      content,
+      user: req.body.user,
+      upload: req.body.upload,
+      parentComment: parentComment || null,
+    };
+
+    if (req.file) {
+      commentData.media = `/img/stock/${req.file.filename}`;
+      commentData.mediaType =
+        req.file.mimetype === 'image/gif' ? 'gif' : 'image';
+    }
+
+    const comment = await Comment.create(commentData);
+    res.status(201).json({
+      status: 'success',
+      data: {
+        data: comment,
+      },
+    });
   });
 });
 
