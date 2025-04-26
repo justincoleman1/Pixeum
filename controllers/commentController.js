@@ -67,11 +67,15 @@ exports.giveComment = catchAsync(async (req, res, next) => {
     if (err) {
       return next(new AppError(err.message, 400));
     }
+<<<<<<< HEAD
     const { elements, parentComment } = req.body;
 
     if (!elements || !Array.isArray(elements)) {
       return next(new AppError('Elements array is required', 400));
     }
+=======
+    const { content, parentComment } = req.body;
+>>>>>>> 47efb58883551a75e091fd65e666ed66d0334b4f
 
     if (parentComment) {
       const parent = await Comment.findById(parentComment);
@@ -98,12 +102,17 @@ exports.giveComment = catchAsync(async (req, res, next) => {
     }
 
     const commentData = {
+<<<<<<< HEAD
       elements: [],
+=======
+      content,
+>>>>>>> 47efb58883551a75e091fd65e666ed66d0334b4f
       user: req.body.user,
       upload: req.body.upload,
       parentComment: parentComment || null,
     };
 
+<<<<<<< HEAD
     let mediaIndex = 0;
     for (let element of elements) {
       if (element.type === 'text') {
@@ -123,6 +132,14 @@ exports.giveComment = catchAsync(async (req, res, next) => {
         mediaIndex++;
       }
     }
+=======
+    if (req.file) {
+      commentData.media = `/img/stock/${req.file.filename}`;
+      commentData.mediaType =
+        req.file.mimetype === 'image/gif' ? 'gif' : 'image';
+    }
+
+>>>>>>> 47efb58883551a75e091fd65e666ed66d0334b4f
     const comment = await Comment.create(commentData);
     res.status(201).json({
       status: 'success',
