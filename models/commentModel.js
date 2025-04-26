@@ -4,23 +4,20 @@ const Upload = require('./uploadModel');
 
 const commentSchema = new mongoose.Schema(
   {
-    content: {
-      type: String,
-      minlength: 1,
-      maxlength: 255,
-      required: [true, 'Comment cannot be empty!'],
-    },
-    media: {
-      // New field for media URL or path
-      type: String,
-      default: null,
-    },
-    mediaType: {
-      // New field to specify media type (e.g., "image", "gif")
-      type: String,
-      enum: ['image', 'gif', null],
-      default: null,
-    },
+    elements: [
+      // Array to store ordered elements (text and media)
+      {
+        type: {
+          type: String,
+          enum: ['text', 'image', 'gif'],
+          required: true,
+        },
+        value: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
     user: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
@@ -142,9 +139,7 @@ commentSchema.methods.softDelete = async function () {
       $set: {
         deleted: true,
         deletedAt: new Date(),
-        content: '[deleted]',
-        media: null, // Clear media on soft delete
-        mediaType: null,
+        mediaItems: [{ type: 'text', value: '[deleted]' }], // Clear media on soft delete
       },
     }
   );
