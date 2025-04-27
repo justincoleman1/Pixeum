@@ -44,12 +44,20 @@ function loadFileData(filename) {
   return gk_fileData[filename] || '';
 }
 
-const form = document.getElementById('comment-form');
-const fileInput = document.getElementById('media-upload');
-const uploadButton = document.getElementById('comment-image');
-const editor = document.getElementById('comment-editor');
-let activeTrashButton = null;
-let elements = []; // Track ordered elements
+// Initialize elements arrays for each form
+const formElementsMap = new Map(); // Map to store elements for each form (main, edit, reply)
+
+function initializeForm(formId, initialElements = []) {
+  formElementsMap.set(formId, [...initialElements]);
+}
+
+function getFormElements(formId) {
+  return formElementsMap.get(formId) || [];
+}
+
+function setFormElements(formId, elements) {
+  formElementsMap.set(formId, elements);
+}
 
 // Function to position cursor after an element
 function positionCursorAfter(element) {
@@ -59,7 +67,7 @@ function positionCursorAfter(element) {
   range.collapse(true);
   selection.removeAllRanges();
   selection.addRange(range);
-  editor.focus();
+  element.focus();
 }
 
 // Function to insert a newline after an element
@@ -70,7 +78,7 @@ function insertNewlineAfter(element) {
 }
 
 // Function to create trash button
-function createTrashButton(container, index) {
+function createTrashButton(container, index, formId) {
   const trashButton = document.createElement('button');
   trashButton.className = 'trash-button';
   trashButton.innerHTML = `<img src="/img/svg/trash.svg" class="cbsz" alt="Trash icon">`;
@@ -78,14 +86,14 @@ function createTrashButton(container, index) {
     e.preventDefault();
     e.stopPropagation();
     container.remove();
-    activeTrashButton = null;
-    // Remove the <br> element following the container if it exists
-    const nextSibling = container.nextSibling;
-    if (nextSibling && nextSibling.tagName === 'BR') {
-      nextSibling.remove();
-    }
-    // Remove the element from the elements array
-    elements = elements.filter((_, i) => i !== index);
+    const elements = getFormElements(formId);
+    setFormElements(
+      formId,
+      elements.filter((_, i) => i !== index)
+    );
+    const editor = document.getElementById(
+      formId === 'comment-form' ? 'comment-editor' : formId
+    );
     editor.focus();
   });
   return trashButton;
@@ -93,40 +101,38 @@ function createTrashButton(container, index) {
 
 // Function to hide all trash buttons
 function hideAllTrashButtons() {
-  const trashButtons = editor.querySelectorAll('.trash-button');
+  const trashButtons = document.querySelectorAll('.trash-button');
   trashButtons.forEach((button) => {
     button.classList.remove('active');
   });
-  activeTrashButton = null;
 }
 
-// Trigger file input click when custom button is clicked
-uploadButton.addEventListener('click', () => {
-  fileInput.click();
-});
-
-// Handle file selection and embed in editor
-fileInput.addEventListener('change', () => {
-  const files = fileInput.files;
+// Function to handle media upload for any form
+function handleMediaUpload(files, formId, editorElement) {
+  const mediaPreviewContainer =
+    editorElement.parentElement.querySelector('.media-preview-container') ||
+    document.createElement('div');
+  if (!mediaPreviewContainer.classList.contains('media-preview-container')) {
+    mediaPreviewContainer.classList.add('media-preview-container');
+    editorElement.parentElement.insertBefore(
+      mediaPreviewContainer,
+      editorElement.nextSibling
+    );
+  }
 
   for (const file of files) {
-    // Create a container div for each media item
     const container = document.createElement('div');
     container.className = 'media-container';
-    container.contentEditable = 'false'; // Prevent typing inside the media container
+    container.contentEditable = 'false';
 
-    // Add trash button
-    const mediaIndex = elements.length;
-    const trashButton = createTrashButton(container, mediaIndex);
+    const mediaIndex = getFormElements(formId).length;
+    const trashButton = createTrashButton(container, mediaIndex, formId);
     container.appendChild(trashButton);
 
-    // Show trash button on container click
     container.addEventListener('click', (e) => {
       e.stopPropagation();
       hideAllTrashButtons();
       trashButton.classList.add('active');
-      activeTrashButton = trashButton;
-      // Position cursor after the container (after the <br>)
       const nextSibling = container.nextSibling;
       if (nextSibling && nextSibling.tagName === 'BR') {
         positionCursorAfter(nextSibling);
@@ -135,7 +141,6 @@ fileInput.addEventListener('change', () => {
       }
     });
 
-    // Handle Excel files
     if (file.name.endsWith('.xlsx')) {
       gk_isXlsx = true;
       gk_xlsxFileLookup[file.name] = true;
@@ -146,54 +151,37 @@ fileInput.addEventListener('change', () => {
         const pre = document.createElement('pre');
         pre.textContent = csv || 'Error processing Excel file';
         container.appendChild(pre);
-        editor.appendChild(container);
+        editorElement.appendChild(container);
+        const elements = getFormElements(formId);
         elements.push({ type: 'excel', value: file.name, file });
+        setFormElements(formId, elements);
         insertNewlineAfter(container);
       };
       reader.readAsDataURL(file);
-    }
-    // Handle images and GIFs
-    else if (file.type.startsWith('image/') || file.type === 'image/gif') {
+    } else if (file.type.startsWith('image/') || file.type === 'image/gif') {
       const img = document.createElement('img');
       img.src = URL.createObjectURL(file);
       img.alt = file.name;
       img.dataset.fileName = file.name;
+      img.classList.add('media-preview');
       container.appendChild(img);
-      editor.appendChild(container);
+      editorElement.appendChild(container);
+      const elements = getFormElements(formId);
       elements.push({
         type: file.type.includes('gif') ? 'gif' : 'image',
         value: file.name,
         file,
       });
+      setFormElements(formId, elements);
       insertNewlineAfter(container);
     } else {
       alert('Please upload only images, GIFs, or Excel (.xlsx) files.');
     }
   }
-
-  // Clear file input
-  fileInput.value = '';
-});
-
-// Hide trash button when clicking outside media
-editor.addEventListener('click', () => {
-  hideAllTrashButtons();
-  editor.focus();
-});
-
-// Handle keydown to capture text on Enter
-editor.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') {
-    // Capture the text before the newline
-    const textBefore = captureTextBeforeCursor();
-    if (textBefore.trim()) {
-      elements.push({ type: 'text', value: textBefore.trim() });
-    }
-  }
-});
+}
 
 // Function to capture text before the cursor
-function captureTextBeforeCursor() {
+function captureTextBeforeCursor(editor) {
   const selection = window.getSelection();
   if (selection.rangeCount === 0) return '';
 
@@ -202,11 +190,9 @@ function captureTextBeforeCursor() {
   const startOffset = range.startOffset;
 
   let text = '';
-  // If the cursor is in a text node, get the text before the cursor
   if (startContainer.nodeType === Node.TEXT_NODE) {
     text = startContainer.textContent.substring(0, startOffset);
   } else if (startContainer === editor) {
-    // If the cursor is directly in the editor, collect text from previous nodes
     const children = Array.from(editor.childNodes);
     const cursorNodeIndex = children.findIndex((node) => {
       const nodeRange = document.createRange();
@@ -227,279 +213,362 @@ function captureTextBeforeCursor() {
   return text;
 }
 
-// Handle form submission
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
+// Initialize main comment form
+const mainForm = document.getElementById('comment-form');
+const mainEditor = document.getElementById('comment-editor');
+if (mainForm && mainEditor) {
+  initializeForm('comment-form');
 
-  // Capture any remaining text before submission
-  const textBefore = captureTextBeforeCursor();
-  if (textBefore.trim()) {
-    elements.push({ type: 'text', value: textBefore.trim() });
-  }
+  // Media upload for main form
+  const mainUploadButton = document.getElementById('comment-image');
+  const mainFileInput = document.getElementById('media-upload');
+  mainUploadButton.addEventListener('click', () => mainFileInput.click());
+  mainFileInput.addEventListener('change', () =>
+    handleMediaUpload(mainFileInput.files, 'comment-form', mainEditor)
+  );
 
-  // Capture text after media containers and <br> tags
-  const children = Array.from(editor.childNodes);
-  let currentText = '';
-  for (let i = 0; i < children.length; i++) {
-    const node = children[i];
-    if (node.nodeType === Node.TEXT_NODE) {
-      currentText += node.textContent;
-    } else if (node.tagName === 'BR') {
-      if (currentText.trim()) {
-        elements.push({ type: 'text', value: currentText.trim() });
-        currentText = '';
+  // Formatting buttons for main form
+  const formattingButtons = mainForm.querySelectorAll(
+    '.comment-bold-button, .comment-italics-button, .comment-strikethrough-button, .comment-link-button, .comment-spoiler-button, .comment-code-button, .comment-quotes-button, .comment-mention-button'
+  );
+  formattingButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      const action = button.id.split('-')[1];
+      const editor = document.getElementById('comment-editor');
+      const selection = window.getSelection();
+      if (selection.rangeCount === 0) return;
+
+      const range = selection.getRangeAt(0);
+      const selectedText = range.toString();
+      let newText = '';
+
+      switch (action) {
+        case 'bold':
+          newText = `**${selectedText}**`;
+          break;
+        case 'italics':
+          newText = `*${selectedText}*`;
+          break;
+        case 'strikethrough':
+          newText = `~~${selectedText}~~`;
+          break;
+        case 'link':
+          newText = `[${selectedText}](url)`;
+          break;
+        case 'spoiler':
+          newText = `||${selectedText}||`;
+          break;
+        case 'code':
+          newText = `\`${selectedText}\``;
+          break;
+        case 'quotes':
+          newText = `> ${selectedText}`;
+          break;
+        case 'mention':
+          newText = `@${selectedText}`;
+          break;
       }
-    } else if (node.classList && node.classList.contains('media-container')) {
-      if (currentText.trim()) {
-        elements.push({ type: 'text', value: currentText.trim() });
-        currentText = '';
+
+      const textNode = document.createTextNode(newText);
+      range.deleteContents();
+      range.insertNode(textNode);
+
+      range.setStartAfter(textNode);
+      range.setEndAfter(textNode);
+      selection.removeAllRanges();
+      selection.addRange(range);
+      editor.focus();
+    });
+  });
+
+  // Handle keydown for main form
+  mainEditor.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      const textBefore = captureTextBeforeCursor(mainEditor);
+      if (textBefore.trim()) {
+        const elements = getFormElements('comment-form');
+        elements.push({ type: 'text', value: textBefore.trim() });
+        setFormElements('comment-form', elements);
       }
-      // Media elements are already in the elements array
-    }
-  }
-  // Add any remaining text
-  if (currentText.trim()) {
-    elements.push({ type: 'text', value: currentText.trim() });
-  }
-
-  // Log the ordered elements
-  console.log('Ordered Elements:', elements);
-
-  // Prepare FormData for Axios request
-  const formData = new FormData();
-  formData.append('elements', JSON.stringify(elements));
-  elements.forEach((element, index) => {
-    if (
-      element.type === 'image' ||
-      element.type === 'gif' ||
-      element.type === 'excel'
-    ) {
-      formData.append(`media-${index}`, element.file);
     }
   });
 
-  // Get username and slug from URL
-  const urlParts = window.location.pathname.split('/');
-  const username = urlParts[1];
-  const slug = urlParts[2];
-  const parentComment = form.dataset.parentId || '';
-
-  try {
-    const res = await axios({
-      method: 'POST',
-      url: `/api/v1/uploads/${username}/${slug}/comments`,
-      data: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-
-    if (res.data.status === 'success') {
-      showAlert('success', parentComment ? 'Reply Posted!' : 'Comment Posted!');
-      window.setTimeout(() => {
-        location.reload();
-      }, 1500);
-    }
-  } catch (err) {
-    showAlert('error', err.response.data.message);
-  }
-
-  // Reset editor
-  editor.innerHTML = '';
-  elements = [];
-  form.dataset.parentId = ''; // Reset parent ID
-});
-
-// Maintain cursor focus after inserting content
-editor.addEventListener('click', () => {
-  editor.focus();
-});
-
-// Handle click on comment media to open modal
-document.addEventListener('click', (e) => {
-  const media = e.target.closest('.comment-media');
-  if (media) {
-    const modal = document.getElementById('comment-media-modal');
-    const modalImage = document.getElementById('comment-media-modal-image');
-    const overlay = document.getElementById('comment-media-modal-overlay');
-
-    // Set the image source and show the modal
-    modalImage.src = media.src;
-    modal.classList.remove('hidden');
-    overlay.classList.remove('hidden');
-  }
-
-  // Close modal when clicking the close button or overlay
-  const closeButton = e.target.closest('#comment-media-modal-close-btn');
-  const overlay = e.target.closest('#comment-media-modal-overlay');
-  if (closeButton || overlay) {
-    const modal = document.getElementById('comment-media-modal');
-    const modalImage = document.getElementById('comment-media-modal-image');
-    const overlay = document.getElementById('comment-media-modal-overlay');
-
-    modal.classList.add('hidden');
-    overlay.classList.add('hidden');
-    modalImage.src = ''; // Clear the image source
-  }
-});
-
-const commentBar = document.getElementById('comment-editor');
-
-if (commentBar) {
-  commentBar.addEventListener('click', (e) => {
+  // Handle submission for main form
+  mainForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    console.log('clicked comment bar');
-    document.getElementById('comment-editor').style.minHeight = '200px';
+    await submitForm('comment-form', mainEditor, null);
   });
 }
 
-//
-
-export const postComment = async (
-  content,
-  username,
-  slug,
-  parentComment = ''
-) => {
-  try {
-    console.log(content);
-    const res = await axios({
-      method: 'POST',
-      url: `/api/v1/uploads/${username}/${slug}/comments`,
-      data: {
-        content,
-        parentComment,
-      },
-    });
-
-    if (res.data.status === 'success') {
-      showAlert('success', parentComment ? 'Reply Posted!' : 'Comment Posted!');
-      window.setTimeout(() => {
-        location.reload();
-      }, 1500);
-    }
-  } catch (err) {
-    showAlert('error', err.response.data.message);
-  }
-};
-
-export const updateComment = async (commentId, content, username, slug) => {
-  try {
-    const res = await axios({
-      method: 'PATCH',
-      url: `/api/v1/uploads/${username}/${slug}/comments/${commentId}`,
-      data: {
-        content,
-      },
-    });
-
-    if (res.data.status === 'success') {
-      showAlert('success', 'Comment Updated!');
-      window.setTimeout(() => {
-        location.reload();
-      }, 1500);
-    }
-  } catch (err) {
-    showAlert('error', err.response.data.message);
-  }
-};
-
-export const deleteComment = async (commentId, username, slug) => {
-  try {
-    const res = await axios({
-      method: 'DELETE',
-      url: `/api/v1/uploads/${username}/${slug}/comments/${commentId}`,
-    });
-
-    if (res.status === 204) {
-      showAlert('success', 'Comment Deleted!');
-      window.setTimeout(() => {
-        location.reload();
-      }, 1500);
-    }
-  } catch (err) {
-    showAlert('error', err.response.data.message);
-  }
-};
-
+// Handle edit and reply forms
 document.addEventListener('DOMContentLoaded', () => {
-  const commentForm = document.getElementById('comment-form');
-  const urlParts = window.location.pathname.split('/');
-  const username = urlParts[1];
-  const slug = urlParts[2];
+  // Initialize edit forms
+  const editForms = document.querySelectorAll('.edit-comment-form');
+  editForms.forEach((form) => {
+    const commentId = form.dataset.commentId;
+    const editor = document.getElementById(`edit-comment-editor-${commentId}`);
+    const initialElements = []; // Populate from existing comment elements
 
-  // Handle reply buttons
+    // Populate initial elements from comment
+    const commentContent = form
+      .closest('.comment')
+      .querySelector('.comment-content');
+    commentContent.querySelectorAll('.comment-element').forEach((element) => {
+      if (element.querySelector('p')) {
+        initialElements.push({
+          type: 'text',
+          value: element.querySelector('p').textContent,
+        });
+      } else if (element.querySelector('.comment-media')) {
+        const img = element.querySelector('.comment-media');
+        initialElements.push({ type: img.dataset.type, value: img.src });
+      } else if (element.querySelector('pre')) {
+        initialElements.push({
+          type: 'excel',
+          value: element.querySelector('pre').textContent,
+        });
+      }
+    });
+    initializeForm(`edit-form-${commentId}`, initialElements);
+
+    // Media upload for edit form
+    const uploadButton = form.querySelector(`#edit-comment-image-${commentId}`);
+    const fileInput = form.querySelector(`#edit-media-upload-${commentId}`);
+    uploadButton.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', () =>
+      handleMediaUpload(fileInput.files, `edit-form-${commentId}`, editor)
+    );
+
+    // Formatting buttons for edit form
+    const formattingButtons = form.querySelectorAll(
+      '.comment-bold-button, .comment-italics-button, .comment-strikethrough-button, .comment-link-button, .comment-spoiler-button, .comment-code-button, .comment-quotes-button, .comment-mention-button'
+    );
+    formattingButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const action = button.id.split('-')[1];
+        const selection = window.getSelection();
+        if (selection.rangeCount === 0) return;
+
+        const range = selection.getRangeAt(0);
+        const selectedText = range.toString();
+        let newText = '';
+
+        switch (action) {
+          case 'bold':
+            newText = `**${selectedText}**`;
+            break;
+          case 'italics':
+            newText = `*${selectedText}*`;
+            break;
+          case 'strikethrough':
+            newText = `~~${selectedText}~~`;
+            break;
+          case 'link':
+            newText = `[${selectedText}](url)`;
+            break;
+          case 'spoiler':
+            newText = `||${selectedText}||`;
+            break;
+          case 'code':
+            newText = `\`${selectedText}\``;
+            break;
+          case 'quotes':
+            newText = `> ${selectedText}`;
+            break;
+          case 'mention':
+            newText = `@${selectedText}`;
+            break;
+        }
+
+        const textNode = document.createTextNode(newText);
+        range.deleteContents();
+        range.insertNode(textNode);
+
+        range.setStartAfter(textNode);
+        range.setEndAfter(textNode);
+        selection.removeAllRanges();
+        selection.addRange(range);
+        editor.focus();
+      });
+    });
+
+    // Handle keydown for edit form
+    editor.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const textBefore = captureTextBeforeCursor(editor);
+        if (textBefore.trim()) {
+          const elements = getFormElements(`edit-form-${commentId}`);
+          elements.push({ type: 'text', value: textBefore.trim() });
+          setFormElements(`edit-form-${commentId}`, elements);
+        }
+      }
+    });
+
+    // Handle submission for edit form
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      await submitForm(`edit-form-${commentId}`, editor, commentId, 'PATCH');
+    });
+  });
+
+  // Initialize reply forms
+  const replyForms = document.querySelectorAll('.reply-form');
+  replyForms.forEach((form) => {
+    const commentId = form.dataset.commentId;
+    const editor = document.getElementById(`reply-comment-editor-${commentId}`);
+    initializeForm(`reply-form-${commentId}`);
+
+    // Media upload for reply form
+    const uploadButton = form.querySelector(
+      `#reply-comment-image-${commentId}`
+    );
+    const fileInput = form.querySelector(`#reply-media-upload-${commentId}`);
+    uploadButton.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', () =>
+      handleMediaUpload(fileInput.files, `reply-form-${commentId}`, editor)
+    );
+
+    // Formatting buttons for reply form
+    const formattingButtons = form.querySelectorAll(
+      '.comment-bold-button, .comment-italics-button, .comment-strikethrough-button, .comment-link-button, .comment-spoiler-button, .comment-code-button, .comment-quotes-button, .comment-mention-button'
+    );
+    formattingButtons.forEach((button) => {
+      button.addEventListener('click', () => {
+        const action = button.id.split('-')[1];
+        const selection = window.getSelection();
+        if (selection.rangeCount === 0) return;
+
+        const range = selection.getRangeAt(0);
+        const selectedText = range.toString();
+        let newText = '';
+
+        switch (action) {
+          case 'bold':
+            newText = `**${selectedText}**`;
+            break;
+          case 'italics':
+            newText = `*${selectedText}*`;
+            break;
+          case 'strikethrough':
+            newText = `~~${selectedText}~~`;
+            break;
+          case 'link':
+            newText = `[${selectedText}](url)`;
+            break;
+          case 'spoiler':
+            newText = `||${selectedText}||`;
+            break;
+          case 'code':
+            newText = `\`${selectedText}\``;
+            break;
+          case 'quotes':
+            newText = `> ${selectedText}`;
+            break;
+          case 'mention':
+            newText = `@${selectedText}`;
+            break;
+        }
+
+        const textNode = document.createTextNode(newText);
+        range.deleteContents();
+        range.insertNode(textNode);
+
+        range.setStartAfter(textNode);
+        range.setEndAfter(textNode);
+        selection.removeAllRanges();
+        selection.addRange(range);
+        editor.focus();
+      });
+    });
+
+    // Handle keydown for reply form
+    editor.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const textBefore = captureTextBeforeCursor(editor);
+        if (textBefore.trim()) {
+          const elements = getFormElements(`reply-form-${commentId}`);
+          elements.push({ type: 'text', value: textBefore.trim() });
+          setFormElements(`reply-form-${commentId}`, elements);
+        }
+      }
+    });
+
+    // Handle submission for reply form
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      await submitForm(`reply-form-${commentId}`, editor, commentId);
+    });
+  });
+
+  // Handle reply button clicks
   document.querySelectorAll('.comment-reply-button').forEach((button) => {
     button.addEventListener('click', () => {
       const commentId = button.dataset.commentId;
-      const replyForm = document.getElementById(`reply-section-${commentId}`);
-      if (replyForm) {
-        replyForm.classList.toggle('hidden');
-        commentForm.dataset.parentId = commentId;
-        document.getElementById('comment-editor').focus();
-      }
+      const replySection = document.getElementById(
+        `reply-section-${commentId}`
+      );
+      replySection.classList.toggle('hidden');
+      const editor = document.getElementById(
+        `reply-comment-editor-${commentId}`
+      );
+      editor.focus();
+      formElementsMap.get('comment-form').dataset.parentId = commentId;
     });
   });
 
-  // Handle reply form submissions
-  document.querySelectorAll('.reply-form').forEach((form) => {
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const commentId = form.dataset.commentId;
-      const content = form.querySelector('textarea').value;
-      await postComment(content, username, slug, commentId);
-    });
-  });
-
-  // Handle edit buttons
+  // Handle edit button clicks
   document.querySelectorAll('.comment-edit-button').forEach((button) => {
     button.addEventListener('click', () => {
       const commentId = button.dataset.commentId;
-      const editForm = document.getElementById(`edit-section-${commentId}`);
-      if (editForm) {
-        editForm.classList.toggle('hidden');
-        const textarea = editForm.querySelector('textarea');
-        textarea.focus();
-      }
+      const editSection = document.getElementById(`edit-section-${commentId}`);
+      editSection.classList.toggle('hidden');
+      const editor = document.getElementById(
+        `edit-comment-editor-${commentId}`
+      );
+      editor.focus();
     });
   });
 
-  // Handle edit form submissions
-  document.querySelectorAll('.edit-comment-form').forEach((form) => {
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const commentId = form.dataset.commentId;
-      const content = form.querySelector('textarea').value;
-      await updateComment(commentId, content, username, slug);
-    });
-  });
-
-  // Handle delete buttons
+  // Handle delete button clicks
   document.querySelectorAll('.comment-delete-button').forEach((button) => {
     button.addEventListener('click', async () => {
       if (confirm('Are you sure you want to delete this comment?')) {
         const commentId = button.dataset.commentId;
-        await deleteComment(commentId, username, slug);
+        const urlParts = window.location.pathname.split('/');
+        const username = urlParts[1];
+        const slug = urlParts[2];
+
+        try {
+          const res = await axios({
+            method: 'DELETE',
+            url: `/api/v1/uploads/${username}/${slug}/comments/${commentId}`,
+          });
+
+          if (res.status === 204) {
+            showAlert('success', 'Comment Deleted!');
+            window.setTimeout(() => {
+              location.reload();
+            }, 1500);
+          }
+        } catch (err) {
+          showAlert('error', err.response.data.message);
+        }
       }
     });
   });
 
-  // Upvote and Downvote Functionality
+  // Handle like and dislike buttons (unchanged)
   const likeButtons = document.querySelectorAll('.comment-like-button');
   likeButtons.forEach((button) => {
     button.addEventListener('click', async (e) => {
-      console.log('Like Button Clicked');
       const commentId = e.target.closest('button').dataset.commentId;
       const uploadPath = window.location.pathname;
-      console.log('Whats This');
       try {
         const res = await fetch(
-          `/api/v1${uploadPath}/comments/${commentId}/likeComment`,
+          `/api/v1${uploadPath}/comments/${commentId}/upvote`,
           {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
           }
         );
 
@@ -511,8 +580,6 @@ document.addEventListener('DOMContentLoaded', () => {
           document.querySelector(
             `#comment-dislike_count-${commentId}`
           ).textContent = data.data.dislike_count;
-        } else {
-          console.error('Error liking comment:', data.message);
         }
       } catch (err) {
         console.error('Error:', err);
@@ -525,15 +592,12 @@ document.addEventListener('DOMContentLoaded', () => {
     button.addEventListener('click', async (e) => {
       const commentId = e.target.closest('button').dataset.commentId;
       const uploadPath = window.location.pathname;
-
       try {
         const res = await fetch(
-          `/api/v1${uploadPath}/comments/${commentId}/dislikeComment`,
+          `/api/v1${uploadPath}/comments/${commentId}/downvote`,
           {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
           }
         );
 
@@ -545,8 +609,6 @@ document.addEventListener('DOMContentLoaded', () => {
           document.querySelector(
             `#comment-dislike_count-${commentId}`
           ).textContent = data.data.dislike_count;
-        } else {
-          console.error('Error disliking comment:', data.message);
         }
       } catch (err) {
         console.error('Error:', err);
@@ -554,3 +616,137 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+
+// Function to handle form submission (shared for main, edit, reply forms)
+async function submitForm(formId, editor, commentId = null, method = 'POST') {
+  // Capture any remaining text before submission
+  const textBefore = captureTextBeforeCursor(editor);
+  if (textBefore.trim()) {
+    const elements = getFormElements(formId);
+    elements.push({ type: 'text', value: textBefore.trim() });
+    setFormElements(formId, elements);
+  }
+
+  // Capture text after media containers and <br> tags
+  const children = Array.from(editor.childNodes);
+  let currentText = '';
+  for (let i = 0; i < children.length; i++) {
+    const node = children[i];
+    if (node.nodeType === Node.TEXT_NODE) {
+      currentText += node.textContent;
+    } else if (node.tagName === 'BR') {
+      if (currentText.trim()) {
+        const elements = getFormElements(formId);
+        elements.push({ type: 'text', value: currentText.trim() });
+        setFormElements(formId, elements);
+        currentText = '';
+      }
+    } else if (node.classList && node.classList.contains('media-container')) {
+      if (currentText.trim()) {
+        const elements = getFormElements(formId);
+        elements.push({ type: 'text', value: currentText.trim() });
+        setFormElements(formId, elements);
+        currentText = '';
+      }
+    }
+  }
+  if (currentText.trim()) {
+    const elements = getFormElements(formId);
+    elements.push({ type: 'text', value: currentText.trim() });
+    setFormElements(formId, elements);
+  }
+
+  // Prepare FormData for Axios request
+  const elements = getFormElements(formId);
+  const formData = new FormData();
+  formData.append('elements', JSON.stringify(elements));
+  elements.forEach((element, index) => {
+    if (
+      element.type === 'image' ||
+      element.type === 'gif' ||
+      element.type === 'excel'
+    ) {
+      if (element.file) {
+        formData.append(`media-${index}`, element.file);
+      }
+    }
+  });
+
+  // Get username and slug from URL
+  const urlParts = window.location.pathname.split('/');
+  const username = urlParts[1];
+  const slug = urlParts[2];
+  let url = `/api/v1/uploads/${username}/${slug}/comments`;
+  if (method === 'PATCH') {
+    url += `/${commentId}`;
+  } else if (commentId) {
+    formData.append('parentComment', commentId);
+  }
+
+  try {
+    const res = await axios({
+      method: method,
+      url: url,
+      data: formData,
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+
+    if (res.data.status === 'success' || res.status === 204) {
+      showAlert(
+        'success',
+        method === 'PATCH'
+          ? 'Comment Updated!'
+          : commentId
+          ? 'Reply Posted!'
+          : 'Comment Posted!'
+      );
+      window.setTimeout(() => {
+        location.reload();
+      }, 1500);
+    }
+  } catch (err) {
+    showAlert('error', err.response.data.message);
+  }
+
+  // Reset editor
+  editor.innerHTML = '';
+  setFormElements(formId, []);
+  if (formId === 'comment-form') {
+    formElementsMap.get(formId).dataset.parentId = '';
+  }
+}
+
+// Handle click on comment media to open modal
+document.addEventListener('click', (e) => {
+  const media = e.target.closest('.comment-media');
+  if (media) {
+    const modal = document.getElementById('comment-media-modal');
+    const modalImage = document.getElementById('comment-media-modal-image');
+    const overlay = document.getElementById('comment-media-modal-overlay');
+
+    modalImage.src = media.src;
+    modal.classList.remove('hidden');
+    overlay.classList.remove('hidden');
+  }
+
+  const closeButton = e.target.closest('#comment-media-modal-close-btn');
+  const overlay = e.target.closest('#comment-media-modal-overlay');
+  if (closeButton || overlay) {
+    const modal = document.getElementById('comment-media-modal');
+    const modalImage = document.getElementById('comment-media-modal-image');
+    const overlay = document.getElementById('comment-media-modal-overlay');
+
+    modal.classList.add('hidden');
+    overlay.classList.add('hidden');
+    modalImage.src = '';
+  }
+});
+
+const commentBar = document.getElementById('comment-editor');
+if (commentBar) {
+  commentBar.addEventListener('click', (e) => {
+    e.preventDefault();
+    console.log('clicked comment bar');
+    document.getElementById('comment-editor').style.minHeight = '200px';
+  });
+}
