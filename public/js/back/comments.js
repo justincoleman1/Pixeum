@@ -1,4 +1,3 @@
-// public/js/comment.js
 /*eslint-disable*/
 import axios from 'axios';
 import { showAlert } from '../front/alerts';
@@ -50,6 +49,7 @@ const fileInput = document.getElementById('media-upload');
 const uploadButton = document.getElementById('comment-image');
 const editor = document.getElementById('comment-editor');
 let activeTrashButton = null;
+let elements = []; // Track ordered elements
 
 // Function to position cursor after an element
 function positionCursorAfter(element) {
@@ -62,8 +62,15 @@ function positionCursorAfter(element) {
   editor.focus();
 }
 
+// Function to insert a newline after an element
+function insertNewlineAfter(element) {
+  const br = document.createElement('br');
+  element.insertAdjacentElement('afterend', br);
+  positionCursorAfter(br);
+}
+
 // Function to create trash button
-function createTrashButton(container) {
+function createTrashButton(container, index) {
   const trashButton = document.createElement('button');
   trashButton.className = 'trash-button';
   trashButton.innerHTML = `<img src="/img/svg/trash.svg" class="cbsz" alt="Trash icon">`;
@@ -72,7 +79,14 @@ function createTrashButton(container) {
     e.stopPropagation();
     container.remove();
     activeTrashButton = null;
-    container.contentEditable = 'true';
+    // Remove the <br> element following the container if it exists
+    const nextSibling = container.nextSibling;
+    if (nextSibling && nextSibling.tagName === 'BR') {
+      nextSibling.remove();
+    }
+    // Remove the element from the elements array
+    elements = elements.filter((_, i) => i !== index);
+    editor.focus();
   });
   return trashButton;
 }
@@ -99,10 +113,11 @@ fileInput.addEventListener('change', () => {
     // Create a container div for each media item
     const container = document.createElement('div');
     container.className = 'media-container';
-    container.contentEditable = 'true';
+    container.contentEditable = 'false'; // Prevent typing inside the media container
 
     // Add trash button
-    const trashButton = createTrashButton(container);
+    const mediaIndex = elements.length;
+    const trashButton = createTrashButton(container, mediaIndex);
     container.appendChild(trashButton);
 
     // Show trash button on container click
@@ -111,10 +126,13 @@ fileInput.addEventListener('change', () => {
       hideAllTrashButtons();
       trashButton.classList.add('active');
       activeTrashButton = trashButton;
-      if (container.contentEditable === 'false') {
-        container.contentEditable = 'true';
-        positionCursorAfter(container);
-      } else container.contentEditable = 'false';
+      // Position cursor after the container (after the <br>)
+      const nextSibling = container.nextSibling;
+      if (nextSibling && nextSibling.tagName === 'BR') {
+        positionCursorAfter(nextSibling);
+      } else {
+        insertNewlineAfter(container);
+      }
     });
 
     // Handle Excel files
@@ -129,7 +147,8 @@ fileInput.addEventListener('change', () => {
         pre.textContent = csv || 'Error processing Excel file';
         container.appendChild(pre);
         editor.appendChild(container);
-        positionCursorAfter(container);
+        elements.push({ type: 'excel', value: file.name, file });
+        insertNewlineAfter(container);
       };
       reader.readAsDataURL(file);
     }
@@ -141,7 +160,12 @@ fileInput.addEventListener('change', () => {
       img.dataset.fileName = file.name;
       container.appendChild(img);
       editor.appendChild(container);
-      positionCursorAfter(container);
+      elements.push({
+        type: file.type.includes('gif') ? 'gif' : 'image',
+        value: file.name,
+        file,
+      });
+      insertNewlineAfter(container);
     } else {
       alert('Please upload only images, GIFs, or Excel (.xlsx) files.');
     }
@@ -157,59 +181,133 @@ editor.addEventListener('click', () => {
   editor.focus();
 });
 
+// Handle keydown to capture text on Enter
+editor.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    // Capture the text before the newline
+    const textBefore = captureTextBeforeCursor();
+    if (textBefore.trim()) {
+      elements.push({ type: 'text', value: textBefore.trim() });
+    }
+  }
+});
+
+// Function to capture text before the cursor
+function captureTextBeforeCursor() {
+  const selection = window.getSelection();
+  if (selection.rangeCount === 0) return '';
+
+  const range = selection.getRangeAt(0);
+  const startContainer = range.startContainer;
+  const startOffset = range.startOffset;
+
+  let text = '';
+  // If the cursor is in a text node, get the text before the cursor
+  if (startContainer.nodeType === Node.TEXT_NODE) {
+    text = startContainer.textContent.substring(0, startOffset);
+  } else if (startContainer === editor) {
+    // If the cursor is directly in the editor, collect text from previous nodes
+    const children = Array.from(editor.childNodes);
+    const cursorNodeIndex = children.findIndex((node) => {
+      const nodeRange = document.createRange();
+      nodeRange.selectNode(node);
+      return nodeRange.compareBoundaryPoints(Range.END_TO_START, range) >= 0;
+    });
+
+    for (let i = 0; i < cursorNodeIndex; i++) {
+      const node = children[i];
+      if (node.nodeType === Node.TEXT_NODE) {
+        text += node.textContent;
+      } else if (node.tagName === 'BR') {
+        text += '\n';
+      }
+    }
+  }
+
+  return text;
+}
+
 // Handle form submission
-form.addEventListener('submit', (e) => {
+form.addEventListener('submit', async (e) => {
   e.preventDefault();
 
-  // Extract text, images, and Excel data from editor
-  const images = editor.querySelectorAll('img');
-  const excelPre = editor.querySelectorAll('pre');
-  const files = Array.from(images).map((img) => ({
-    name: img.dataset.fileName,
-    src: img.src,
-  }));
-  const excelData = Array.from(excelPre).map((pre) => ({
-    name: 'excel-data',
-    content: pre.textContent,
-  }));
-  const textContent = Array.from(editor.childNodes)
-    .map((node) => {
-      if (node.nodeType === Node.TEXT_NODE) return node.textContent;
-      if (node.tagName === 'IMG') return `[IMG:${node.dataset.fileName}]`;
-      if (node.tagName === 'PRE') return `[EXCEL:${node.textContent}]`;
-      return '';
-    })
-    .join('');
+  // Capture any remaining text before submission
+  const textBefore = captureTextBeforeCursor();
+  if (textBefore.trim()) {
+    elements.push({ type: 'text', value: textBefore.trim() });
+  }
 
-  // Log form data (replace with backend submission logic)
-  console.log('Text Content:', textContent);
-  console.log('Images:', files);
-  console.log('Excel Data:', excelData);
+  // Capture text after media containers and <br> tags
+  const children = Array.from(editor.childNodes);
+  let currentText = '';
+  for (let i = 0; i < children.length; i++) {
+    const node = children[i];
+    if (node.nodeType === Node.TEXT_NODE) {
+      currentText += node.textContent;
+    } else if (node.tagName === 'BR') {
+      if (currentText.trim()) {
+        elements.push({ type: 'text', value: currentText.trim() });
+        currentText = '';
+      }
+    } else if (node.classList && node.classList.contains('media-container')) {
+      if (currentText.trim()) {
+        elements.push({ type: 'text', value: currentText.trim() });
+        currentText = '';
+      }
+      // Media elements are already in the elements array
+    }
+  }
+  // Add any remaining text
+  if (currentText.trim()) {
+    elements.push({ type: 'text', value: currentText.trim() });
+  }
 
-  // For backend submission, create FormData
+  // Log the ordered elements
+  console.log('Ordered Elements:', elements);
+
+  // Prepare FormData for Axios request
   const formData = new FormData();
-  formData.append('comment', textContent);
-  files.forEach((file, index) => {
-    formData.append(`media-${index}`, file.src);
-  });
-  excelData.forEach((data, index) => {
-    formData.append(`excel-${index}`, data.content);
+  formData.append('elements', JSON.stringify(elements));
+  elements.forEach((element, index) => {
+    if (
+      element.type === 'image' ||
+      element.type === 'gif' ||
+      element.type === 'excel'
+    ) {
+      formData.append(`media-${index}`, element.file);
+    }
   });
 
-  // Example: Send to backend (uncomment and replace with your endpoint)
-  /*
-    fetch('/your-backend-endpoint', {
-        method: 'POST',
-        body: formData
-    })
-    .then(response => response.json())
-    .then(data => console.log('Success:', data))
-    .catch(error => console.error('Error:', error));
-    */
+  // Get username and slug from URL
+  const urlParts = window.location.pathname.split('/');
+  const username = urlParts[1];
+  const slug = urlParts[2];
+  const parentComment = form.dataset.parentId || '';
+
+  try {
+    const res = await axios({
+      method: 'POST',
+      url: `/api/v1/uploads/${username}/${slug}/comments`,
+      data: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    if (res.data.status === 'success') {
+      showAlert('success', parentComment ? 'Reply Posted!' : 'Comment Posted!');
+      window.setTimeout(() => {
+        location.reload();
+      }, 1500);
+    }
+  } catch (err) {
+    showAlert('error', err.response.data.message);
+  }
 
   // Reset editor
   editor.innerHTML = '';
-  alert('Comment submitted! (Check console for details)');
+  elements = [];
+  form.dataset.parentId = ''; // Reset parent ID
 });
 
 // Maintain cursor focus after inserting content
@@ -217,72 +315,33 @@ editor.addEventListener('click', () => {
   editor.focus();
 });
 
-// export const postComment = async (
-//   content,
-//   username,
-//   slug,
-//   parentComment = ''
-// ) => {
-//   try {
-//     console.log(content);
-//     const res = await axios({
-//       method: 'POST',
-//       url: `/api/v1/uploads/${username}/${slug}/comments`,
-//       data: {
-//         content,
-//         parentComment,
-//       },
-//     });
+// Handle click on comment media to open modal
+document.addEventListener('click', (e) => {
+  const media = e.target.closest('.comment-media');
+  if (media) {
+    const modal = document.getElementById('comment-media-modal');
+    const modalImage = document.getElementById('comment-media-modal-image');
+    const overlay = document.getElementById('comment-media-modal-overlay');
 
-//     if (res.data.status === 'success') {
-//       showAlert('success', parentComment ? 'Reply Posted!' : 'Comment Posted!');
-//       window.setTimeout(() => {
-//         location.reload();
-//       }, 1500);
-//     }
-//   } catch (err) {
-//     showAlert('error', err.response.data.message);
-//   }
-// };
+    // Set the image source and show the modal
+    modalImage.src = media.src;
+    modal.classList.remove('hidden');
+    overlay.classList.remove('hidden');
+  }
 
-// export const updateComment = async (commentId, content, username, slug) => {
-//   try {
-//     const res = await axios({
-//       method: 'PATCH',
-//       url: `/api/v1/uploads/${username}/${slug}/comments/${commentId}`,
-//       data: {
-//         content,
-//       },
-//     });
+  // Close modal when clicking the close button or overlay
+  const closeButton = e.target.closest('#comment-media-modal-close-btn');
+  const overlay = e.target.closest('#comment-media-modal-overlay');
+  if (closeButton || overlay) {
+    const modal = document.getElementById('comment-media-modal');
+    const modalImage = document.getElementById('comment-media-modal-image');
+    const overlay = document.getElementById('comment-media-modal-overlay');
 
-//     if (res.data.status === 'success') {
-//       showAlert('success', 'Comment Updated!');
-//       window.setTimeout(() => {
-//         location.reload();
-//       }, 1500);
-//     }
-//   } catch (err) {
-//     showAlert('error', err.response.data.message);
-//   }
-// };
-
-// export const deleteComment = async (commentId, username, slug) => {
-//   try {
-//     const res = await axios({
-//       method: 'DELETE',
-//       url: `/api/v1/uploads/${username}/${slug}/comments/${commentId}`,
-//     });
-
-//     if (res.status === 204) {
-//       showAlert('success', 'Comment Deleted!');
-//       window.setTimeout(() => {
-//         location.reload();
-//       }, 1500);
-//     }
-//   } catch (err) {
-//     showAlert('error', err.response.data.message);
-//   }
-// };
+    modal.classList.add('hidden');
+    overlay.classList.add('hidden');
+    modalImage.src = ''; // Clear the image source
+  }
+});
 
 const commentBar = document.getElementById('comment-editor');
 
@@ -294,150 +353,204 @@ if (commentBar) {
   });
 }
 
-// document.addEventListener('DOMContentLoaded', () => {
-//   const commentForm = document.getElementById('comment-form');
-//   const urlParts = window.location.pathname.split('/');
-//   const username = urlParts[1];
-//   const slug = urlParts[2];
+//
 
-//   // Handle main comment form submission
-//   // if (commentForm) {
-//   //   commentForm.addEventListener('submit', async (e) => {
-//   //     e.preventDefault();
-//   //     console.log('Form submitted');
-//   //     const content = document.getElementById('comment-editor').value;
-//   //     const parentComment = commentForm.dataset.parentId || '';
-//   //     await postComment(content, username, slug, parentComment);
-//   //     commentForm.dataset.parentId = ''; // Reset parent ID
-//   //     document.getElementById('comment-editor').value = ''; // Clear textarea
-//   //   });
-//   // } else {
-//   //   console.error('Comment form not found');
-//   // }
+export const postComment = async (
+  content,
+  username,
+  slug,
+  parentComment = ''
+) => {
+  try {
+    console.log(content);
+    const res = await axios({
+      method: 'POST',
+      url: `/api/v1/uploads/${username}/${slug}/comments`,
+      data: {
+        content,
+        parentComment,
+      },
+    });
 
-//   // Handle reply buttons
-//   document.querySelectorAll('.comment-reply-button').forEach((button) => {
-//     button.addEventListener('click', () => {
-//       const commentId = button.dataset.commentId;
-//       const replyForm = document.getElementById(`reply-section-${commentId}`);
-//       if (replyForm) {
-//         replyForm.classList.toggle('hidden');
-//         commentForm.dataset.parentId = commentId;
-//         document.getElementById('comment-editor').focus();
-//       }
-//     });
-//   });
+    if (res.data.status === 'success') {
+      showAlert('success', parentComment ? 'Reply Posted!' : 'Comment Posted!');
+      window.setTimeout(() => {
+        location.reload();
+      }, 1500);
+    }
+  } catch (err) {
+    showAlert('error', err.response.data.message);
+  }
+};
 
-//   // Handle reply form submissions
-//   document.querySelectorAll('.reply-form').forEach((form) => {
-//     form.addEventListener('submit', async (e) => {
-//       e.preventDefault();
-//       const commentId = form.dataset.commentId;
-//       const content = form.querySelector('textarea').value;
-//       await postComment(content, username, slug, commentId);
-//     });
-//   });
+export const updateComment = async (commentId, content, username, slug) => {
+  try {
+    const res = await axios({
+      method: 'PATCH',
+      url: `/api/v1/uploads/${username}/${slug}/comments/${commentId}`,
+      data: {
+        content,
+      },
+    });
 
-//   // Handle edit buttons
-//   document.querySelectorAll('.comment-edit-button').forEach((button) => {
-//     button.addEventListener('click', () => {
-//       const commentId = button.dataset.commentId;
-//       const editForm = document.getElementById(`edit-section-${commentId}`);
-//       if (editForm) {
-//         editForm.classList.toggle('hidden');
-//         const textarea = editForm.querySelector('textarea');
-//         textarea.focus();
-//       }
-//     });
-//   });
+    if (res.data.status === 'success') {
+      showAlert('success', 'Comment Updated!');
+      window.setTimeout(() => {
+        location.reload();
+      }, 1500);
+    }
+  } catch (err) {
+    showAlert('error', err.response.data.message);
+  }
+};
 
-//   // Handle edit form submissions
-//   document.querySelectorAll('.edit-comment-form').forEach((form) => {
-//     form.addEventListener('submit', async (e) => {
-//       e.preventDefault();
-//       const commentId = form.dataset.commentId;
-//       const content = form.querySelector('textarea').value;
-//       await updateComment(commentId, content, username, slug);
-//     });
-//   });
+export const deleteComment = async (commentId, username, slug) => {
+  try {
+    const res = await axios({
+      method: 'DELETE',
+      url: `/api/v1/uploads/${username}/${slug}/comments/${commentId}`,
+    });
 
-//   // Handle delete buttons
-//   document.querySelectorAll('.comment-delete-button').forEach((button) => {
-//     button.addEventListener('click', async () => {
-//       if (confirm('Are you sure you want to delete this comment?')) {
-//         const commentId = button.dataset.commentId;
-//         await deleteComment(commentId, username, slug);
-//       }
-//     });
-//   });
+    if (res.status === 204) {
+      showAlert('success', 'Comment Deleted!');
+      window.setTimeout(() => {
+        location.reload();
+      }, 1500);
+    }
+  } catch (err) {
+    showAlert('error', err.response.data.message);
+  }
+};
 
-//   // Upvote and Downvote Functionality
-//   const likeButtons = document.querySelectorAll('.comment-like-button');
-//   likeButtons.forEach((button) => {
-//     button.addEventListener('click', async (e) => {
-//       console.log('Like Button Clicked');
-//       const commentId = e.target.closest('button').dataset.commentId;
-//       const uploadPath = window.location.pathname;
-//       console.log('Whats This');
-//       try {
-//         const res = await fetch(
-//           `/api/v1${uploadPath}/comments/${commentId}/likeComment`,
-//           {
-//             method: 'POST',
-//             headers: {
-//               'Content-Type': 'application/json',
-//             },
-//           }
-//         );
+document.addEventListener('DOMContentLoaded', () => {
+  const commentForm = document.getElementById('comment-form');
+  const urlParts = window.location.pathname.split('/');
+  const username = urlParts[1];
+  const slug = urlParts[2];
 
-//         const data = await res.json();
-//         if (data.status === 'success') {
-//           document.querySelector(
-//             `#comment-like_count-${commentId}`
-//           ).textContent = data.data.like_count;
-//           document.querySelector(
-//             `#comment-dislike_count-${commentId}`
-//           ).textContent = data.data.dislike_count;
-//         } else {
-//           console.error('Error liking comment:', data.message);
-//         }
-//       } catch (err) {
-//         console.error('Error:', err);
-//       }
-//     });
-//   });
+  // Handle reply buttons
+  document.querySelectorAll('.comment-reply-button').forEach((button) => {
+    button.addEventListener('click', () => {
+      const commentId = button.dataset.commentId;
+      const replyForm = document.getElementById(`reply-section-${commentId}`);
+      if (replyForm) {
+        replyForm.classList.toggle('hidden');
+        commentForm.dataset.parentId = commentId;
+        document.getElementById('comment-editor').focus();
+      }
+    });
+  });
 
-//   const dislikeButtons = document.querySelectorAll('.comment-dislike-button');
-//   dislikeButtons.forEach((button) => {
-//     button.addEventListener('click', async (e) => {
-//       const commentId = e.target.closest('button').dataset.commentId;
-//       const uploadPath = window.location.pathname;
+  // Handle reply form submissions
+  document.querySelectorAll('.reply-form').forEach((form) => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const commentId = form.dataset.commentId;
+      const content = form.querySelector('textarea').value;
+      await postComment(content, username, slug, commentId);
+    });
+  });
 
-//       try {
-//         const res = await fetch(
-//           `/api/v1${uploadPath}/comments/${commentId}/dislikeComment`,
-//           {
-//             method: 'POST',
-//             headers: {
-//               'Content-Type': 'application/json',
-//             },
-//           }
-//         );
+  // Handle edit buttons
+  document.querySelectorAll('.comment-edit-button').forEach((button) => {
+    button.addEventListener('click', () => {
+      const commentId = button.dataset.commentId;
+      const editForm = document.getElementById(`edit-section-${commentId}`);
+      if (editForm) {
+        editForm.classList.toggle('hidden');
+        const textarea = editForm.querySelector('textarea');
+        textarea.focus();
+      }
+    });
+  });
 
-//         const data = await res.json();
-//         if (data.status === 'success') {
-//           document.querySelector(
-//             `#comment-like_count-${commentId}`
-//           ).textContent = data.data.like_count;
-//           document.querySelector(
-//             `#comment-dislike_count-${commentId}`
-//           ).textContent = data.data.dislike_count;
-//         } else {
-//           console.error('Error disliking comment:', data.message);
-//         }
-//       } catch (err) {
-//         console.error('Error:', err);
-//       }
-//     });
-//   });
-// });
+  // Handle edit form submissions
+  document.querySelectorAll('.edit-comment-form').forEach((form) => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const commentId = form.dataset.commentId;
+      const content = form.querySelector('textarea').value;
+      await updateComment(commentId, content, username, slug);
+    });
+  });
+
+  // Handle delete buttons
+  document.querySelectorAll('.comment-delete-button').forEach((button) => {
+    button.addEventListener('click', async () => {
+      if (confirm('Are you sure you want to delete this comment?')) {
+        const commentId = button.dataset.commentId;
+        await deleteComment(commentId, username, slug);
+      }
+    });
+  });
+
+  // Upvote and Downvote Functionality
+  const likeButtons = document.querySelectorAll('.comment-like-button');
+  likeButtons.forEach((button) => {
+    button.addEventListener('click', async (e) => {
+      console.log('Like Button Clicked');
+      const commentId = e.target.closest('button').dataset.commentId;
+      const uploadPath = window.location.pathname;
+      console.log('Whats This');
+      try {
+        const res = await fetch(
+          `/api/v1${uploadPath}/comments/${commentId}/likeComment`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        const data = await res.json();
+        if (data.status === 'success') {
+          document.querySelector(
+            `#comment-like_count-${commentId}`
+          ).textContent = data.data.like_count;
+          document.querySelector(
+            `#comment-dislike_count-${commentId}`
+          ).textContent = data.data.dislike_count;
+        } else {
+          console.error('Error liking comment:', data.message);
+        }
+      } catch (err) {
+        console.error('Error:', err);
+      }
+    });
+  });
+
+  const dislikeButtons = document.querySelectorAll('.comment-dislike-button');
+  dislikeButtons.forEach((button) => {
+    button.addEventListener('click', async (e) => {
+      const commentId = e.target.closest('button').dataset.commentId;
+      const uploadPath = window.location.pathname;
+
+      try {
+        const res = await fetch(
+          `/api/v1${uploadPath}/comments/${commentId}/dislikeComment`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+
+        const data = await res.json();
+        if (data.status === 'success') {
+          document.querySelector(
+            `#comment-like_count-${commentId}`
+          ).textContent = data.data.like_count;
+          document.querySelector(
+            `#comment-dislike_count-${commentId}`
+          ).textContent = data.data.dislike_count;
+        } else {
+          console.error('Error disliking comment:', data.message);
+        }
+      } catch (err) {
+        console.error('Error:', err);
+      }
+    });
+  });
+});

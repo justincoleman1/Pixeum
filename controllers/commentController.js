@@ -1,17 +1,23 @@
-// controllers/commentController.js
 const catchAsync = require('../utils/catchAsync');
 const Comment = require('../models/commentModel');
 const User = require('../models/userModel');
 const Upload = require('../models/uploadModel');
 const AppError = require('../utils/appError');
 const factory = require('./handlerFactory');
-const multerCommentController = require('./multerCommentController');
+const multerController = require('./multerCommentController');
 const sharp = require('sharp');
 const fs = require('fs').promises;
 
 exports.setCommentUserIds = catchAsync(async (req, res, next) => {
+  console.log(
+    'setCommentUserIds - Username:',
+    req.params.username,
+    'Slug:',
+    req.params.slug
+  );
   const uploadsUser = await User.findOne({ username: req.params.username });
   if (!uploadsUser) {
+    console.log('User not found:', req.params.username);
     return next(new AppError('User not found', 404));
   }
   const upload = await Upload.findOne({
@@ -19,64 +25,87 @@ exports.setCommentUserIds = catchAsync(async (req, res, next) => {
     slug: req.params.slug,
   });
   if (!upload) {
+    console.log('Upload not found:', req.params.slug);
     return next(new AppError('Upload not found', 404));
   }
-  req.body.upload = upload._id;
+  req.uploadId = upload._id;
   req.body.user = req.user.id;
+  console.log(
+    'setCommentUserIds - Upload ID:',
+    req.uploadId,
+    'User ID:',
+    req.body.user
+  );
   next();
 });
 
-// Middleware to resize comment images
 exports.resizeCommentImage = catchAsync(async (req, res, next) => {
   console.log('Resize Comment Image Middleware');
-  if (!req.file) {
-    console.log('No file present...Skipping');
+  if (!req.files || req.files.length === 0) {
+    console.log('No files present...Skipping');
     return next();
   }
 
-  // Skip resizing for GIFs to preserve animation
-  if (req.file.mimetype === 'image/gif') {
-    console.log('GIF detected, skipping resize...');
-    return next();
+  // Parse the elements array from req.body
+  const elements = JSON.parse(req.body.elements || '[]');
+  let mediaIndex = 0;
+
+  // Iterate through elements to find media items
+  for (let element of elements) {
+    if (element.type === 'image' || element.type === 'gif') {
+      // Find the corresponding file in req.files
+      const file = req.files.find((f) => f.fieldname === `media-${mediaIndex}`);
+      if (!file) {
+        return next(new AppError('Media file mismatch', 400));
+      }
+
+      // Resize only images, skip GIFs
+      if (element.type === 'gif') {
+        console.log('GIF detected, skipping resize...');
+      } else {
+        const maxWidth = 300;
+        await sharp(`public/img/stock/${file.filename}`)
+          .resize({
+            fit: sharp.fit.contain,
+            width: maxWidth,
+          })
+          .jpeg({ quality: 90 })
+          .toFile(`public/img/stock/temp-${file.filename}`);
+
+        await fs.rename(
+          `public/img/stock/temp-${file.filename}`,
+          `public/img/stock/${file.filename}`
+        );
+      }
+      mediaIndex++;
+    } else if (element.type === 'excel') {
+      // Excel files are not resized, but increment the media index
+      mediaIndex++;
+    }
   }
-
-  // Resize images to a max width of 300px
-  const maxWidth = 300;
-  await sharp(`public/img/stock/${req.file.filename}`)
-    .resize({
-      fit: sharp.fit.contain,
-      width: maxWidth,
-    })
-    .jpeg({ quality: 90 })
-    .toFile(`public/img/stock/temp-${req.file.filename}`);
-
-  // Replace the original file with the resized one
-  await fs.rename(
-    `public/img/stock/temp-${req.file.filename}`,
-    `public/img/stock/${req.file.filename}`
-  );
 
   console.log('Ending Resize Comment Image Middleware');
   next();
 });
 
-// Validate parentComment if provided
 exports.giveComment = catchAsync(async (req, res, next) => {
-  //Handle file upload using the centralized Multer middleware
-  multerCommentController.uploadCommentMedia(req, res, async (err) => {
+  multerController.uploadCommentMedia(req, res, async (err) => {
     if (err) {
       return next(new AppError(err.message, 400));
     }
-<<<<<<< HEAD
-    const { elements, parentComment } = req.body;
 
-    if (!elements || !Array.isArray(elements)) {
+    const { elements, parentComment } = req.body; // Initialize parentComment from req.body
+
+    if (!elements) {
       return next(new AppError('Elements array is required', 400));
     }
-=======
-    const { content, parentComment } = req.body;
->>>>>>> 47efb58883551a75e091fd65e666ed66d0334b4f
 
+    const parsedElements = JSON.parse(elements);
+    if (!Array.isArray(parsedElements)) {
+      return next(new AppError('Elements must be an array', 400));
+    }
+
+    // Check for nested comment depth if parentComment exists
     if (parentComment) {
       const parent = await Comment.findById(parentComment);
       if (!parent) {
@@ -87,7 +116,6 @@ exports.giveComment = catchAsync(async (req, res, next) => {
           new AppError('Parent comment does not belong to this upload', 400)
         );
       }
-      // Check nesting level
       let depth = 0;
       let current = parent;
       while (current.parentComment && depth < 3) {
@@ -102,45 +130,53 @@ exports.giveComment = catchAsync(async (req, res, next) => {
     }
 
     const commentData = {
-<<<<<<< HEAD
       elements: [],
-=======
-      content,
->>>>>>> 47efb58883551a75e091fd65e666ed66d0334b4f
-      user: req.body.user,
-      upload: req.body.upload,
+      user: req.user.id,
+      upload: req.uploadId,
       parentComment: parentComment || null,
     };
 
-<<<<<<< HEAD
+    console.log('commentData:', commentData);
+    // Process elements and map media files
     let mediaIndex = 0;
-    for (let element of elements) {
+    for (let element of parsedElements) {
       if (element.type === 'text') {
         commentData.elements.push({
           type: 'text',
           value: element.value,
         });
       } else if (element.type === 'image' || element.type === 'gif') {
-        if (mediaIndex >= req.files.length) {
+        const file = req.files.find(
+          (f) => f.fieldname === `media-${mediaIndex}`
+        );
+        if (!file) {
           return next(new AppError('Media file mismatch', 400));
         }
-        const file = req.files[mediaIndex];
         commentData.elements.push({
           type: element.type,
           value: `/img/stock/${file.filename}`,
         });
         mediaIndex++;
+      } else if (element.type === 'excel') {
+        const file = req.files.find(
+          (f) => f.fieldname === `media-${mediaIndex}`
+        );
+        if (!file) {
+          return next(new AppError('Media file mismatch', 400));
+        }
+        commentData.elements.push({
+          type: 'excel',
+          value: element.value, // CSV content or filename
+        });
+        mediaIndex++;
       }
     }
-=======
-    if (req.file) {
-      commentData.media = `/img/stock/${req.file.filename}`;
-      commentData.mediaType =
-        req.file.mimetype === 'image/gif' ? 'gif' : 'image';
-    }
 
->>>>>>> 47efb58883551a75e091fd65e666ed66d0334b4f
+    console.log('about to create comment');
+    console.log('commentData:', commentData);
+
     const comment = await Comment.create(commentData);
+
     res.status(201).json({
       status: 'success',
       data: {
@@ -151,7 +187,6 @@ exports.giveComment = catchAsync(async (req, res, next) => {
 });
 
 exports.likeComment = catchAsync(async (req, res, next) => {
-  console.log('HERE');
   const comment = await Comment.findById(req.params.id);
   if (!comment) {
     return next(new AppError('Comment not found', 404));
@@ -162,16 +197,11 @@ exports.likeComment = catchAsync(async (req, res, next) => {
   const alreadyDisliked = comment.dislikedBy.includes(userId);
 
   if (alreadyLiked) {
-    // Undo upvote
-    comment.likedBy = comment.dislikedBy.filter(
-      (id) => id.toString() !== userId
-    );
+    comment.likedBy = comment.likedBy.filter((id) => id.toString() !== userId);
     comment.like_count = Math.max(comment.like_count - 1, 0);
   } else {
-    // Add upvote
     comment.likedBy.push(userId);
     comment.like_count += 1;
-    // If user previously downvoted, remove the downvote
     if (alreadyDisliked) {
       comment.dislikedBy = comment.dislikedBy.filter(
         (id) => id.toString() !== userId
@@ -200,20 +230,17 @@ exports.dislikeComment = catchAsync(async (req, res, next) => {
   }
 
   const userId = req.user.id;
-  const alreadyDisliked = comment.dislikedBy.includes(userId); // Updated from downvotedBy
-  const alreadyLiked = comment.likedBy.includes(userId); // Updated from upvotedBy
+  const alreadyDisliked = comment.dislikedBy.includes(userId);
+  const alreadyLiked = comment.likedBy.includes(userId);
 
   if (alreadyDisliked) {
-    // Undo downvote
     comment.dislikedBy = comment.dislikedBy.filter(
       (id) => id.toString() !== userId
     );
     comment.dislike_count = Math.max(comment.dislike_count - 1, 0);
   } else {
-    // Add downvote
     comment.dislikedBy.push(userId);
     comment.dislike_count += 1;
-    // If user previously upvoted, remove the upvote
     if (alreadyLiked) {
       comment.likedBy = comment.likedBy.filter(
         (id) => id.toString() !== userId
@@ -240,20 +267,27 @@ exports.updateComment = catchAsync(async (req, res, next) => {
   if (!comment) {
     return next(new AppError('Comment not found', 404));
   }
-  if (comment.user.id.toString() !== req.user.id) {
-    return next(new AppError('You can only edit your own comments', 403));
+
+  if (comment.user.toString() !== req.user.id) {
+    return next(new AppError('You can only update your own comments', 403));
+  }
+
+  const { elements } = req.body;
+
+  if (!elements || !Array.isArray(elements)) {
+    return next(new AppError('Elements array is required', 400));
   }
 
   const updatedComment = await Comment.findByIdAndUpdate(
     req.params.id,
-    { content: req.body.content, isEdited: true, updatedAt: Date.now() },
+    { elements },
     { new: true, runValidators: true }
   );
 
   res.status(200).json({
     status: 'success',
     data: {
-      updatedComment,
+      data: updatedComment,
     },
   });
 });
@@ -274,13 +308,11 @@ exports.deleteMyComment = catchAsync(async (req, res, next) => {
   }
 
   const ageInMs = Date.now() - comment.createdAt.getTime();
-  const softDeleteThreshold = 60 * 1000; // 24 hours in milliseconds 24 60 60 1000 - 1min 60* 1000
+  const softDeleteThreshold = 24 * 60 * 60 * 1000;
 
   if (ageInMs >= softDeleteThreshold) {
-    // Soft delete
     await comment.softDelete();
   } else {
-    // Hard delete
     await comment.deleteOne();
   }
 
@@ -292,4 +324,3 @@ exports.deleteMyComment = catchAsync(async (req, res, next) => {
 
 exports.getAllComments = factory.getAllDocs(Comment);
 exports.getComment = factory.getDoc(Comment);
-exports.deleteComment = factory.deleteDoc(Comment);

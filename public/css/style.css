@@ -2351,6 +2351,141 @@ section.upload {
   margin-left: 150px;
 }
 
+.comment-media-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 75%;
+  background: #fff;
+  padding: 1rem;
+  border-radius: 5px;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.comment-media-modal img {
+  max-width: 100%;
+  height: auto;
+  padding: 1rem;
+  box-sizing: border-box;
+  display: block;
+  margin: 0 auto;
+}
+.comment-media-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+.comment-media-modal-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.gif-picker-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #333;
+  padding: 1rem;
+  border-radius: 5px;
+  z-index: 1000;
+  width: 80%;
+  max-width: 600px;
+  max-height: 80%;
+  overflow-y: auto;
+}
+.gif-picker-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+.gif-search-input {
+  width: 100%;
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+  background: #444;
+  color: #fff;
+  border: 1px solid #555;
+  border-radius: 3px;
+}
+.gif-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 0.5rem;
+}
+.gif-item {
+  cursor: pointer;
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 3px;
+}
+.gif-item:hover {
+  opacity: 0.8;
+}
+.close-gif-picker {
+  background: #ff0000;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 3px;
+  cursor: pointer;
+  float: right;
+}
+.media-preview {
+  max-width: 100px;
+  margin: 0.5rem;
+}
+.media-preview-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.media-item {
+  position: relative;
+  display: inline-block;
+}
+.remove-media-btn {
+  cursor: pointer;
+  color: #ff0000;
+  font-size: 0.875rem;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.comment-media {
+  cursor: pointer;
+  max-width: 200px;
+  margin: 0.5rem;
+}
+.comment-content {
+  display: block;
+}
+.comment-content strong {
+  font-weight: bold;
+}
+.comment-content em {
+  font-style: italic;
+}
+.comment-element {
+  margin-bottom: 0.5rem;
+}
+
 .comments-container {
   width: 100%;
   display: flex;

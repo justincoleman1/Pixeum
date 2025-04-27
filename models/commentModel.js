@@ -1,10 +1,8 @@
-// models/commentModel.js
 const mongoose = require('mongoose');
 const Upload = require('./uploadModel');
 
 const commentSchema = new mongoose.Schema(
   {
-<<<<<<< HEAD
     elements: [
       // Array to store ordered elements (text and media)
       {
@@ -19,25 +17,6 @@ const commentSchema = new mongoose.Schema(
         },
       },
     ],
-=======
-    content: {
-      type: String,
-      minlength: 1,
-      maxlength: 255,
-      required: [true, 'Comment cannot be empty!'],
-    },
-    media: {
-      // New field for media URL or path
-      type: String,
-      default: null,
-    },
-    mediaType: {
-      // New field to specify media type (e.g., "image", "gif")
-      type: String,
-      enum: ['image', 'gif', null],
-      default: null,
-    },
->>>>>>> 47efb58883551a75e091fd65e666ed66d0334b4f
     user: {
       type: mongoose.Schema.ObjectId,
       ref: 'User',
@@ -62,14 +41,12 @@ const commentSchema = new mongoose.Schema(
       default: 0,
     },
     likedBy: [
-      // Track users who upvoted
       {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
       },
     ],
     dislikedBy: [
-      // Track users who downvoted
       {
         type: mongoose.Schema.ObjectId,
         ref: 'User',
@@ -79,10 +56,6 @@ const commentSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    isEdited: {
-      type: Boolean,
-      default: false,
-    },
     deleted: {
       type: Boolean,
       default: false,
@@ -90,6 +63,10 @@ const commentSchema = new mongoose.Schema(
     deletedAt: {
       type: Date,
       default: null,
+    },
+    isEdited: {
+      type: Boolean,
+      default: false,
     },
   },
   {
@@ -104,11 +81,7 @@ commentSchema.index({ upload: 1, user: 1 });
 commentSchema.index({ parentComment: 1 });
 
 commentSchema.pre(/^find/, function (next) {
-  this.sort({ createdAt: 1 });
-  this.populate({
-    path: 'user',
-    select: 'username photo',
-  });
+  this.sort({ createdAt: -1 });
   next();
 });
 
@@ -123,7 +96,20 @@ commentSchema.virtual('comments', {
   localField: '_id',
 });
 
-// Increment comment_count for top-level comments, reply_count for replies
+commentSchema.pre('save', async function (next) {
+  if (!this.user) {
+    return next(new Error('Comment must have a user'));
+  }
+  const user = await mongoose.model('User').findById(this.user);
+  if (!user) {
+    return next(new Error('Invalid user reference'));
+  }
+  if (!this.isNew && this.isModified('elements')) {
+    this.isEdited = true;
+  }
+  next();
+});
+
 commentSchema.post('save', async function (doc, next) {
   try {
     console.log(
@@ -134,11 +120,9 @@ commentSchema.post('save', async function (doc, next) {
       'Upload:',
       doc.upload
     );
-    // Increment comment_count on the Upload for every comment
     await Upload.findByIdAndUpdate(doc.upload, {
       $inc: { comment_count: 1 },
     });
-    // If it's a reply, increment reply_count on the parent comment
     if (doc.parentComment) {
       await this.model('Comment').findByIdAndUpdate(doc.parentComment, {
         $inc: { reply_count: 1 },
@@ -151,7 +135,6 @@ commentSchema.post('save', async function (doc, next) {
   }
 });
 
-// Custom method for soft deletion
 commentSchema.methods.softDelete = async function () {
   await this.model('Comment').updateOne(
     { _id: this._id },
@@ -159,18 +142,13 @@ commentSchema.methods.softDelete = async function () {
       $set: {
         deleted: true,
         deletedAt: new Date(),
-<<<<<<< HEAD
-        mediaItems: [{ type: 'text', value: '[deleted]' }], // Clear media on soft delete
-=======
-        content: '[deleted]',
-        media: null, // Clear media on soft delete
-        mediaType: null,
->>>>>>> 47efb58883551a75e091fd65e666ed66d0334b4f
+        elements: [{ type: 'text', value: '[deleted]' }],
       },
     }
   );
   return { status: 'soft-deleted' };
 };
+
 commentSchema.pre(
   'deleteOne',
   { document: true, query: false },
@@ -185,14 +163,12 @@ commentSchema.pre(
         this.upload
       );
       const ageInMs = Date.now() - this.createdAt.getTime();
-      const softDeleteThreshold = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+      const softDeleteThreshold = 24 * 60 * 60 * 1000;
 
       if (ageInMs >= softDeleteThreshold) {
-        // Soft delete: handled in controller, throw error to stop hard deletion
         throw new Error('Soft deletion required');
       }
 
-      // Hard delete: remove comment and update counts
       let totalCommentsToDecrement = 1;
       const replies = await this.model('Comment').find({
         parentComment: this._id,
@@ -236,7 +212,6 @@ commentSchema.pre(
       next();
     } catch (err) {
       if (err.message === 'Soft deletion required') {
-        // Stop hard deletion, handled in controller
         next();
       } else {
         console.error('Error updating counts on delete:', err);
@@ -245,5 +220,6 @@ commentSchema.pre(
     }
   }
 );
+
 const Comment = mongoose.model('Comment', commentSchema);
 module.exports = Comment;
