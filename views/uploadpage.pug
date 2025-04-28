@@ -2,8 +2,7 @@ extends base
 
 append head
     script(type='module' src='/js/front/cycleImageSize.js')
-    script(src="https://cdn.tailwindcss.com")
-    script(src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js")
+    script(type='module' src='/js/front/commentsF.js')
 
 mixin renderComment(comment, depth=0)
     li(class=['comment-item ml-8',`depth-${depth}`])
@@ -52,12 +51,12 @@ mixin renderComment(comment, depth=0)
                 if !comment.deleted
                     .comments-edit-section.hidden(data-comment-id=comment._id, id=`edit-section-${comment._id}`)
                         form(data-comment-id=comment._id, id=`edit-form-${comment._id}` enctype='multipart/form-data' class='comments-post')
-                            div(id=`comment-editor-${comment._id}` contenteditable="true" placeholder="Join the discussion..." class="mt-1 block w-full")
+                            div(id=`edit-comment-editor-${comment._id}` contenteditable="true" placeholder="Join the discussion..." class="comment-editor mt-1 block w-full")
                             hr
                             .comments-buttons
                                 button(id=`edit-comment-gif-${comment._id}` class='comment-gif-button m10')
                                     img.cbsz(src='/img/svg/gif.svg' alt='Gif')
-                                input(type="file" id=`edit-media-upload-${comment._id}` name="media" accept="image/*,.gif,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                                input(type="file" id=`edit-media-upload-${comment._id}` class='media-upload' name="media" accept="image/*,.gif,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                                 button(type="button" id=`edit-comment-image-${comment._id}` class="comment-image-button m5")
                                     img.cbsz(src='/img/svg/image-landscape.svg' alt='Image')
                                 .v1.m5
@@ -79,15 +78,24 @@ mixin renderComment(comment, depth=0)
                                     img.cbsz(src='/img/svg/Mention.svg' alt='Mention')
                                 .comment-submit
                                     button.edit-submit-button(type='submit') Save
+                            .media-preview-container(id=`media-preview-container-edit-${comment._id}`)
+                                each element, index in comment.elements
+                                    if element.type !== 'text'
+                                        .media-item(data-index=index)
+                                            if element.type === 'image' || element.type === 'gif'
+                                                img.media-preview(src=element.value alt=`Media Preview ${index}`)
+                                            else if element.type === 'excel'
+                                                pre= element.value
+                                            button.remove-media-btn(type='button' data-comment-id=`edit-${comment._id}` data-index=index) Remove Media
                     .comments-reply-section.hidden(data-comment-id=comment._id, id=`reply-section-${comment._id}`)
                         img.comment-user-icon(src=`/img/users/${comment.user.photo}`)
                         form(data-comment-id=comment._id, id=`reply-form-${comment._id}` enctype='multipart/form-data' class='comments-post')
-                            div(id=`comment-editor-${comment._id}` contenteditable="true" placeholder="Join the discussion..." class="mt-1 block w-full")
+                            div(id=`reply-comment-editor-${comment._id}` contenteditable="true" placeholder="Join the discussion..." class="comment-editor mt-1 block w-full")
                             hr
                             .comments-buttons
                                 button(id=`reply-comment-gif-${comment._id}` class='comment-gif-button m10')
                                     img.cbsz(src='/img/svg/gif.svg' alt='Gif')
-                                input(type="file" id=`reply-media-upload-${comment._id}` name="media" accept="image/*,.gif,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                                input(type="file" id=`reply-media-upload-${comment._id}` class='media-upload' name="media" accept="image/*,.gif,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                                 button(type="button" id=`reply-comment-image-${comment._id}` class="comment-image-button m5")
                                     img.cbsz(src='/img/svg/image-landscape.svg' alt='Image')
                                 .v1.m5
@@ -109,6 +117,7 @@ mixin renderComment(comment, depth=0)
                                     img.cbsz(src='/img/svg/Mention.svg' alt='Mention')
                                 .comment-submit
                                     button.reply-submit-button(type='submit') Submit Reply
+                            .media-preview-container(id=`media-preview-container-${comment._id}`)
             if comment.comments && comment.comments.length && depth < 3
                 each reply in comment.comments
                     +renderComment(reply, depth + 1)
@@ -251,12 +260,12 @@ block content
                                     .comments-post-section
                                         img.comment-user-icon(src=`/img/stock/${upload.media}`)
                                         form(id='comment-form' enctype='multipart/form-data' class='comments-post')
-                                            div(id='comment-editor' contenteditable="true" placeholder="Join the discussion..." class="mt-1 block w-full")
+                                            div(id='comment-editor' contenteditable="true" placeholder="Join the discussion..." class="comment-editor mt-1 block w-full")
                                             hr
                                             .comments-buttons
                                                 button#comment-gif.comment-gif-button.m10
                                                     img.cbsz(src='/img/svg/gif.svg' alt='Gif')
-                                                input(type="file" id="media-upload" name="media" accept="image/*,.gif,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                                                input(type="file" id="media-upload" class='media-upload' name="media" accept="image/*,.gif,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
                                                 button(type="button" id="comment-image" class="comment-image-button m5")
                                                     img.cbsz(src='/img/svg/image-landscape.svg' alt='Image')
                                                 .v1.m5
