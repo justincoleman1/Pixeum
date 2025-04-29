@@ -166,7 +166,9 @@ const uploadButton = document.getElementById('comment-image');
 const editor = document.getElementById('comment-editor');
 let activeTrashButton = null;
 // Track media files and their DOM nodes separately
-const mediaItems = []; // Array to store { file, container }
+const mediaItems = []; // Array to store { file, type, fileName, container }
+// Track media items for each reply form using a Map
+const replyMediaItemsMap = new Map(); // Map<commentId, Array<{ file, type, fileName, container }>>
 
 // Function to position cursor after an element
 function positionCursorAfter(element) {
@@ -176,7 +178,7 @@ function positionCursorAfter(element) {
   range.collapse(true);
   selection.removeAllRanges();
   selection.addRange(range);
-  editor.focus();
+  element.focus();
 }
 
 // Function to insert a newline after an element
@@ -212,9 +214,40 @@ function createTrashButton(container) {
   return trashButton;
 }
 
-// Function to hide all trash buttons
-function hideAllTrashButtons() {
-  const trashButtons = editor.querySelectorAll('.trash-button');
+// Function to create trash button for reply media
+function createReplyTrashButton(container, commentId) {
+  const trashButton = document.createElement('button');
+  trashButton.className = 'trash-button';
+  trashButton.innerHTML = `<img src="/img/svg/trash.svg" class="cbsz" alt="Trash icon">`;
+  trashButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Remove the container from the DOM
+    container.remove();
+    // Remove the <br> element following the container if it exists
+    const nextSibling = container.nextSibling;
+    if (nextSibling && nextSibling.tagName === 'BR') {
+      nextSibling.remove();
+    }
+    // Remove the media item from replyMediaItemsMap
+    const mediaItems = replyMediaItemsMap.get(commentId) || [];
+    const index = mediaItems.findIndex((item) => item.container === container);
+    if (index !== -1) {
+      mediaItems.splice(index, 1);
+      replyMediaItemsMap.set(commentId, mediaItems);
+      console.log(
+        `Media item removed from replyMediaItemsMap[${commentId}]:`,
+        mediaItems
+      );
+    }
+    container.focus();
+  });
+  return trashButton;
+}
+
+// Function to hide all trash buttons in a specific editor
+function hideAllTrashButtons(targetEditor) {
+  const trashButtons = targetEditor.querySelectorAll('.trash-button');
   trashButtons.forEach((button) => {
     button.classList.remove('active');
   });
@@ -243,7 +276,7 @@ fileInput.addEventListener('change', () => {
     // Show trash button on container click
     container.addEventListener('click', (e) => {
       e.stopPropagation();
-      hideAllTrashButtons();
+      hideAllTrashButtons(editor);
       trashButton.classList.add('active');
       activeTrashButton = trashButton;
       // Position cursor after the container (after the <br>)
@@ -305,14 +338,18 @@ fileInput.addEventListener('change', () => {
 
 // Hide trash button when clicking outside media
 editor.addEventListener('click', () => {
-  hideAllTrashButtons();
+  hideAllTrashButtons(editor);
   editor.focus();
 });
 
 // Recursive function to process nodes and their children
-// Recursive function to process nodes and their children
-// Recursive function to process nodes and their children
-function processNode(node, elements, mediaItems, currentTextState) {
+function processNode(
+  node,
+  elements,
+  mediaItems,
+  currentTextState,
+  commentId = null
+) {
   let currentText = currentTextState.text;
 
   if (node.nodeType === Node.TEXT_NODE) {
@@ -345,7 +382,11 @@ function processNode(node, elements, mediaItems, currentTextState) {
       const fileName = mediaNode ? mediaNode.dataset.fileName : null;
       console.log('Found media-container with fileName:', fileName);
       if (fileName) {
-        const matchingMedia = mediaItems.find(
+        // Use commentId-specific mediaItems if provided (for replies), otherwise use global mediaItems (for main form)
+        const mediaItemsToUse = commentId
+          ? replyMediaItemsMap.get(commentId) || []
+          : mediaItems;
+        const matchingMedia = mediaItemsToUse.find(
           (item) => item.fileName === fileName
         );
         if (matchingMedia) {
@@ -375,9 +416,13 @@ function processNode(node, elements, mediaItems, currentTextState) {
       // Recursively process child nodes
       const children = Array.from(node.childNodes);
       for (let i = 0; i < children.length; i++) {
-        const childState = processNode(children[i], elements, mediaItems, {
-          text: currentText,
-        });
+        const childState = processNode(
+          children[i],
+          elements,
+          mediaItems,
+          { text: currentText },
+          commentId
+        );
         currentText = childState.text;
       }
     }
@@ -479,32 +524,154 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Handle reply form submissions
   document.querySelectorAll('.reply-form').forEach((form) => {
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const commentId = form.dataset.commentId;
-      const replyEditor = form.querySelector(
-        `#reply-comment-editor-${commentId}`
-      );
-      const replyElements = [];
+    const commentId = form.dataset.commentId;
+    const replyEditor = form.querySelector(
+      `#reply-comment-editor-${commentId}`
+    );
+    const fileInput = form.querySelector(`#reply-media-upload-${commentId}`);
+    const uploadButton = form.querySelector(
+      `#reply-comment-image-${commentId}`
+    );
 
-      // Capture text from reply editor
-      const children = Array.from(replyEditor.childNodes);
-      let currentText = '';
-      for (let i = 0; i < children.length; i++) {
-        const node = children[i];
-        if (node.nodeType === Node.TEXT_NODE) {
-          currentText += node.textContent;
-        } else if (node.tagName === 'BR') {
-          if (currentText.trim()) {
-            replyElements.push({
-              type: 'text',
-              value: currentText.trim(),
-              order: replyElements.length,
-            });
-            currentText = '';
+    // Initialize media items for this reply form
+    if (!replyMediaItemsMap.has(commentId)) {
+      replyMediaItemsMap.set(commentId, []);
+    }
+
+    // Handle media upload button click
+    uploadButton.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    // Handle file selection and embed in reply editor
+    fileInput.addEventListener('change', () => {
+      const files = fileInput.files;
+      const mediaItems = replyMediaItemsMap.get(commentId);
+
+      for (const file of files) {
+        // Create a container div for each media item
+        const container = document.createElement('div');
+        container.className = 'media-container';
+        container.contentEditable = 'false'; // Prevent typing inside the media container
+
+        // Add trash button
+        const trashButton = createReplyTrashButton(container, commentId);
+        container.appendChild(trashButton);
+
+        // Show trash button on container click
+        container.addEventListener('click', (e) => {
+          e.stopPropagation();
+          hideAllTrashButtons(replyEditor);
+          trashButton.classList.add('active');
+          // Position cursor after the container (after the <br>)
+          const nextSibling = container.nextSibling;
+          if (nextSibling && nextSibling.tagName === 'BR') {
+            positionCursorAfter(nextSibling);
+          } else {
+            insertNewlineAfter(container);
           }
+        });
+
+        // Handle Excel files
+        if (file.name.endsWith('.xlsx')) {
+          gk_isXlsx = true;
+          gk_xlsxFileLookup[file.name] = true;
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            gk_fileData[file.name] = event.target.result.split(',')[1];
+            const csv = loadFileData(file.name);
+            const pre = document.createElement('pre');
+            pre.textContent = csv || 'Error processing Excel file';
+            pre.dataset.fileName = file.name; // Store file name for matching
+            container.appendChild(pre);
+            replyEditor.appendChild(container);
+            mediaItems.push({
+              file,
+              type: 'excel',
+              fileName: file.name,
+              container,
+            });
+            replyMediaItemsMap.set(commentId, mediaItems);
+            console.log(
+              `Added Excel to replyMediaItemsMap[${commentId}]:`,
+              mediaItems
+            );
+            insertNewlineAfter(container);
+          };
+          reader.readAsDataURL(file);
+        }
+        // Handle images and GIFs
+        else if (file.type.startsWith('image/') || file.type === 'image/gif') {
+          const img = document.createElement('img');
+          img.src = URL.createObjectURL(file);
+          img.alt = file.name;
+          img.dataset.fileName = file.name;
+          img.classList.add('media-preview');
+          container.appendChild(img);
+          replyEditor.appendChild(container);
+          mediaItems.push({
+            file,
+            type: file.type.includes('gif') ? 'gif' : 'image',
+            fileName: file.name,
+            container,
+          });
+          replyMediaItemsMap.set(commentId, mediaItems);
+          console.log(
+            `Added image/GIF to replyMediaItemsMap[${commentId}]:`,
+            mediaItems
+          );
+          insertNewlineAfter(container);
+        } else {
+          alert('Please upload only images, GIFs, or Excel (.xlsx) files.');
         }
       }
+
+      // Clear file input
+      fileInput.value = '';
+    });
+
+    // Hide trash buttons when clicking outside media
+    replyEditor.addEventListener('click', () => {
+      hideAllTrashButtons(replyEditor);
+      replyEditor.focus();
+    });
+
+    // Handle form submission
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const replyElements = [];
+
+      // Parse the reply editor's innerHTML into a DOM structure
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(
+        `<div>${replyEditor.innerHTML}</div>`,
+        'text/html'
+      );
+      const parsedChildren = Array.from(doc.body.firstChild.childNodes);
+
+      console.log(
+        `Parsed reply innerHTML for comment ${commentId}:`,
+        replyEditor.innerHTML
+      );
+      console.log(
+        `Parsed reply children for comment ${commentId}:`,
+        parsedChildren
+      );
+
+      let currentText = '';
+      // Process each parsed child recursively, passing the commentId
+      for (let i = 0; i < parsedChildren.length; i++) {
+        const state = processNode(
+          parsedChildren[i],
+          replyElements,
+          mediaItems,
+          { text: currentText },
+          commentId
+        );
+        currentText = state.text;
+      }
+
+      // Add any remaining text
       if (currentText.trim()) {
         replyElements.push({
           type: 'text',
@@ -513,14 +680,26 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
 
-      // Prepare FormData for reply
+      // Prepare FormData for reply with a separate mediaIndex
       const formData = new FormData();
       formData.append('elements', JSON.stringify(replyElements));
+      let mediaIndex = 0; // Separate counter for media elements
+      replyElements.forEach((element) => {
+        if (
+          element.type === 'image' ||
+          element.type === 'gif' ||
+          element.type === 'excel'
+        ) {
+          formData.append(`media-${mediaIndex}`, element.file);
+          mediaIndex++;
+        }
+      });
 
       await postComment(formData, username, slug, commentId);
 
       // Reset reply editor
       replyEditor.innerHTML = '';
+      replyMediaItemsMap.set(commentId, []); // Clear media items for this reply form
       form.classList.add('hidden');
     });
   });

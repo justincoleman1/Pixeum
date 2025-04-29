@@ -89,7 +89,7 @@ mixin renderComment(comment, depth=0)
                                             button.remove-media-btn(type='button' data-comment-id=`edit-${comment._id}` data-index=index) Remove Media
                     .comments-reply-section.hidden(data-comment-id=comment._id, id=`reply-section-${comment._id}`)
                         img.comment-user-icon(src=`/img/users/${comment.user.photo}`)
-                        form(data-comment-id=comment._id, id=`reply-form-${comment._id}` enctype='multipart/form-data' class='comments-post')
+                        form(data-comment-id=comment._id, id=`reply-form-${comment._id}` enctype='multipart/form-data' class='reply-form comments-post')
                             div(id=`reply-comment-editor-${comment._id}` contenteditable="true" placeholder="Join the discussion..." class="comment-editor mt-1 block w-full")
                             hr
                             .comments-buttons
