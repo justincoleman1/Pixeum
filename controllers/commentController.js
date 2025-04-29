@@ -30,12 +30,6 @@ exports.setCommentUserIds = catchAsync(async (req, res, next) => {
   }
   req.uploadId = upload._id;
   req.body.user = req.user.id;
-  console.log(
-    'setCommentUserIds - Upload ID:',
-    req.uploadId,
-    'User ID:',
-    req.body.user
-  );
   next();
 });
 
@@ -96,6 +90,8 @@ exports.giveComment = catchAsync(async (req, res, next) => {
 
     const { elements, parentComment } = req.body; // Initialize parentComment from req.body
 
+    console.log(elements);
+
     if (!elements) {
       return next(new AppError('Elements array is required', 400));
     }
@@ -136,7 +132,6 @@ exports.giveComment = catchAsync(async (req, res, next) => {
       parentComment: parentComment || null,
     };
 
-    console.log('commentData:', commentData);
     // Process elements and map media files
     let mediaIndex = 0;
     for (let element of parsedElements) {
@@ -149,6 +144,7 @@ exports.giveComment = catchAsync(async (req, res, next) => {
         const file = req.files.find(
           (f) => f.fieldname === `media-${mediaIndex}`
         );
+        console.log('here is the file: ', file);
         if (!file) {
           return next(new AppError('Media file mismatch', 400));
         }
@@ -171,9 +167,7 @@ exports.giveComment = catchAsync(async (req, res, next) => {
         mediaIndex++;
       }
     }
-
-    console.log('about to create comment');
-    console.log('commentData:', commentData);
+    console.log('commentData:', commentData.elements);
 
     const comment = await Comment.create(commentData);
 

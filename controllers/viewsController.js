@@ -34,8 +34,6 @@ exports.getUploadPage = catchAsync(async (req, res, next) => {
   const user = req.uploadsUser;
   const upload = req.upload;
 
-  console.log(req.upload);
-
   const recents = await Upload.find({ user: user._id, mimetype: 'image' })
     .where('slug')
     .ne(req.params.slug)

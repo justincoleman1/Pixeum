@@ -628,7 +628,6 @@ exports.getUploadStats = catchAsync(async (req, res, next) => {
 
 // controllers/uploadController.js
 exports.getUpload = catchAsync(async (req, res, next) => {
-  console.log('Inside the getUpload Function');
   const uploadsUser = await User.findOne({ username: req.params.username });
   if (!uploadsUser) {
     return res.status(404).json({

@@ -2,7 +2,6 @@ extends base
 
 append head
     script(type='module' src='/js/front/cycleImageSize.js')
-    script(type='module' src='/js/front/commentsF.js')
 
 mixin renderComment(comment, depth=0)
     li(class=['comment-item ml-8',`depth-${depth}`])
@@ -25,7 +24,8 @@ mixin renderComment(comment, depth=0)
                     if comment.deleted
                         p='[deleted]'
                     else
-                        each element in comment.elements
+                        - const sortedElements = comment.elements.sort((a, b) => a.order - b.order);
+                        each element in sortedElements
                             .comment-element
                                 if element.type === 'text'
                                     - const formattedText = element.value.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>')
