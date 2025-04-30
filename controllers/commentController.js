@@ -44,14 +44,22 @@ exports.resizeCommentImage = catchAsync(async (req, res, next) => {
   const elements = JSON.parse(req.body.elements || '[]');
   let mediaIndex = 0;
 
-  // Iterate through elements to find media items
+  // Iterate through elements to find new media items only
   for (let element of elements) {
     if (element.type === 'image' || element.type === 'gif') {
-      // Find the corresponding file in req.files
+      // Skip existing media (no file to resize)
+      if (element.isExisting) {
+        console.log(`Skipping existing media: ${element.value}`);
+        continue;
+      }
+
+      // Find the corresponding file in req.files for new media
       const file = req.files.find((f) => f.fieldname === `media-${mediaIndex}`);
       if (!file) {
-        return next(new AppError('Media file mismatch', 400));
+        return next(new AppError('Media file mismatch for new upload', 400));
       }
+
+      console.log(`Processing media-${mediaIndex}:`, file);
 
       // Resize only images, skip GIFs
       if (element.type === 'gif') {
@@ -70,11 +78,21 @@ exports.resizeCommentImage = catchAsync(async (req, res, next) => {
           `public/img/stock/temp-${file.filename}`,
           `public/img/stock/${file.filename}`
         );
+        console.log(`Resized image to public/img/stock/${file.filename}`);
       }
       mediaIndex++;
     } else if (element.type === 'excel') {
-      // Excel files are not resized, but increment the media index
-      mediaIndex++;
+      // Excel files are not resized, but increment the media index for new uploads
+      if (!element.isExisting) {
+        const file = req.files.find(
+          (f) => f.fieldname === `media-${mediaIndex}`
+        );
+        if (!file) {
+          return next(new AppError('Media file mismatch for new upload', 400));
+        }
+        console.log(`Processing Excel media-${mediaIndex}:`, file);
+        mediaIndex++;
+      }
     }
   }
 
@@ -284,7 +302,6 @@ exports.updateComment = catchAsync(async (req, res, next) => {
       updatedAt: Date.now(),
     };
 
-    // Process elements and map media files
     let mediaIndex = 0;
     for (let element of parsedElements) {
       if (element.type === 'text') {
@@ -293,44 +310,57 @@ exports.updateComment = catchAsync(async (req, res, next) => {
           value: element.value,
         });
       } else if (element.type === 'image' || element.type === 'gif') {
-        // Check if this is a new media upload
-        const file = req.files.find(
-          (f) => f.fieldname === `media-${mediaIndex}`
-        );
-        if (file) {
+        if (element.isExisting) {
+          // Existing media, use the original value
+          commentData.elements.push({
+            type: element.type,
+            value: element.value,
+          });
+        } else {
           // New media upload
+          const file = req.files.find(
+            (f) => f.fieldname === `media-${mediaIndex}`
+          );
+          if (!file) {
+            return next(
+              new AppError('Media file mismatch for new upload', 400)
+            );
+          }
+          console.log(`Processing new media at media-${mediaIndex}:`, file);
           commentData.elements.push({
             type: element.type,
             value: `/img/stock/${file.filename}`,
           });
           mediaIndex++;
-        } else {
-          // Existing media (no file uploaded, use the existing value)
-          commentData.elements.push({
-            type: element.type,
-            value: element.value,
-          });
         }
       } else if (element.type === 'excel') {
-        const file = req.files.find(
-          (f) => f.fieldname === `media-${mediaIndex}`
-        );
-        if (file) {
-          // New Excel upload
-          commentData.elements.push({
-            type: 'excel',
-            value: element.value,
-          });
-          mediaIndex++;
-        } else {
+        if (element.isExisting) {
           // Existing Excel data
           commentData.elements.push({
             type: 'excel',
             value: element.value,
           });
+        } else {
+          // New Excel upload
+          const file = req.files.find(
+            (f) => f.fieldname === `media-${mediaIndex}`
+          );
+          if (!file) {
+            return next(
+              new AppError('Media file mismatch for new upload', 400)
+            );
+          }
+          console.log(`Processing new Excel at media-${mediaIndex}:`, file);
+          commentData.elements.push({
+            type: 'excel',
+            value: element.value,
+          });
+          mediaIndex++;
         }
       }
     }
+
+    console.log('Updated commentData.elements:', commentData.elements);
 
     const comment = await Comment.findByIdAndUpdate(
       req.params.id,
