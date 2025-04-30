@@ -12,14 +12,14 @@ router
   .get(commentController.getAllComments)
   .post(
     commentController.setCommentUserIds,
-    commentController.giveComment,
-    commentController.resizeCommentImage
+    commentController.resizeCommentImage,
+    commentController.giveComment
   );
 
 router
   .route('/:id')
   .get(commentController.getComment)
-  .patch(commentController.updateComment)
+  .patch(commentController.resizeCommentImage, commentController.updateComment)
   .delete(commentController.deleteMyComment);
 
 router.route('/:id/likeComment').post(commentController.likeComment);

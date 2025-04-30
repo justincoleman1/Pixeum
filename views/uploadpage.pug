@@ -4,7 +4,7 @@ append head
     script(type='module' src='/js/front/cycleImageSize.js')
 
 mixin renderComment(comment, depth=0)
-    li(class=['comment-item ml-8',`depth-${depth}`])
+    li(class=['comment-item ml-8',`depth-${depth}`] id=`comment-${comment._id}` data-elements=JSON.stringify(comment.elements))
         if comment.user && comment.user.username
             img.comment-user-icon(src=`/img/users/${comment.user.photo || 'default.jpg'}`)
             .comment
@@ -50,7 +50,7 @@ mixin renderComment(comment, depth=0)
                             button.comment-delete-button(data-comment-id=comment._id) Delete
                 if !comment.deleted
                     .comments-edit-section.hidden(data-comment-id=comment._id, id=`edit-section-${comment._id}`)
-                        form(data-comment-id=comment._id, id=`edit-form-${comment._id}` enctype='multipart/form-data' class='comments-post')
+                        form(data-comment-id=comment._id, id=`edit-form-${comment._id}` enctype='multipart/form-data' class='edit-comment-form comments-post')
                             div(id=`edit-comment-editor-${comment._id}` contenteditable="true" placeholder="Join the discussion..." class="comment-editor mt-1 block w-full")
                             hr
                             .comments-buttons
@@ -78,15 +78,6 @@ mixin renderComment(comment, depth=0)
                                     img.cbsz(src='/img/svg/Mention.svg' alt='Mention')
                                 .comment-submit
                                     button.edit-submit-button(type='submit') Save
-                            .media-preview-container(id=`media-preview-container-edit-${comment._id}`)
-                                each element, index in comment.elements
-                                    if element.type !== 'text'
-                                        .media-item(data-index=index)
-                                            if element.type === 'image' || element.type === 'gif'
-                                                img.media-preview(src=element.value alt=`Media Preview ${index}`)
-                                            else if element.type === 'excel'
-                                                pre= element.value
-                                            button.remove-media-btn(type='button' data-comment-id=`edit-${comment._id}` data-index=index) Remove Media
                     .comments-reply-section.hidden(data-comment-id=comment._id, id=`reply-section-${comment._id}`)
                         img.comment-user-icon(src=`/img/users/${comment.user.photo}`)
                         form(data-comment-id=comment._id, id=`reply-form-${comment._id}` enctype='multipart/form-data' class='reply-form comments-post')
@@ -117,7 +108,6 @@ mixin renderComment(comment, depth=0)
                                     img.cbsz(src='/img/svg/Mention.svg' alt='Mention')
                                 .comment-submit
                                     button.reply-submit-button(type='submit') Submit Reply
-                            .media-preview-container(id=`media-preview-container-${comment._id}`)
             if comment.comments && comment.comments.length && depth < 3
                 each reply in comment.comments
                     +renderComment(reply, depth + 1)

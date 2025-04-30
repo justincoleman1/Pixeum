@@ -107,7 +107,7 @@ exports.giveComment = catchAsync(async (req, res, next) => {
       if (!parent) {
         return next(new AppError('Parent comment not found', 404));
       }
-      if (parent.upload.toString() !== req.body.upload.toString()) {
+      if (parent.upload.toString() !== req.uploadId.toString()) {
         return next(
           new AppError('Parent comment does not belong to this upload', 400)
         );
@@ -257,33 +257,103 @@ exports.dislikeComment = catchAsync(async (req, res, next) => {
 });
 
 exports.updateComment = catchAsync(async (req, res, next) => {
-  const comment = await Comment.findById(req.params.id);
-  if (!comment) {
-    return next(new AppError('Comment not found', 404));
+  try {
+    await new Promise((resolve, reject) => {
+      multerController.uploadCommentMedia(req, res, (err) => {
+        if (err) {
+          return reject(new AppError(err.message, 400));
+        }
+        resolve();
+      });
+    });
+
+    const { elements } = req.body;
+
+    if (!elements) {
+      return next(new AppError('Elements array is required', 400));
+    }
+
+    const parsedElements = JSON.parse(elements);
+    if (!Array.isArray(parsedElements)) {
+      return next(new AppError('Elements must be an array', 400));
+    }
+
+    const commentData = {
+      elements: [],
+      isEdited: true,
+      updatedAt: Date.now(),
+    };
+
+    // Process elements and map media files
+    let mediaIndex = 0;
+    for (let element of parsedElements) {
+      if (element.type === 'text') {
+        commentData.elements.push({
+          type: 'text',
+          value: element.value,
+        });
+      } else if (element.type === 'image' || element.type === 'gif') {
+        // Check if this is a new media upload
+        const file = req.files.find(
+          (f) => f.fieldname === `media-${mediaIndex}`
+        );
+        if (file) {
+          // New media upload
+          commentData.elements.push({
+            type: element.type,
+            value: `/img/stock/${file.filename}`,
+          });
+          mediaIndex++;
+        } else {
+          // Existing media (no file uploaded, use the existing value)
+          commentData.elements.push({
+            type: element.type,
+            value: element.value,
+          });
+        }
+      } else if (element.type === 'excel') {
+        const file = req.files.find(
+          (f) => f.fieldname === `media-${mediaIndex}`
+        );
+        if (file) {
+          // New Excel upload
+          commentData.elements.push({
+            type: 'excel',
+            value: element.value,
+          });
+          mediaIndex++;
+        } else {
+          // Existing Excel data
+          commentData.elements.push({
+            type: 'excel',
+            value: element.value,
+          });
+        }
+      }
+    }
+
+    const comment = await Comment.findByIdAndUpdate(
+      req.params.id,
+      commentData,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
+
+    if (!comment) {
+      return next(new AppError('Comment not found', 404));
+    }
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        data: comment,
+      },
+    });
+  } catch (err) {
+    next(err);
   }
-
-  if (comment.user.toString() !== req.user.id) {
-    return next(new AppError('You can only update your own comments', 403));
-  }
-
-  const { elements } = req.body;
-
-  if (!elements || !Array.isArray(elements)) {
-    return next(new AppError('Elements array is required', 400));
-  }
-
-  const updatedComment = await Comment.findByIdAndUpdate(
-    req.params.id,
-    { elements },
-    { new: true, runValidators: true }
-  );
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      data: updatedComment,
-    },
-  });
 });
 
 exports.deleteMyComment = catchAsync(async (req, res, next) => {

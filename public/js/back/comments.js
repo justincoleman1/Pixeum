@@ -169,6 +169,8 @@ let activeTrashButton = null;
 const mediaItems = []; // Array to store { file, type, fileName, container }
 // Track media items for each reply form using a Map
 const replyMediaItemsMap = new Map(); // Map<commentId, Array<{ file, type, fileName, container }>>
+// Track media items for each edit form using a Map
+const editMediaItemsMap = new Map(); // Map<commentId, Array<{ file, type, fileName, container, isExisting, existingValue }>>
 
 // Function to position cursor after an element
 function positionCursorAfter(element) {
@@ -188,7 +190,7 @@ function insertNewlineAfter(element) {
   positionCursorAfter(br);
 }
 
-// Function to create trash button
+// Function to create trash button for main comment form
 function createTrashButton(container) {
   const trashButton = document.createElement('button');
   trashButton.className = 'trash-button';
@@ -208,6 +210,7 @@ function createTrashButton(container) {
     const index = mediaItems.findIndex((item) => item.container === container);
     if (index !== -1) {
       mediaItems.splice(index, 1);
+      console.log(`Removed media item from mediaItems:`, mediaItems);
     }
     editor.focus();
   });
@@ -237,6 +240,37 @@ function createReplyTrashButton(container, commentId) {
       replyMediaItemsMap.set(commentId, mediaItems);
       console.log(
         `Media item removed from replyMediaItemsMap[${commentId}]:`,
+        mediaItems
+      );
+    }
+    container.focus();
+  });
+  return trashButton;
+}
+
+// Function to create trash button for edit media
+function createEditTrashButton(container, commentId) {
+  const trashButton = document.createElement('button');
+  trashButton.className = 'trash-button';
+  trashButton.innerHTML = `<img src="/img/svg/trash.svg" class="cbsz" alt="Trash icon">`;
+  trashButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    // Remove the container from the DOM
+    container.remove();
+    // Remove the <br> element following the container if it exists
+    const nextSibling = container.nextSibling;
+    if (nextSibling && nextSibling.tagName === 'BR') {
+      nextSibling.remove();
+    }
+    // Remove the media item from editMediaItemsMap
+    const mediaItems = editMediaItemsMap.get(commentId) || [];
+    const index = mediaItems.findIndex((item) => item.container === container);
+    if (index !== -1) {
+      mediaItems.splice(index, 1);
+      editMediaItemsMap.set(commentId, mediaItems);
+      console.log(
+        `Media item removed from editMediaItemsMap[${commentId}]:`,
         mediaItems
       );
     }
@@ -307,6 +341,7 @@ fileInput.addEventListener('change', () => {
           fileName: file.name,
           container,
         });
+        console.log(`Added Excel to mediaItems:`, mediaItems);
         insertNewlineAfter(container);
       };
       reader.readAsDataURL(file);
@@ -326,6 +361,7 @@ fileInput.addEventListener('change', () => {
         fileName: file.name,
         container,
       });
+      console.log(`Added image/GIF to mediaItems:`, mediaItems);
       insertNewlineAfter(container);
     } else {
       alert('Please upload only images, GIFs, or Excel (.xlsx) files.');
@@ -348,7 +384,8 @@ function processNode(
   elements,
   mediaItems,
   currentTextState,
-  commentId = null
+  commentId = null,
+  isEditForm = false
 ) {
   let currentText = currentTextState.text;
 
@@ -382,23 +419,40 @@ function processNode(
       const fileName = mediaNode ? mediaNode.dataset.fileName : null;
       console.log('Found media-container with fileName:', fileName);
       if (fileName) {
-        // Use commentId-specific mediaItems if provided (for replies), otherwise use global mediaItems (for main form)
-        const mediaItemsToUse = commentId
-          ? replyMediaItemsMap.get(commentId) || []
-          : mediaItems;
+        // Determine which mediaItems to use based on context
+        let mediaItemsToUse;
+        if (isEditForm) {
+          mediaItemsToUse = editMediaItemsMap.get(commentId) || [];
+        } else if (commentId) {
+          mediaItemsToUse = replyMediaItemsMap.get(commentId) || [];
+        } else {
+          mediaItemsToUse = mediaItems;
+        }
+        console.log(
+          `Using mediaItemsToUse for ${
+            isEditForm ? 'edit' : commentId ? 'reply' : 'main'
+          } form:`,
+          mediaItemsToUse
+        );
         const matchingMedia = mediaItemsToUse.find(
           (item) => item.fileName === fileName
         );
         if (matchingMedia) {
           console.log('Matching media found:', matchingMedia);
+          // For edit form, include existingValue for existing media to preserve the server-side path
           elements.push({
             type: matchingMedia.type,
-            value: matchingMedia.fileName,
-            file: matchingMedia.file,
+            value: matchingMedia.isExisting
+              ? matchingMedia.existingValue
+              : matchingMedia.fileName,
+            file: matchingMedia.file, // Will be null for existing media
             order: elements.length,
+            isExisting: matchingMedia.isExisting || false,
           });
         } else {
-          console.error('No matching media item found for fileName:', fileName);
+          console.warn(
+            `No matching media item found for fileName: ${fileName}. Skipping this media element.`
+          );
         }
       } else {
         console.error('No fileName found in media-container');
@@ -421,7 +475,8 @@ function processNode(
           elements,
           mediaItems,
           { text: currentText },
-          commentId
+          commentId,
+          isEditForm
         );
         currentText = childState.text;
       }
@@ -444,7 +499,7 @@ form.addEventListener('submit', async (e) => {
     `<div>${editor.innerHTML}</div>`,
     'text/html'
   );
-  const parsedChildren = Array.from(doc.body.firstChild.childNodes); // Get children of the wrapper div
+  const parsedChildren = Array.from(doc.body.firstChild.childNodes);
 
   console.log('Parsed innerHTML:', editor.innerHTML);
   console.log('Parsed children:', parsedChildren);
@@ -489,6 +544,11 @@ form.addEventListener('submit', async (e) => {
   const username = urlParts[1];
   const slug = urlParts[2];
   const parentComment = form.dataset.parentId || '';
+
+  // Append parentComment to formData
+  if (parentComment) {
+    formData.append('parentComment', parentComment);
+  }
 
   // Post Comment to backend
   await postComment(formData, username, slug, parentComment);
@@ -695,6 +755,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
 
+      // Append parentComment to formData
+      if (commentId) {
+        formData.append('parentComment', commentId);
+      }
+
       await postComment(formData, username, slug, commentId);
 
       // Reset reply editor
@@ -707,12 +772,102 @@ document.addEventListener('DOMContentLoaded', () => {
   // Handle edit buttons
   document.querySelectorAll('.comment-edit-button').forEach((button) => {
     button.addEventListener('click', () => {
+      console.log('EDIT BUTTON CLICKED');
       const commentId = button.dataset.commentId;
       const editSection = document.getElementById(`edit-section-${commentId}`);
       if (editSection) {
         editSection.classList.toggle('hidden');
         const editEditor = editSection.querySelector(
           `#edit-comment-editor-${commentId}`
+        );
+
+        // Clear the editor before populating
+        editEditor.innerHTML = '';
+
+        // Initialize media items for this edit form
+        if (!editMediaItemsMap.has(commentId)) {
+          editMediaItemsMap.set(commentId, []);
+        }
+
+        // Get the comment elements from the DOM
+        const commentElement = document.getElementById(`comment-${commentId}`);
+        const elements = JSON.parse(commentElement.dataset.elements);
+
+        // Populate the editor with the comment's elements
+        elements.forEach((element) => {
+          if (element.type === 'text') {
+            // Add text element
+            const textNode = document.createTextNode(element.value);
+            editEditor.appendChild(textNode);
+            const br = document.createElement('br');
+            editEditor.appendChild(br);
+          } else if (
+            element.type === 'image' ||
+            element.type === 'gif' ||
+            element.type === 'excel'
+          ) {
+            // Add media element
+            const container = document.createElement('div');
+            container.className = 'media-container';
+            container.contentEditable = 'false';
+
+            // Add trash button
+            const trashButton = createEditTrashButton(container, commentId);
+            container.appendChild(trashButton);
+
+            // Show trash button on container click
+            container.addEventListener('click', (e) => {
+              e.stopPropagation();
+              hideAllTrashButtons(editEditor);
+              trashButton.classList.add('active');
+              const nextSibling = container.nextSibling;
+              if (nextSibling && nextSibling.tagName === 'BR') {
+                positionCursorAfter(nextSibling);
+              } else {
+                insertNewlineAfter(container);
+              }
+            });
+
+            // Add media content
+            if (element.type === 'image' || element.type === 'gif') {
+              const img = document.createElement('img');
+              img.src = element.value;
+              img.alt = element.value.split('/').pop();
+              img.dataset.fileName = element.value.split('/').pop();
+              img.classList.add('media-preview');
+              container.appendChild(img);
+              editEditor.appendChild(container);
+              // Add to editMediaItemsMap as an existing media item
+              editMediaItemsMap.get(commentId).push({
+                file: null, // No file object for existing media; server already has it
+                type: element.type,
+                fileName: element.value.split('/').pop(),
+                container,
+                isExisting: true, // Flag to indicate this is from the original comment
+                existingValue: element.value, // Store the full server-side path
+              });
+            } else if (element.type === 'excel') {
+              const pre = document.createElement('pre');
+              pre.textContent = element.value;
+              pre.dataset.fileName = 'existing-excel-' + commentId; // Unique identifier for existing Excel
+              container.appendChild(pre);
+              editEditor.appendChild(container);
+              editMediaItemsMap.get(commentId).push({
+                file: null,
+                type: 'excel',
+                fileName: 'existing-excel-' + commentId,
+                container,
+                isExisting: true,
+                existingValue: element.value,
+              });
+            }
+            insertNewlineAfter(container);
+          }
+        });
+
+        console.log(
+          `Populated editMediaItemsMap[${commentId}]:`,
+          editMediaItemsMap.get(commentId)
         );
         editEditor.focus();
       }
@@ -721,32 +876,151 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Handle edit form submissions
   document.querySelectorAll('.edit-comment-form').forEach((form) => {
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const commentId = form.dataset.commentId;
-      const editEditor = form.querySelector(
-        `#edit-comment-editor-${commentId}`
-      );
-      const editElements = [];
+    const commentId = form.dataset.commentId;
+    const editEditor = form.querySelector(`#edit-comment-editor-${commentId}`);
+    const editFileInput = form.querySelector(`#edit-media-upload-${commentId}`);
+    const editUploadButton = form.querySelector(
+      `#edit-comment-image-${commentId}`
+    );
 
-      // Capture text from edit editor
-      const children = Array.from(editEditor.childNodes);
-      let currentText = '';
-      for (let i = 0; i < children.length; i++) {
-        const node = children[i];
-        if (node.nodeType === Node.TEXT_NODE) {
-          currentText += node.textContent;
-        } else if (node.tagName === 'BR') {
-          if (currentText.trim()) {
-            editElements.push({
-              type: 'text',
-              value: currentText.trim(),
-              order: editElements.length,
-            });
-            currentText = '';
+    // Handle media upload button click
+    editUploadButton.addEventListener('click', () => {
+      console.log('clicked image button');
+      editFileInput.click();
+    });
+
+    // Handle file selection and embed in edit editor
+    editFileInput.addEventListener('change', () => {
+      const files = editFileInput.files;
+      const mediaItems = editMediaItemsMap.get(commentId);
+
+      for (const file of files) {
+        // Create a container div for each media item
+        const container = document.createElement('div');
+        container.className = 'media-container';
+        container.contentEditable = 'false'; // Prevent typing inside the media container
+
+        // Add trash button
+        const trashButton = createEditTrashButton(container, commentId);
+        container.appendChild(trashButton);
+
+        // Show trash button on container click
+        container.addEventListener('click', (e) => {
+          e.stopPropagation();
+          hideAllTrashButtons(editEditor);
+          trashButton.classList.add('active');
+          // Position cursor after the container (after the <br>)
+          const nextSibling = container.nextSibling;
+          if (nextSibling && nextSibling.tagName === 'BR') {
+            positionCursorAfter(nextSibling);
+          } else {
+            insertNewlineAfter(container);
           }
+        });
+
+        // Handle Excel files
+        if (file.name.endsWith('.xlsx')) {
+          gk_isXlsx = true;
+          gk_xlsxFileLookup[file.name] = true;
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            gk_fileData[file.name] = event.target.result.split(',')[1];
+            const csv = loadFileData(file.name);
+            const pre = document.createElement('pre');
+            pre.textContent = csv || 'Error processing Excel file';
+            pre.dataset.fileName = file.name; // Store file name for matching
+            container.appendChild(pre);
+            editEditor.appendChild(container);
+            mediaItems.push({
+              file,
+              type: 'excel',
+              fileName: file.name,
+              container,
+              isExisting: false, // New media added during editing
+            });
+            editMediaItemsMap.set(commentId, mediaItems);
+            console.log(
+              `Added Excel to editMediaItemsMap[${commentId}]:`,
+              mediaItems
+            );
+            insertNewlineAfter(container);
+          };
+          reader.readAsDataURL(file);
+        }
+        // Handle images and GIFs
+        else if (file.type.startsWith('image/') || file.type === 'image/gif') {
+          const img = document.createElement('img');
+          img.src = URL.createObjectURL(file);
+          img.alt = file.name;
+          img.dataset.fileName = file.name;
+          img.classList.add('media-preview');
+          container.appendChild(img);
+          editEditor.appendChild(container);
+          mediaItems.push({
+            file,
+            type: file.type.includes('gif') ? 'gif' : 'image',
+            fileName: file.name,
+            container,
+            isExisting: false,
+          });
+          editMediaItemsMap.set(commentId, mediaItems);
+          console.log(
+            `Added image/GIF to editMediaItemsMap[${commentId}]:`,
+            mediaItems
+          );
+          insertNewlineAfter(container);
+        } else {
+          alert('Please upload only images, GIFs, or Excel (.xlsx) files.');
         }
       }
+
+      // Clear file input
+      editFileInput.value = '';
+    });
+
+    // Hide trash buttons when clicking outside media
+    editEditor.addEventListener('click', () => {
+      hideAllTrashButtons(editEditor);
+      editEditor.focus();
+    });
+
+    // Handle form submission
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const editElements = [];
+
+      // Parse the edit editor's innerHTML into a DOM structure
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(
+        `<div>${editEditor.innerHTML}</div>`,
+        'text/html'
+      );
+      const parsedChildren = Array.from(doc.body.firstChild.childNodes);
+
+      console.log(
+        `Parsed edit innerHTML for comment ${commentId}:`,
+        editEditor.innerHTML
+      );
+      console.log(
+        `Parsed edit children for comment ${commentId}:`,
+        parsedChildren
+      );
+
+      let currentText = '';
+      // Process each parsed child recursively, passing the commentId and indicating this is an edit form
+      for (let i = 0; i < parsedChildren.length; i++) {
+        const state = processNode(
+          parsedChildren[i],
+          editElements,
+          mediaItems,
+          { text: currentText },
+          commentId,
+          true
+        );
+        currentText = state.text;
+      }
+
+      // Add any remaining text
       if (currentText.trim()) {
         editElements.push({
           type: 'text',
@@ -755,14 +1029,32 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       }
 
-      // Prepare FormData for edit
+      // Log the ordered elements before sending
+      console.log('Ordered Edit Elements Before Sending:', editElements);
+
+      // Prepare FormData for edit with a separate mediaIndex
       const formData = new FormData();
       formData.append('elements', JSON.stringify(editElements));
+      let mediaIndex = 0; // Separate counter for media elements
+      editElements.forEach((element) => {
+        if (
+          element.type === 'image' ||
+          element.type === 'gif' ||
+          element.type === 'excel'
+        ) {
+          // Only append the file if it exists (for new media uploads)
+          if (element.file) {
+            formData.append(`media-${mediaIndex}`, element.file);
+            mediaIndex++;
+          }
+        }
+      });
 
       await updateComment(commentId, formData, username, slug);
 
       // Reset edit editor
       editEditor.innerHTML = '';
+      editMediaItemsMap.set(commentId, []); // Clear media items for this edit form
       form.classList.add('hidden');
     });
   });
