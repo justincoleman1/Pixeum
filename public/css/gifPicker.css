@@ -1,0 +1,29 @@
+/* public/css/gifPicker.css */
+
+/* Target the container of the GIF grid */
+.gpr-category-list,
+.gpr-gif-list {
+  display: grid !important;
+  grid-template-columns: repeat(
+    2,
+    1fr
+  ) !important; /* Two columns of equal width */
+  gap: 10px !important; /* Space between GIF buttons */
+  padding: 10px !important;
+}
+
+/* Style each GIF button */
+.gpr-btn {
+  width: 100% !important; /* Ensure each GIF button takes full column width */
+  aspect-ratio: 1 / 1 !important; /* Maintain square aspect ratio for consistency */
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Style the GIF image inside the button */
+.gpr-result-image {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important; /* Ensure GIFs scale nicely */
+}

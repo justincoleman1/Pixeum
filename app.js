@@ -52,10 +52,16 @@ const styleSources = [
   'fonts.googleapis.com',
   'cdnjs.cloudflare.com',
 ];
-const connectSources = ["'self'", 'unpkg.com', 'blob:', 'data:'];
+const connectSources = [
+  "'self'",
+  'unpkg.com',
+  'blob:',
+  'data:',
+  'https://tenor.googleapis.com',
+];
 const fontSources = ["'self'", 'fonts.gstatic.com'];
 const workerSources = ["'self'", 'unsafe-inline', 'blob:'];
-const imageSources = ["'self'", 'data:', 'blob:'];
+const imageSources = ["'self'", 'data:', 'blob:', 'https://media.tenor.com'];
 //Set security http headers
 app.use(
   helmet({
@@ -135,6 +141,13 @@ app.use('/api/v1/comments', commentRouter);
 app.use('/api/v1/:username/:slug/comments', commentRouter);
 app.use('/api/v1/stock', stockRouter);
 app.use('/', viewRouter);
+app.get('/api/tenor', async (req, res) => {
+  const { q } = req.query;
+  const response = await axios.get(
+    `https://tenor.googleapis.com/v2/search?q=${q}&key=${process.env.TENOR_API_KEY}`
+  );
+  res.json(response.data);
+});
 
 //3 ERROR HANDLER
 app.all('*', (req, res, next) => {

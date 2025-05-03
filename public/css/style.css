@@ -3424,3 +3424,20 @@ a.user-nav-item {
   overflow-y: auto;
 }
 /*=================================================================================================================*/
+
+.gpr-category-list,
+.gpr-gif-list-column {
+  display: grid !important;
+  grid-template-columns: repeat(
+    2,
+    1fr
+  ) !important; /* Two columns of equal width */
+  gap: 10px !important; /* Space between GIF buttons */
+  padding: 10px !important;
+}
+
+.gpr-btn.gpr-result-image img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important; /* Ensure GIFs scale nicely */
+}

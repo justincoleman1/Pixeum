@@ -52,6 +52,7 @@ exports.getUploadPage = catchAsync(async (req, res, next) => {
     recents,
     isFavorited: JSON.stringify(req.isFavorited),
     timeAgo: timeAgo2,
+    tenorApiKey: process.env.TENOR_API_KEY,
   });
 });
 

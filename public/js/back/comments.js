@@ -1,6 +1,7 @@
 /*eslint-disable*/
 import axios from 'axios';
 import { showAlert } from '../front/alerts';
+import { openGifPicker } from './gifPicker';
 
 const postComment = async (formData, username, slug, parentComment) => {
   try {
@@ -288,9 +289,106 @@ function hideAllTrashButtons(targetEditor) {
   activeTrashButton = null;
 }
 
+// Function to insert a GIF into the editor
+function insertGifIntoEditor(editor, gifUrl, mediaItemsMap, commentId = null) {
+  // Create a container div for the GIF
+  const container = document.createElement('div');
+  container.className = 'media-container';
+  container.contentEditable = 'false'; // Prevent typing inside the media container
+
+  // Create the GIF image element
+  const img = document.createElement('img');
+  img.src = gifUrl;
+  img.alt = 'GIF';
+  img.dataset.fileName = gifUrl;
+  img.classList.add('media-preview');
+  container.appendChild(img);
+
+  // Add highlight effect
+  container.classList.add('gif-highlight');
+
+  // Add trash button
+  const trashButton = commentId
+    ? (mediaItemsMap === replyMediaItemsMap
+        ? createReplyTrashButton
+        : createEditTrashButton)(container, commentId)
+    : createTrashButton(container);
+  container.appendChild(trashButton);
+
+  // Show trash button on container click
+  container.addEventListener('click', (e) => {
+    e.stopPropagation();
+    hideAllTrashButtons(editor);
+    trashButton.classList.add('active');
+    const nextSibling = container.nextSibling;
+    if (nextSibling && nextSibling.tagName === 'BR') {
+      positionCursorAfter(nextSibling);
+    } else {
+      insertNewlineAfter(container);
+    }
+  });
+
+  // Add the container to the editor
+  editor.appendChild(container);
+  insertNewlineAfter(container);
+
+  // Add the GIF to the appropriate mediaItems map
+  if (mediaItemsMap) {
+    const mediaItems = mediaItemsMap.get(commentId) || [];
+    mediaItems.push({
+      type: 'gif',
+      fileName: gifUrl,
+      container,
+      file: null, // No file object since it's a URL
+      isExisting: false,
+      source: 'url', // Indicate this is a URL-based GIF
+    });
+    mediaItemsMap.set(commentId, mediaItems);
+    console.log(
+      `Added GIF to ${
+        mediaItemsMap === replyMediaItemsMap
+          ? 'replyMediaItemsMap'
+          : 'editMediaItemsMap'
+      }[${commentId}]:`,
+      mediaItems
+    );
+  } else {
+    mediaItems.push({
+      type: 'gif',
+      fileName: gifUrl,
+      container,
+      file: null,
+      source: 'url', // Indicate this is a URL-based GIF
+    });
+    console.log(`Added GIF to mediaItems:`, mediaItems);
+  }
+
+  // Focus the editor
+  editor.focus();
+}
+
 // Trigger file input click when custom button is clicked
 uploadButton.addEventListener('click', () => {
   fileInput.click();
+});
+
+// Handle GIF button click for the main comment form
+const gifButton = document.getElementById('comment-gif');
+gifButton.addEventListener('click', () => {
+  const containerId = 'gif-picker-main';
+  const container = document.getElementById(containerId);
+  const tenorApiKey = form.dataset.tenorApiKey;
+  const clientKey = 'pixeum'; // Custom client key for Pixeum
+  if (!tenorApiKey) {
+    console.error('Tenor API key is missing for main comment form');
+    alert('Unable to load GIF picker: API key is missing.');
+    return;
+  }
+  container.style.display = 'block'; // Show the container
+  openGifPicker(containerId, tenorApiKey, clientKey, (gifUrl) => {
+    insertGifIntoEditor(editor, gifUrl, null);
+    container.style.display = 'none'; // Hide the container after selection
+  });
 });
 
 // Handle file selection and embed in editor
@@ -340,6 +438,7 @@ fileInput.addEventListener('change', () => {
           type: 'excel',
           fileName: file.name,
           container,
+          source: 'upload', // Indicate this is a file upload
         });
         console.log(`Added Excel to mediaItems:`, mediaItems);
         insertNewlineAfter(container);
@@ -360,6 +459,7 @@ fileInput.addEventListener('change', () => {
         type: file.type.includes('gif') ? 'gif' : 'image',
         fileName: file.name,
         container,
+        source: 'upload', // Indicate this is a file upload
       });
       console.log(`Added image/GIF to mediaItems:`, mediaItems);
       insertNewlineAfter(container);
@@ -445,14 +545,31 @@ function processNode(
             value: matchingMedia.isExisting
               ? matchingMedia.existingValue
               : matchingMedia.fileName,
-            file: matchingMedia.file, // Will be null for existing media
+            file: matchingMedia.file, // Will be null for existing media or URL-based GIFs
             order: elements.length,
             isExisting: matchingMedia.isExisting || false,
+            source: matchingMedia.source || 'upload', // Include source (url or upload)
           });
         } else {
-          console.warn(
-            `No matching media item found for fileName: ${fileName}. Skipping this media element.`
-          );
+          // If no matching media item is found, treat it as a URL-based GIF (e.g., from the GIF picker)
+          const img = node.querySelector('img.media-preview');
+          if (img && img.src) {
+            console.log(
+              `No matching media item, using URL for GIF: ${img.src}`
+            );
+            elements.push({
+              type: 'gif',
+              value: img.src, // Use the GIF URL directly
+              file: null, // No file object since it's a URL
+              order: elements.length,
+              isExisting: false,
+              source: 'url', // Indicate this is a URL-based GIF
+            });
+          } else {
+            console.warn(
+              `No matching media item found for fileName: ${fileName}. Skipping this media element.`
+            );
+          }
         }
       } else {
         console.error('No fileName found in media-container');
@@ -530,12 +647,15 @@ form.addEventListener('submit', async (e) => {
   let mediaIndex = 0; // Separate counter for media elements
   elements.forEach((element) => {
     if (
-      element.type === 'image' ||
-      element.type === 'gif' ||
-      element.type === 'excel'
+      (element.type === 'image' ||
+        element.type === 'gif' ||
+        element.type === 'excel') &&
+      element.source === 'upload'
     ) {
-      formData.append(`media-${mediaIndex}`, element.file);
-      mediaIndex++;
+      if (element.file) {
+        formData.append(`media-${mediaIndex}`, element.file);
+        mediaIndex++;
+      }
     }
   });
 
@@ -592,6 +712,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const uploadButton = form.querySelector(
       `#reply-comment-image-${commentId}`
     );
+    const gifButton = form.querySelector(`#reply-comment-gif-${commentId}`);
 
     // Initialize media items for this reply form
     if (!replyMediaItemsMap.has(commentId)) {
@@ -601,6 +722,24 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle media upload button click
     uploadButton.addEventListener('click', () => {
       fileInput.click();
+    });
+
+    // Handle GIF button click for reply form
+    gifButton.addEventListener('click', () => {
+      const containerId = `gif-picker-reply-${commentId}`;
+      const container = document.getElementById(containerId);
+      const tenorApiKey = form.dataset.tenorApiKey;
+      const clientKey = 'pixeum'; // Custom client key for Pixeum
+      if (!tenorApiKey) {
+        console.error('Tenor API key is missing for reply form');
+        alert('Unable to load GIF picker: API key is missing.');
+        return;
+      }
+      container.style.display = 'block'; // Show the container
+      openGifPicker(containerId, tenorApiKey, clientKey, (gifUrl) => {
+        insertGifIntoEditor(replyEditor, gifUrl, replyMediaItemsMap, commentId);
+        container.style.display = 'none'; // Hide the container after selection
+      });
     });
 
     // Handle file selection and embed in reply editor
@@ -650,6 +789,7 @@ document.addEventListener('DOMContentLoaded', () => {
               type: 'excel',
               fileName: file.name,
               container,
+              source: 'upload', // Indicate this is a file upload
             });
             replyMediaItemsMap.set(commentId, mediaItems);
             console.log(
@@ -674,6 +814,7 @@ document.addEventListener('DOMContentLoaded', () => {
             type: file.type.includes('gif') ? 'gif' : 'image',
             fileName: file.name,
             container,
+            source: 'upload', // Indicate this is a file upload
           });
           replyMediaItemsMap.set(commentId, mediaItems);
           console.log(
@@ -746,12 +887,15 @@ document.addEventListener('DOMContentLoaded', () => {
       let mediaIndex = 0; // Separate counter for media elements
       replyElements.forEach((element) => {
         if (
-          element.type === 'image' ||
-          element.type === 'gif' ||
-          element.type === 'excel'
+          (element.type === 'image' ||
+            element.type === 'gif' ||
+            element.type === 'excel') &&
+          element.source === 'upload'
         ) {
-          formData.append(`media-${mediaIndex}`, element.file);
-          mediaIndex++;
+          if (element.file) {
+            formData.append(`media-${mediaIndex}`, element.file);
+            mediaIndex++;
+          }
         }
       });
 
@@ -845,6 +989,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 container,
                 isExisting: true, // Flag to indicate this is from the original comment
                 existingValue: element.value, // Store the full server-side path
+                source: 'upload', // Existing media is assumed to be an upload unless specified
               });
             } else if (element.type === 'excel') {
               const pre = document.createElement('pre');
@@ -859,6 +1004,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 container,
                 isExisting: true,
                 existingValue: element.value,
+                source: 'upload', // Existing media is assumed to be an upload
               });
             }
             insertNewlineAfter(container);
@@ -882,11 +1028,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const editUploadButton = form.querySelector(
       `#edit-comment-image-${commentId}`
     );
+    const editGifButton = form.querySelector(`#edit-comment-gif-${commentId}`);
 
     // Handle media upload button click
     editUploadButton.addEventListener('click', () => {
       console.log('clicked image button');
       editFileInput.click();
+    });
+
+    // Handle GIF button click for edit form
+    editGifButton.addEventListener('click', () => {
+      const containerId = `gif-picker-edit-${commentId}`;
+      const container = document.getElementById(containerId);
+      const tenorApiKey = form.dataset.tenorApiKey;
+      const clientKey = 'pixeum'; // Custom client key for Pixeum
+      if (!tenorApiKey) {
+        console.error('Tenor API key is missing for edit form');
+        alert('Unable to load GIF picker: API key is missing.');
+        return;
+      }
+      container.style.display = 'block'; // Show the container
+      openGifPicker(containerId, tenorApiKey, clientKey, (gifUrl) => {
+        insertGifIntoEditor(editEditor, gifUrl, editMediaItemsMap, commentId);
+        container.style.display = 'none'; // Hide the container after selection
+      });
     });
 
     // Handle file selection and embed in edit editor
@@ -937,6 +1102,7 @@ document.addEventListener('DOMContentLoaded', () => {
               fileName: file.name,
               container,
               isExisting: false, // New media added during editing
+              source: 'upload', // Indicate this is a file upload
             });
             editMediaItemsMap.set(commentId, mediaItems);
             console.log(
@@ -962,6 +1128,7 @@ document.addEventListener('DOMContentLoaded', () => {
             fileName: file.name,
             container,
             isExisting: false,
+            source: 'upload', // Indicate this is a file upload
           });
           editMediaItemsMap.set(commentId, mediaItems);
           console.log(
@@ -1038,11 +1205,11 @@ document.addEventListener('DOMContentLoaded', () => {
       let mediaIndex = 0; // Separate counter for media elements
       editElements.forEach((element) => {
         if (
-          element.type === 'image' ||
-          element.type === 'gif' ||
-          element.type === 'excel'
+          (element.type === 'image' ||
+            element.type === 'gif' ||
+            element.type === 'excel') &&
+          element.source === 'upload'
         ) {
-          // Only append the file if it exists (for new media uploads)
           if (element.file) {
             formData.append(`media-${mediaIndex}`, element.file);
             mediaIndex++;

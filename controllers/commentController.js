@@ -44,19 +44,23 @@ exports.resizeCommentImage = catchAsync(async (req, res, next) => {
   const elements = JSON.parse(req.body.elements || '[]');
   let mediaIndex = 0;
 
-  // Iterate through elements to find new media items only
+  // Iterate through elements to find media items
   for (let element of elements) {
     if (element.type === 'image' || element.type === 'gif') {
-      // Skip existing media (no file to resize)
+      // Skip URL-based media or existing media
+      if (element.source === 'url') {
+        console.log(`Skipping URL-based media: ${element.value}`);
+        continue;
+      }
       if (element.isExisting) {
         console.log(`Skipping existing media: ${element.value}`);
         continue;
       }
 
-      // Find the corresponding file in req.files for new media
+      // Find the corresponding file in req.files for uploaded media
       const file = req.files.find((f) => f.fieldname === `media-${mediaIndex}`);
       if (!file) {
-        return next(new AppError('Media file mismatch for new upload', 400));
+        return next(new AppError('Media file mismatch', 400));
       }
 
       console.log(`Processing media-${mediaIndex}:`, file);
@@ -82,13 +86,17 @@ exports.resizeCommentImage = catchAsync(async (req, res, next) => {
       }
       mediaIndex++;
     } else if (element.type === 'excel') {
-      // Excel files are not resized, but increment the media index for new uploads
+      // Excel files are not resized, but increment the media index for uploaded media
+      if (element.source === 'url') {
+        console.log(`Skipping URL-based Excel: ${element.value}`);
+        continue;
+      }
       if (!element.isExisting) {
         const file = req.files.find(
           (f) => f.fieldname === `media-${mediaIndex}`
         );
         if (!file) {
-          return next(new AppError('Media file mismatch for new upload', 400));
+          return next(new AppError('Media file mismatch', 400));
         }
         console.log(`Processing Excel media-${mediaIndex}:`, file);
         mediaIndex++;
@@ -101,14 +109,17 @@ exports.resizeCommentImage = catchAsync(async (req, res, next) => {
 });
 
 exports.giveComment = catchAsync(async (req, res, next) => {
-  multerController.uploadCommentMedia(req, res, async (err) => {
-    if (err) {
-      return next(new AppError(err.message, 400));
-    }
+  try {
+    await new Promise((resolve, reject) => {
+      multerController.uploadCommentMedia(req, res, (err) => {
+        if (err) {
+          return reject(new AppError(err.message, 400));
+        }
+        resolve();
+      });
+    });
 
-    const { elements, parentComment } = req.body; // Initialize parentComment from req.body
-
-    console.log(elements);
+    const { elements, parentComment } = req.body;
 
     if (!elements) {
       return next(new AppError('Elements array is required', 400));
@@ -119,38 +130,16 @@ exports.giveComment = catchAsync(async (req, res, next) => {
       return next(new AppError('Elements must be an array', 400));
     }
 
-    // Check for nested comment depth if parentComment exists
-    if (parentComment) {
-      const parent = await Comment.findById(parentComment);
-      if (!parent) {
-        return next(new AppError('Parent comment not found', 404));
-      }
-      if (parent.upload.toString() !== req.uploadId.toString()) {
-        return next(
-          new AppError('Parent comment does not belong to this upload', 400)
-        );
-      }
-      let depth = 0;
-      let current = parent;
-      while (current.parentComment && depth < 3) {
-        current = await Comment.findById(current.parentComment);
-        depth++;
-      }
-      if (depth >= 2) {
-        return next(
-          new AppError('Maximum reply nesting level reached (3 levels)', 400)
-        );
-      }
-    }
-
     const commentData = {
       elements: [],
       user: req.user.id,
       upload: req.uploadId,
-      parentComment: parentComment || null,
     };
 
-    // Process elements and map media files
+    if (parentComment) {
+      commentData.parentComment = parentComment;
+    }
+
     let mediaIndex = 0;
     for (let element of parsedElements) {
       if (element.type === 'text') {
@@ -159,33 +148,69 @@ exports.giveComment = catchAsync(async (req, res, next) => {
           value: element.value,
         });
       } else if (element.type === 'image' || element.type === 'gif') {
-        const file = req.files.find(
-          (f) => f.fieldname === `media-${mediaIndex}`
-        );
-        console.log('here is the file: ', file);
-        if (!file) {
-          return next(new AppError('Media file mismatch', 400));
+        if (element.source === 'url') {
+          // URL-based media: use the value directly
+          commentData.elements.push({
+            type: element.type,
+            value: element.value,
+          });
+        } else if (element.isExisting) {
+          // Existing media: use the value directly
+          commentData.elements.push({
+            type: element.type,
+            value: element.value,
+          });
+        } else {
+          // Uploaded media: expect a file
+          const file = req.files.find(
+            (f) => f.fieldname === `media-${mediaIndex}`
+          );
+          if (!file) {
+            return next(
+              new AppError('Media file mismatch for new upload', 400)
+            );
+          }
+          console.log(`Processing new media at media-${mediaIndex}:`, file);
+          commentData.elements.push({
+            type: element.type,
+            value: `/img/stock/${file.filename}`,
+          });
+          mediaIndex++;
         }
-        commentData.elements.push({
-          type: element.type,
-          value: `/img/stock/${file.filename}`,
-        });
-        mediaIndex++;
       } else if (element.type === 'excel') {
-        const file = req.files.find(
-          (f) => f.fieldname === `media-${mediaIndex}`
-        );
-        if (!file) {
-          return next(new AppError('Media file mismatch', 400));
+        if (element.source === 'url') {
+          // URL-based Excel data (unlikely, but handle for completeness)
+          commentData.elements.push({
+            type: 'excel',
+            value: element.value,
+          });
+        } else if (element.isExisting) {
+          // Existing Excel data
+          commentData.elements.push({
+            type: 'excel',
+            value: element.value,
+          });
+        } else {
+          // Uploaded Excel
+          const file = req.files.find(
+            (f) => f.fieldname === `media-${mediaIndex}`
+          );
+          if (!file) {
+            return next(
+              new AppError('Media file mismatch for new upload', 400)
+            );
+          }
+          console.log(`Processing new Excel at media-${mediaIndex}:`, file);
+          commentData.elements.push({
+            type: 'excel',
+            value: element.value,
+          });
+          mediaIndex++;
         }
-        commentData.elements.push({
-          type: 'excel',
-          value: element.value, // CSV content or filename
-        });
-        mediaIndex++;
       }
     }
-    console.log('commentData:', commentData.elements);
+
+    console.log('Comment data before saving:', commentData);
 
     const comment = await Comment.create(commentData);
 
@@ -195,7 +220,9 @@ exports.giveComment = catchAsync(async (req, res, next) => {
         data: comment,
       },
     });
-  });
+  } catch (err) {
+    next(err);
+  }
 });
 
 exports.likeComment = catchAsync(async (req, res, next) => {
@@ -310,7 +337,13 @@ exports.updateComment = catchAsync(async (req, res, next) => {
           value: element.value,
         });
       } else if (element.type === 'image' || element.type === 'gif') {
-        if (element.isExisting) {
+        if (element.source === 'url') {
+          // URL-based media: use the value directly
+          commentData.elements.push({
+            type: element.type,
+            value: element.value,
+          });
+        } else if (element.isExisting) {
           // Existing media, use the original value
           commentData.elements.push({
             type: element.type,
