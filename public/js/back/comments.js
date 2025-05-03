@@ -172,6 +172,12 @@ const mediaItems = []; // Array to store { file, type, fileName, container }
 const replyMediaItemsMap = new Map(); // Map<commentId, Array<{ file, type, fileName, container }>>
 // Track media items for each edit form using a Map
 const editMediaItemsMap = new Map(); // Map<commentId, Array<{ file, type, fileName, container, isExisting, existingValue }>>
+// Object to store cleanup functions for GIF pickers
+const gifPickerCleanups = {
+  main: null, // For gif-picker-main
+  reply: new Map(), // Map<commentId, cleanupFunction> for reply forms
+  edit: new Map(), // Map<commentId, cleanupFunction> for edit forms
+};
 
 // Function to position cursor after an element
 function positionCursorAfter(element) {
@@ -384,11 +390,31 @@ gifButton.addEventListener('click', () => {
     alert('Unable to load GIF picker: API key is missing.');
     return;
   }
-  container.style.display = 'block'; // Show the container
-  openGifPicker(containerId, tenorApiKey, clientKey, (gifUrl) => {
-    insertGifIntoEditor(editor, gifUrl, null);
-    container.style.display = 'none'; // Hide the container after selection
-  });
+
+  // Toggle the visibility of the GIF picker
+  const isVisible = container.style.display === 'block';
+  if (isVisible) {
+    // If the GIF picker is visible, hide it and clean up
+    container.style.display = 'none';
+    if (gifPickerCleanups.main) {
+      gifPickerCleanups.main(); // Unmount the GIF picker
+      gifPickerCleanups.main = null; // Clear the cleanup function
+    }
+  } else {
+    // If the GIF picker is not visible, show it and render the picker
+    container.style.display = 'block';
+    const cleanup = openGifPicker(
+      containerId,
+      tenorApiKey,
+      clientKey,
+      (gifUrl) => {
+        insertGifIntoEditor(editor, gifUrl, null);
+        container.style.display = 'none'; // Hide the container after selection
+        gifPickerCleanups.main = null; // Clear the cleanup function after selection
+      }
+    );
+    gifPickerCleanups.main = cleanup; // Store the cleanup function
+  }
 });
 
 // Handle file selection and embed in editor
@@ -735,11 +761,37 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Unable to load GIF picker: API key is missing.');
         return;
       }
-      container.style.display = 'block'; // Show the container
-      openGifPicker(containerId, tenorApiKey, clientKey, (gifUrl) => {
-        insertGifIntoEditor(replyEditor, gifUrl, replyMediaItemsMap, commentId);
-        container.style.display = 'none'; // Hide the container after selection
-      });
+
+      // Toggle the visibility of the GIF picker
+      const isVisible = container.style.display === 'block';
+      if (isVisible) {
+        // If the GIF picker is visible, hide it and clean up
+        container.style.display = 'none';
+        const cleanup = gifPickerCleanups.reply.get(commentId);
+        if (cleanup) {
+          cleanup(); // Unmount the GIF picker
+          gifPickerCleanups.reply.delete(commentId); // Clear the cleanup function
+        }
+      } else {
+        // If the GIF picker is not visible, show it and render the picker
+        container.style.display = 'block';
+        const cleanup = openGifPicker(
+          containerId,
+          tenorApiKey,
+          clientKey,
+          (gifUrl) => {
+            insertGifIntoEditor(
+              replyEditor,
+              gifUrl,
+              replyMediaItemsMap,
+              commentId
+            );
+            container.style.display = 'none'; // Hide the container after selection
+            gifPickerCleanups.reply.delete(commentId); // Clear the cleanup function after selection
+          }
+        );
+        gifPickerCleanups.reply.set(commentId, cleanup); // Store the cleanup function
+      }
     });
 
     // Handle file selection and embed in reply editor
@@ -921,6 +973,24 @@ document.addEventListener('DOMContentLoaded', () => {
       const editSection = document.getElementById(`edit-section-${commentId}`);
       if (editSection) {
         editSection.classList.toggle('hidden');
+        // If the form is being hidden, clear the editMediaItemsMap for this comment
+        if (editSection.classList.contains('hidden')) {
+          editMediaItemsMap.set(commentId, []);
+          console.log(`Cleared editMediaItemsMap[${commentId}] on form close`);
+          // Clean up any open GIF picker for this edit form
+          const editGifContainer = document.getElementById(
+            `gif-picker-edit-${commentId}`
+          );
+          if (editGifContainer && editGifContainer.style.display === 'block') {
+            editGifContainer.style.display = 'none';
+            const cleanup = gifPickerCleanups.edit.get(commentId);
+            if (cleanup) {
+              cleanup(); // Unmount the GIF picker
+              gifPickerCleanups.edit.delete(commentId); // Clear the cleanup function
+            }
+          }
+          return; // Exit early since we're closing the form
+        }
         const editEditor = editSection.querySelector(
           `#edit-comment-editor-${commentId}`
         );
@@ -1047,11 +1117,37 @@ document.addEventListener('DOMContentLoaded', () => {
         alert('Unable to load GIF picker: API key is missing.');
         return;
       }
-      container.style.display = 'block'; // Show the container
-      openGifPicker(containerId, tenorApiKey, clientKey, (gifUrl) => {
-        insertGifIntoEditor(editEditor, gifUrl, editMediaItemsMap, commentId);
-        container.style.display = 'none'; // Hide the container after selection
-      });
+
+      // Toggle the visibility of the GIF picker
+      const isVisible = container.style.display === 'block';
+      if (isVisible) {
+        // If the GIF picker is visible, hide it and clean up
+        container.style.display = 'none';
+        const cleanup = gifPickerCleanups.edit.get(commentId);
+        if (cleanup) {
+          cleanup(); // Unmount the GIF picker
+          gifPickerCleanups.edit.delete(commentId); // Clear the cleanup function
+        }
+      } else {
+        // If the GIF picker is not visible, show it and render the picker
+        container.style.display = 'block';
+        const cleanup = openGifPicker(
+          containerId,
+          tenorApiKey,
+          clientKey,
+          (gifUrl) => {
+            insertGifIntoEditor(
+              editEditor,
+              gifUrl,
+              editMediaItemsMap,
+              commentId
+            );
+            container.style.display = 'none'; // Hide the container after selection
+            gifPickerCleanups.edit.delete(commentId); // Clear the cleanup function after selection
+          }
+        );
+        gifPickerCleanups.edit.set(commentId, cleanup); // Store the cleanup function
+      }
     });
 
     // Handle file selection and embed in edit editor
@@ -1232,6 +1328,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (confirm('Are you sure you want to delete this comment?')) {
         const commentId = button.dataset.commentId;
         await deleteComment(commentId, username, slug);
+        // Clean up editMediaItemsMap and GIF picker cleanup for this comment
+        editMediaItemsMap.delete(commentId);
+        console.log(`Removed editMediaItemsMap[${commentId}] after deletion`);
+        const cleanup = gifPickerCleanups.edit.get(commentId);
+        if (cleanup) {
+          cleanup();
+          gifPickerCleanups.edit.delete(commentId);
+        }
       }
     });
   });
