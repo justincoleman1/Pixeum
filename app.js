@@ -58,6 +58,7 @@ const connectSources = [
   'blob:',
   'data:',
   'https://tenor.googleapis.com',
+  'https://media.tenor.com',
 ];
 const fontSources = ["'self'", 'fonts.gstatic.com'];
 const workerSources = ["'self'", 'unsafe-inline', 'blob:'];
