@@ -31,7 +31,9 @@ mixin renderComment(comment, depth=0)
                                     - const formattedText = element.value.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>')
                                     p!= formattedText
                                 else if element.type === 'image' || element.type === 'gif'
-                                    img.comment-media(src=element.value alt=`Comment ${element.type}` data-type=element.type)
+                                    img.comment-media(src=element.value alt=`Comment ${element.type}` data-type=element.type data-commentor-username=comment.user.username
+            data-commentor-avatar=`/img/users/${comment.user.photo || 'default.jpg'}`
+            data-comment-sent-time=comment.createdAt.toISOString())
                                 else if element.type === 'excel'
                                     pre= element.value
                 .comment-footer
@@ -120,210 +122,220 @@ mixin renderComment(comment, depth=0)
                     | Posted on #{new Date(comment.createdAt).toLocaleDateString()}     
 
 block content
-  #imageModal.image-modal
-    button#imageModal-close-btn
-                svg.modal-close-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor")
-                    path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
-    #imageModal-content.image-modal-content(upload-isFavorited=isFavorited)
-        img#modal-image.modal-image.selectable-image(src=`/img/stock/raw-${upload.media}`)
+    #imageModal.image-modal
+        button#imageModal-close-btn
+                    svg.modal-close-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor")
+                        path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
+        #imageModal-content.image-modal-content(upload-isFavorited=isFavorited)
+            img#modal-image.modal-image.selectable-image(src=`/img/stock/raw-${upload.media}`)
   
-  #comment-media-modal.comment-media-modal.hidden
-    button#comment-media-modal-close-btn.comment-media-modal-close-btn
-      svg.modal-close-icon(xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor")
-        path(stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12")
-    img#comment-media-modal-image
 
-  .comment-media-modal-overlay.hidden#comment-media-modal-overlay
-  section#main.main
-    .upload-container
-        .highlighted-section
-            .highlighted-container-top
-                img#main-image.highlighted__img.selectable-image(src=`/img/stock/${upload.media}`)
-            .highlighted-container-bottom
-                .highlighted-container-bottom-wrapper
-                    .highlighted-panel
-                        .highlighted-actions-l
-                            button#favorite-btn.btn.btn__highlighted-favorites(type='button' title='Favorite')
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="favorite-icon">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                                </svg>
-                                | Add to Favorites 
-                        .highlighted-actions-r
-                            if user && user.username === upload.user.username
-                                button#upload-delete-btn.btn.btn-highlighted(type='button' title='Delete')
-                                    svg(xmlns="http://www.w3.org/2000/svg", fill="none", viewBox="0 0 24 24", stroke-width="1.5", stroke="currentColor", class="highlighted-icons")
-                                        path(stroke-linecap="round", stroke-linejoin="round", d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0")
-                                #delete-upload-modal.modal-delete-upload
-                                    .modal-content-delete-upload
-                                        p Are you sure you want to delete your upload?
-                                        .modal-buttons-delete-upload
-                                            button#delete-upload-yes.btn.yes__delete-modal-btn Yes
-                                            button#delete-upload-no.btn.no__delete-modal-btn No
-                            button.btn.btn-highlighted(type='button' title='Share')
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" stroke-width="1.5", stroke="currentColor", class="highlighted-icons">
-                                    <path fill="#fff" d="M6.54 55.08a1.91 1.91 0 0 1-.62-.1 2 2 0 0 1-1.38-2c0-.3 2.06-29.34 31.18-31.62V10.92a2 2 0 0 1 3.43-1.4l19.74 20.16a2 2 0 0 1 0 2.8L39.15 52.64a2 2 0 0 1-3.43-1.4V41c-19.44.74-27.41 13-27.49 13.15a2 2 0 0 1-1.69.93Zm33.18-39.26v7.41a2 2 0 0 1-1.93 2c-18.84.69-25.58 13.24-28 21.31 5-4.32 13.91-9.6 27.81-9.6h.09a2 2 0 0 1 2 2v7.41l15-15.26Z" data-name="Arrow"/>
-                                </svg>
-                            button.btn.btn-highlighted(type='button' title='Download')
-                                <svg xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" viewBox="0 0 24 24">
-                                <path fill="#fff" d="M14.29,17.29,13,18.59V13a1,1,0,0,0-2,0v5.59l-1.29-1.3a1,1,0,0,0-1.42,1.42l3,3a1,1,0,0,0,.33.21.94.94,0,0,0,.76,0,1,1,0,0,0,.33-.21l3-3a1,1,0,0,0-1.42-1.42ZM18.42,6.22A7,7,0,0,0,5.06,8.11,4,4,0,0,0,6,16a1,1,0,0,0,0-2,2,2,0,0,1,0-4A1,1,0,0,0,7,9a5,5,0,0,1,9.73-1.61,1,1,0,0,0,.78.67,3,3,0,0,1,.24,5.84,1,1,0,1,0,.5,1.94,5,5,0,0,0,.17-9.62Z"/>
-                                </svg>
-                            if user && user.username === upload.user.username
-                                a#upload-edit-btn.btn.btn-highlighted(href=`/${user.username}/${upload.slug}/update` title='Update upload')
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="highlighted-icons">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"></path>
+    #comment-media-modal-overlay.comment-media-modal-overlay.hidden
+    #comment-media-modal.comment-media-modal.hidden
+        .modal-header
+            .modal-commentor-info
+                img.modal-commentor-avatar(src='' alt='Commentor Avatar' width='32' height='32')
+                .modal-commentor-details
+                    span.modal-commentor-username
+                    span.modal-commentor-time
+            .modal-actions
+                button#comment-media-modal-download-btn(type='button')
+                    img(src='/img/svg/download.svg' alt='Download Media')
+                button#comment-media-modal-close-btn(type='button')
+                    img(src='/img/svg/close.svg' alt='Close Modal')
+        .modal-body
+            img#comment-media-modal-image.comment-modal-image(src='' alt='Comment Media')
+
+    section#main.main
+        .upload-container
+            .highlighted-section
+                .highlighted-container-top
+                    img#main-image.highlighted__img.selectable-image(src=`/img/stock/${upload.media}`)
+                .highlighted-container-bottom
+                    .highlighted-container-bottom-wrapper
+                        .highlighted-panel
+                            .highlighted-actions-l
+                                button#favorite-btn.btn.btn__highlighted-favorites(type='button' title='Favorite')
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="favorite-icon">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
                                     </svg>
-                            button.btn.btn-highlighted(type='button' title='More')
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="highlighted-icons">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
-                                </svg>
-                    .highlighted-header
-                        .highlighted__title-container
-                            .highlighted__title-date
-                                .highlighted__title-date-l
-                                    img.profile__avatar-img(src=`/img/users/${upload.user.photo}`)
+                                    | Add to Favorites 
+                            .highlighted-actions-r
+                                if user && user.username === upload.user.username
+                                    button#upload-delete-btn.btn.btn-highlighted(type='button' title='Delete')
+                                        svg(xmlns="http://www.w3.org/2000/svg", fill="none", viewBox="0 0 24 24", stroke-width="1.5", stroke="currentColor", class="highlighted-icons")
+                                            path(stroke-linecap="round", stroke-linejoin="round", d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0")
+                                    #delete-upload-modal.modal-delete-upload
+                                        .modal-content-delete-upload
+                                            p Are you sure you want to delete your upload?
+                                            .modal-buttons-delete-upload
+                                                button#delete-upload-yes.btn.yes__delete-modal-btn Yes
+                                                button#delete-upload-no.btn.no__delete-modal-btn No
+                                button.btn.btn-highlighted(type='button' title='Share')
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" stroke-width="1.5", stroke="currentColor", class="highlighted-icons">
+                                        <path fill="#fff" d="M6.54 55.08a1.91 1.91 0 0 1-.62-.1 2 2 0 0 1-1.38-2c0-.3 2.06-29.34 31.18-31.62V10.92a2 2 0 0 1 3.43-1.4l19.74 20.16a2 2 0 0 1 0 2.8L39.15 52.64a2 2 0 0 1-3.43-1.4V41c-19.44.74-27.41 13-27.49 13.15a2 2 0 0 1-1.69.93Zm33.18-39.26v7.41a2 2 0 0 1-1.93 2c-18.84.69-25.58 13.24-28 21.31 5-4.32 13.91-9.6 27.81-9.6h.09a2 2 0 0 1 2 2v7.41l15-15.26Z" data-name="Arrow"/>
+                                    </svg>
+                                button.btn.btn-highlighted(type='button' title='Download')
+                                    <svg xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" viewBox="0 0 24 24">
+                                    <path fill="#fff" d="M14.29,17.29,13,18.59V13a1,1,0,0,0-2,0v5.59l-1.29-1.3a1,1,0,0,0-1.42,1.42l3,3a1,1,0,0,0,.33.21.94.94,0,0,0,.76,0,1,1,0,0,0,.33-.21l3-3a1,1,0,0,0-1.42-1.42ZM18.42,6.22A7,7,0,0,0,5.06,8.11,4,4,0,0,0,6,16a1,1,0,0,0,0-2,2,2,0,0,1,0-4A1,1,0,0,0,7,9a5,5,0,0,1,9.73-1.61,1,1,0,0,0,.78.67,3,3,0,0,1,.24,5.84,1,1,0,1,0,.5,1.94,5,5,0,0,0,.17-9.62Z"/>
+                                    </svg>
+                                if user && user.username === upload.user.username
+                                    a#upload-edit-btn.btn.btn-highlighted(href=`/${user.username}/${upload.slug}/update` title='Update upload')
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="highlighted-icons">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"></path>
+                                        </svg>
+                                button.btn.btn-highlighted(type='button' title='More')
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="highlighted-icons">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
+                                    </svg>
+                        .highlighted-header
+                            .highlighted__title-container
+                                .highlighted__title-date
+                                    .highlighted__title-date-l
+                                        img.profile__avatar-img(src=`/img/users/${upload.user.photo}`)
+                                        
+                                        .highlighted-author
+                                            h2.highlighted-title=`${upload.title}`
+                                            .highlighted-subscribe
+                                                .author-container
+                                                    h4.by by
+                                                    h4.author=`${upload.user.username}`
+                                                button.btn.btn__subscribe-upload
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="highlighted-sub-icon">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                                    </svg>
+                                                    | Subscribe
+
                                     
-                                    .highlighted-author
-                                        h2.highlighted-title=`${upload.title}`
-                                        .highlighted-subscribe
-                                            .author-container
-                                                h4.by by
-                                                h4.author=`${upload.user.username}`
-                                            button.btn.btn__subscribe-upload
-                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="highlighted-sub-icon">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                                                </svg>
-                                                | Subscribe
-
+                                    p.highlighted-date=`Published: ${date}`
                                 
-                                p.highlighted-date=`Published: ${date}`
-                            
-                            .highlighted-impact
-                                
-                                .highlighted__like-count
-                                    span.hc
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#c3c3c3" viewBox="0 0 24 24" stroke-width="0" stroke="currentColor" width="24" height="24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
-                                        </svg>
-                                    p.hc=`${upload.favorite_count} Favorites`
-                                
-                                .highlighted__comment-count
-                                    span.hc
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="#c3c3c3" viewBox="0 0 24 24" stroke-width="0" stroke="currentColor" width="24" height="24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 011.037-.443 48.282 48.282 0 005.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
-                                        </svg>
-                                    p.hc=`${upload.comment_count} Comments`
+                                .highlighted-impact
+                                    
+                                    .highlighted__like-count
+                                        span.hc
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="#c3c3c3" viewBox="0 0 24 24" stroke-width="0" stroke="currentColor" width="24" height="24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                                            </svg>
+                                        p.hc=`${upload.favorite_count} Favorites`
+                                    
+                                    .highlighted__comment-count
+                                        span.hc
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="#c3c3c3" viewBox="0 0 24 24" stroke-width="0" stroke="currentColor" width="24" height="24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.076-4.076a1.526 1.526 0 011.037-.443 48.282 48.282 0 005.68-.494c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0012 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018z" />
+                                            </svg>
+                                        p.hc=`${upload.comment_count} Comments`
 
 
-                                .highlighted__view-count
-                                    span.hc
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                                        <path fill="none" d="M0 0h24v24H0V0z"/>
-                                        <path fill=""#c3c3c3 d="M12 4C7 4 2.73 7.11 1 11.5 2.73 15.89 7 19 12 19s9.27-3.11 11-7.5C21.27 7.11 17 4 12 4zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
-                                        </svg>   
-                                    p.hc= `${upload.view_count} Views`
-                            if upload.maturity.length > 0 || upload.tags.length > 0
-                                .highlighted__maturity-tags
-                                    if upload.maturity.length > 0
-                                        .highlighted-maturity-container
-                                            h5.highlighted-maturity R-18
-                                            if upload.maturity[0] === 'strict'
-                                                h5.highlighted-maturity explicit
+                                    .highlighted__view-count
+                                        span.hc
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                                            <path fill="none" d="M0 0h24v24H0V0z"/>
+                                            <path fill=""#c3c3c3 d="M12 4C7 4 2.73 7.11 1 11.5 2.73 15.89 7 19 12 19s9.27-3.11 11-7.5C21.27 7.11 17 4 12 4zm0 12.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                                            </svg>   
+                                        p.hc= `${upload.view_count} Views`
+                                if upload.maturity.length > 0 || upload.tags.length > 0
+                                    .highlighted__maturity-tags
+                                        if upload.maturity.length > 0
+                                            .highlighted-maturity-container
+                                                h5.highlighted-maturity R-18
+                                                if upload.maturity[0] === 'strict'
+                                                    h5.highlighted-maturity explicit
+                                                else
+                                                    h5 moderate
+                                                each mat,i in upload.maturity
+                                                    if i > 0
+                                                        h5=mat
+                                        if upload.tags.length > 0
+                                            .highlighted-tags
+                                                each tag in upload.tags
+                                                    a(href="#")
+                                                        span.highlighted-hashtag=`#${tag}`
+                                if upload.description  
+                                    .description-container           
+                                        p.highlighted-description(name='description')=`${upload.description}`
+                                
+                                .image-details-container
+                                    span IMAGE SIZE:  
+                                    p.image-details=`${upload.width} x ${upload.height}px ${upload.size}`
+                                .comments-container
+                                    .comments-header
+                                        h2(class='text-xl font-bold mb-4') Comments
+                                    .comments-body
+                                        .comments-post-section
+                                            img.comment-user-icon(src=`/img/stock/${upload.media}`)
+                                            form(id='comment-form' enctype='multipart/form-data' class='comments-post' data-tenor-api-key=process.env.TENOR_API_KEY)
+                                                div(id='comment-editor' contenteditable="true" placeholder="Join the discussion..." class="comment-editor mt-1 block w-full")
+                                                hr
+                                                .comments-buttons
+                                                    button(type="button" id="comment-gif" class="comment-gif-button m10")
+                                                        img.cbsz(src='/img/svg/gif.svg' alt='Gif')
+                                                    div#gif-picker-main(style='display: none;')
+                                                    input(type="file" id="media-upload" class='media-upload' name="media" accept="image/*,.gif,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                                                    button(type="button" id="comment-image" class="comment-image-button m5")
+                                                        img.cbsz(src='/img/svg/image-landscape.svg' alt='Image')
+                                                    .v1.m5
+                                                    button(type="button" id="comment-bold" class="comment-bold-button m5")
+                                                        img.cbsz(src='/img/svg/bold.svg' alt='Bold')
+                                                    button(type="button" id="comment-italics" class="comment-italics-button m5")
+                                                        img.cbsz(src='/img/svg/italic.svg' alt='Italics')
+                                                    button(type="button" id="comment-strikethrough" class="comment-strikethrough-button m5")
+                                                        img.cbsz(src='/img/svg/strikethrough.svg' alt='Strikethrough')
+                                                    button(type="button" id="comment-link" class="comment-link-button m5")
+                                                        img.cbsz(src='/img/svg/link.svg' alt='Link')
+                                                    button(type="button" id="comment-spoiler" class="comment-spoiler-button m5")
+                                                        img.cbsz(src='/img/svg/eye-invisible.svg' alt='Spoiler') 
+                                                    button(type="button" id="comment-code" class="comment-code-button m5")
+                                                        img.cbsz(src='/img/svg/code.svg' alt='Code')
+                                                    button(type="button" id="comment-quotes" class="comment-quotes-button m5")
+                                                        img.cbsz.m10(src='/img/svg/quotes.svg' alt='Quotes')
+                                                    button(type="button" id="comment-mention" class="comment-mention-button m5")
+                                                        img.cbsz(src='/img/svg/Mention.svg' alt='Mention')
+                                                    .comment-submit
+                                                        button#post-comment-btn.comments-submit-button(type='submit') Comment
+                                        ul#messages.comments-list
+                                            if upload.comments && upload.comments.length
+                                                each comment in upload.comments
+                                                    if !comment.parentComment
+                                                        +renderComment(comment)
                                             else
-                                                h5 moderate
-                                            each mat,i in upload.maturity
-                                                if i > 0
-                                                    h5=mat
-                                    if upload.tags.length > 0
-                                        .highlighted-tags
-                                            each tag in upload.tags
-                                                a(href="#")
-                                                    span.highlighted-hashtag=`#${tag}`
-                            if upload.description  
-                                .description-container           
-                                    p.highlighted-description(name='description')=`${upload.description}`
-                            
-                            .image-details-container
-                                span IMAGE SIZE:  
-                                p.image-details=`${upload.width} x ${upload.height}px ${upload.size}`
-                            .comments-container
-                                .comments-header
-                                    h2(class='text-xl font-bold mb-4') Comments
-                                .comments-body
-                                    .comments-post-section
-                                        img.comment-user-icon(src=`/img/stock/${upload.media}`)
-                                        form(id='comment-form' enctype='multipart/form-data' class='comments-post' data-tenor-api-key=process.env.TENOR_API_KEY)
-                                            div(id='comment-editor' contenteditable="true" placeholder="Join the discussion..." class="comment-editor mt-1 block w-full")
-                                            hr
-                                            .comments-buttons
-                                                button(type="button" id="comment-gif" class="comment-gif-button m10")
-                                                    img.cbsz(src='/img/svg/gif.svg' alt='Gif')
-                                                div#gif-picker-main(style='display: none;')
-                                                input(type="file" id="media-upload" class='media-upload' name="media" accept="image/*,.gif,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                                                button(type="button" id="comment-image" class="comment-image-button m5")
-                                                    img.cbsz(src='/img/svg/image-landscape.svg' alt='Image')
-                                                .v1.m5
-                                                button(type="button" id="comment-bold" class="comment-bold-button m5")
-                                                    img.cbsz(src='/img/svg/bold.svg' alt='Bold')
-                                                button(type="button" id="comment-italics" class="comment-italics-button m5")
-                                                    img.cbsz(src='/img/svg/italic.svg' alt='Italics')
-                                                button(type="button" id="comment-strikethrough" class="comment-strikethrough-button m5")
-                                                    img.cbsz(src='/img/svg/strikethrough.svg' alt='Strikethrough')
-                                                button(type="button" id="comment-link" class="comment-link-button m5")
-                                                    img.cbsz(src='/img/svg/link.svg' alt='Link')
-                                                button(type="button" id="comment-spoiler" class="comment-spoiler-button m5")
-                                                    img.cbsz(src='/img/svg/eye-invisible.svg' alt='Spoiler') 
-                                                button(type="button" id="comment-code" class="comment-code-button m5")
-                                                    img.cbsz(src='/img/svg/code.svg' alt='Code')
-                                                button(type="button" id="comment-quotes" class="comment-quotes-button m5")
-                                                    img.cbsz.m10(src='/img/svg/quotes.svg' alt='Quotes')
-                                                button(type="button" id="comment-mention" class="comment-mention-button m5")
-                                                    img.cbsz(src='/img/svg/Mention.svg' alt='Mention')
-                                                .comment-submit
-                                                    button#post-comment-btn.comments-submit-button(type='submit') Comment
-                                    ul#messages.comments-list
-                                        if upload.comments && upload.comments.length
-                                            each comment in upload.comments
-                                                if !comment.parentComment
-                                                    +renderComment(comment)
-                                        else
-                                            p.comment-befirst-cotent='Be the first to comment'
-        .side-container
-            .side__container-header
-                .side__header
-                    img.side__avatar-img(src=`/img/users/${upload.user.photo}`)
-                    h4=`${upload.user.username}`
-                .side__sub-btn
-                    button.btn.btn-subscribe Subscribe
+                                                p.comment-befirst-cotent='Be the first to comment'
+            .side-container
+                .side__container-header
+                    .side__header
+                        img.side__avatar-img(src=`/img/users/${upload.user.photo}`)
+                        h4=`${upload.user.username}`
+                    .side__sub-btn
+                        button.btn.btn-subscribe Subscribe
 
-            .side__container-body
-                .side__container-item
-                    if recents
-                        h4 Recent Works
-                        .grid__recent-works
-                            if recents[0]
-                                a.el.el-1(href=`/${upload.user.username}/${recents[0].slug}`)
-                                    img.grid-image(src=`/img/stock/${recents[0].media}`)
-                            if recents[1]
-                                a.el.el-2(href=`/${upload.user.username}/${recents[1].slug}`)
-                                    img.grid-image(src=`/img/stock/${recents[1].media}`)
-                            if recents[2]
-                                a.el.el-3(href=`/${upload.user.username}/${recents[2].slug}`)
-                                    img.grid-image(src=`/img/stock/${recents[2].media}`)
-                            if recents[3]
-                                a.el.el-4(href=`/${upload.user.username}/${recents[2].slug}`)
-                                    img.grid-image(src=`/img/stock/${recents[3].media}`)
-                            if recents[4]
-                                a.el.el-5(href=`/${upload.user.username}/${recents[4].slug}`)
-                                    img.grid-image(src=`/img/stock/${recents[4].media}`)
-                            if recents[5]
-                                a.el.el-6(href=`/${upload.user.username}/${recents[5].slug}`)
-                                    img.grid-image(src=`/img/stock/${recents[5].media}`)
-                            if recents[6]
-                                a.el.el-7(href=`/${upload.user.username}/${recents[6].slug}`)
-                                    img.grid-image(src=`/img/stock/${recents[6].media}`)
-                            if recents[7]
-                                a.el.el-8(href=`/${upload.user.username}/${recents[7].slug}`)
-                                    img.grid-image(src=`/img/stock/${recents[7].media}`)
-                            if recents[8]
-                                a.el.el-9(href=`/${upload.user.username}/${recents[8].slug}`)
-                                    img.grid-image(src=`/img/stock/${recents[8].media}`)                  
+                .side__container-body
+                    .side__container-item
+                        if recents
+                            h4 Recent Works
+                            .grid__recent-works
+                                if recents[0]
+                                    a.el.el-1(href=`/${upload.user.username}/${recents[0].slug}`)
+                                        img.grid-image(src=`/img/stock/${recents[0].media}`)
+                                if recents[1]
+                                    a.el.el-2(href=`/${upload.user.username}/${recents[1].slug}`)
+                                        img.grid-image(src=`/img/stock/${recents[1].media}`)
+                                if recents[2]
+                                    a.el.el-3(href=`/${upload.user.username}/${recents[2].slug}`)
+                                        img.grid-image(src=`/img/stock/${recents[2].media}`)
+                                if recents[3]
+                                    a.el.el-4(href=`/${upload.user.username}/${recents[2].slug}`)
+                                        img.grid-image(src=`/img/stock/${recents[3].media}`)
+                                if recents[4]
+                                    a.el.el-5(href=`/${upload.user.username}/${recents[4].slug}`)
+                                        img.grid-image(src=`/img/stock/${recents[4].media}`)
+                                if recents[5]
+                                    a.el.el-6(href=`/${upload.user.username}/${recents[5].slug}`)
+                                        img.grid-image(src=`/img/stock/${recents[5].media}`)
+                                if recents[6]
+                                    a.el.el-7(href=`/${upload.user.username}/${recents[6].slug}`)
+                                        img.grid-image(src=`/img/stock/${recents[6].media}`)
+                                if recents[7]
+                                    a.el.el-8(href=`/${upload.user.username}/${recents[7].slug}`)
+                                        img.grid-image(src=`/img/stock/${recents[7].media}`)
+                                if recents[8]
+                                    a.el.el-9(href=`/${upload.user.username}/${recents[8].slug}`)
+                                        img.grid-image(src=`/img/stock/${recents[8].media}`)                  

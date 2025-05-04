@@ -161,6 +161,454 @@ function loadFileData(filename) {
   return gk_fileData[filename] || '';
 }
 
+// Function to toggle bold on selected text in a content-editable editor// Function to toggle bold on selected text in a content-editable editor
+function toggleBold(editor) {
+  const selection = window.getSelection();
+  if (!selection.rangeCount) return; // No selection
+
+  const range = selection.getRangeAt(0);
+  const selectedText = range.toString();
+
+  if (!selectedText) return; // No text selected
+
+  // Get the common ancestor and check for existing formatting
+  let parent = range.commonAncestorContainer;
+  if (parent.nodeType === 3) {
+    // Text node
+    parent = parent.parentNode;
+  }
+
+  const isAlreadyBold = parent.closest('strong') !== null;
+  const isItalic = parent.closest('em') !== null;
+  const isStrikethrough = parent.closest('s') !== null;
+  const isLink = parent.closest('a') !== null;
+  const isSpoiler = parent.closest('span.spoiler') !== null;
+
+  if (isAlreadyBold) {
+    // If already bold, unwrap the <strong> tag while preserving other formatting
+    const strongElement = parent.closest('strong');
+    const fragment = document.createDocumentFragment();
+    Array.from(strongElement.childNodes).forEach((node) => {
+      if (
+        node.nodeType === Node.ELEMENT_NODE &&
+        (node.nodeName === 'EM' ||
+          node.nodeName === 'S' ||
+          node.nodeName === 'A' ||
+          (node.nodeName === 'SPAN' && node.classList.contains('spoiler')))
+      ) {
+        fragment.appendChild(node.cloneNode(true));
+      } else {
+        fragment.appendChild(node.cloneNode(true));
+      }
+    });
+    strongElement.parentNode.replaceChild(fragment, strongElement);
+  } else {
+    // If not bold, wrap the selection in a <strong> tag while preserving other formatting
+    const strongElement = document.createElement('strong');
+    const contents = range.extractContents();
+    // Reapply existing formatting
+    let contentToWrap = contents;
+    if (isSpoiler) {
+      const spoilerElement = document.createElement('span');
+      spoilerElement.className = 'spoiler';
+      spoilerElement.appendChild(contentToWrap);
+      contentToWrap = spoilerElement;
+    }
+    if (isLink) {
+      const aElement = document.createElement('a');
+      aElement.href = parent.closest('a').href;
+      aElement.target = '_blank';
+      aElement.rel = 'noopener noreferrer';
+      aElement.appendChild(contentToWrap);
+      contentToWrap = aElement;
+    }
+    if (isStrikethrough) {
+      const sElement = document.createElement('s');
+      sElement.appendChild(contentToWrap);
+      contentToWrap = sElement;
+    }
+    if (isItalic) {
+      const emElement = document.createElement('em');
+      emElement.appendChild(contentToWrap);
+      contentToWrap = emElement;
+    }
+    strongElement.appendChild(contentToWrap);
+    range.insertNode(strongElement);
+  }
+
+  // Restore the selection
+  const newRange = document.createRange();
+  newRange.setStart(range.startContainer, range.startOffset);
+  newRange.setEnd(range.endContainer, range.endOffset);
+  selection.removeAllRanges();
+  selection.addRange(newRange);
+
+  // Ensure the editor remains focused
+  editor.focus();
+}
+
+// Function to toggle italics on selected text in a content-editable editor
+function toggleItalics(editor) {
+  const selection = window.getSelection();
+  if (!selection.rangeCount) return; // No selection
+
+  const range = selection.getRangeAt(0);
+  const selectedText = range.toString();
+
+  if (!selectedText) return; // No text selected
+
+  // Get the common ancestor and check for existing formatting
+  let parent = range.commonAncestorContainer;
+  if (parent.nodeType === 3) {
+    // Text node
+    parent = parent.parentNode;
+  }
+
+  const isAlreadyItalic = parent.closest('em') !== null;
+  const isBold = parent.closest('strong') !== null;
+  const isStrikethrough = parent.closest('s') !== null;
+  const isLink = parent.closest('a') !== null;
+  const isSpoiler = parent.closest('span.spoiler') !== null;
+
+  if (isAlreadyItalic) {
+    // If already italic, unwrap the <em> tag while preserving other formatting
+    const emElement = parent.closest('em');
+    const fragment = document.createDocumentFragment();
+    Array.from(emElement.childNodes).forEach((node) => {
+      if (
+        node.nodeType === Node.ELEMENT_NODE &&
+        (node.nodeName === 'STRONG' ||
+          node.nodeName === 'S' ||
+          node.nodeName === 'A' ||
+          (node.nodeName === 'SPAN' && node.classList.contains('spoiler')))
+      ) {
+        fragment.appendChild(node.cloneNode(true));
+      } else {
+        fragment.appendChild(node.cloneNode(true));
+      }
+    });
+    emElement.parentNode.replaceChild(fragment, emElement);
+  } else {
+    // If not italic, wrap the selection in an <em> tag while preserving other formatting
+    const emElement = document.createElement('em');
+    const contents = range.extractContents();
+    // Reapply existing formatting
+    let contentToWrap = contents;
+    if (isSpoiler) {
+      const spoilerElement = document.createElement('span');
+      spoilerElement.className = 'spoiler';
+      spoilerElement.appendChild(contentToWrap);
+      contentToWrap = spoilerElement;
+    }
+    if (isLink) {
+      const aElement = document.createElement('a');
+      aElement.href = parent.closest('a').href;
+      aElement.target = '_blank';
+      aElement.rel = 'noopener noreferrer';
+      aElement.appendChild(contentToWrap);
+      contentToWrap = aElement;
+    }
+    if (isStrikethrough) {
+      const sElement = document.createElement('s');
+      sElement.appendChild(contentToWrap);
+      contentToWrap = sElement;
+    }
+    if (isBold) {
+      const strongElement = document.createElement('strong');
+      strongElement.appendChild(contentToWrap);
+      contentToWrap = strongElement;
+    }
+    emElement.appendChild(contentToWrap);
+    range.insertNode(emElement);
+  }
+
+  // Restore the selection
+  const newRange = document.createRange();
+  newRange.setStart(range.startContainer, range.startOffset);
+  newRange.setEnd(range.endContainer, range.endOffset);
+  selection.removeAllRanges();
+  selection.addRange(newRange);
+
+  // Ensure the editor remains focused
+  editor.focus();
+}
+
+// Function to toggle strikethrough on selected text in a content-editable editor
+function toggleStrikethrough(editor) {
+  const selection = window.getSelection();
+  if (!selection.rangeCount) return; // No selection
+
+  const range = selection.getRangeAt(0);
+  const selectedText = range.toString();
+
+  if (!selectedText) return; // No text selected
+
+  // Get the common ancestor and check for existing formatting
+  let parent = range.commonAncestorContainer;
+  if (parent.nodeType === 3) {
+    // Text node
+    parent = parent.parentNode;
+  }
+
+  const isAlreadyStrikethrough = parent.closest('s') !== null;
+  const isBold = parent.closest('strong') !== null;
+  const isItalic = parent.closest('em') !== null;
+  const isLink = parent.closest('a') !== null;
+  const isSpoiler = parent.closest('span.spoiler') !== null;
+
+  if (isAlreadyStrikethrough) {
+    // If already strikethrough, unwrap the <s> tag while preserving other formatting
+    const sElement = parent.closest('s');
+    const fragment = document.createDocumentFragment();
+    Array.from(sElement.childNodes).forEach((node) => {
+      if (
+        node.nodeType === Node.ELEMENT_NODE &&
+        (node.nodeName === 'STRONG' ||
+          node.nodeName === 'EM' ||
+          node.nodeName === 'A' ||
+          (node.nodeName === 'SPAN' && node.classList.contains('spoiler')))
+      ) {
+        fragment.appendChild(node.cloneNode(true));
+      } else {
+        fragment.appendChild(node.cloneNode(true));
+      }
+    });
+    sElement.parentNode.replaceChild(fragment, sElement);
+  } else {
+    // If not strikethrough, wrap the selection in an <s> tag while preserving other formatting
+    const sElement = document.createElement('s');
+    const contents = range.extractContents();
+    // Reapply existing formatting
+    let contentToWrap = contents;
+    if (isSpoiler) {
+      const spoilerElement = document.createElement('span');
+      spoilerElement.className = 'spoiler';
+      spoilerElement.appendChild(contentToWrap);
+      contentToWrap = spoilerElement;
+    }
+    if (isLink) {
+      const aElement = document.createElement('a');
+      aElement.href = parent.closest('a').href;
+      aElement.target = '_blank';
+      aElement.rel = 'noopener noreferrer';
+      aElement.appendChild(contentToWrap);
+      contentToWrap = aElement;
+    }
+    if (isItalic) {
+      const emElement = document.createElement('em');
+      emElement.appendChild(contentToWrap);
+      contentToWrap = emElement;
+    }
+    if (isBold) {
+      const strongElement = document.createElement('strong');
+      strongElement.appendChild(contentToWrap);
+      contentToWrap = strongElement;
+    }
+    sElement.appendChild(contentToWrap);
+    range.insertNode(sElement);
+  }
+
+  // Restore the selection
+  const newRange = document.createRange();
+  newRange.setStart(range.startContainer, range.startOffset);
+  newRange.setEnd(range.endContainer, range.endOffset);
+  selection.removeAllRanges();
+  selection.addRange(newRange);
+
+  // Ensure the editor remains focused
+  editor.focus();
+}
+
+// Function to toggle link on selected text in a content-editable editor
+function toggleLink(editor) {
+  const selection = window.getSelection();
+  if (!selection.rangeCount) return; // No selection
+
+  const range = selection.getRangeAt(0);
+  const selectedText = range.toString();
+
+  if (!selectedText) return; // No text selected
+
+  // Get the common ancestor and check for existing formatting
+  let parent = range.commonAncestorContainer;
+  if (parent.nodeType === 3) {
+    // Text node
+    parent = parent.parentNode;
+  }
+
+  const isAlreadyLink = parent.closest('a') !== null;
+  const isBold = parent.closest('strong') !== null;
+  const isItalic = parent.closest('em') !== null;
+  const isStrikethrough = parent.closest('s') !== null;
+  const isSpoiler = parent.closest('span.spoiler') !== null;
+
+  if (isAlreadyLink) {
+    // If already a link, unwrap the <a> tag while preserving other formatting
+    const linkElement = parent.closest('a');
+    const fragment = document.createDocumentFragment();
+    Array.from(linkElement.childNodes).forEach((node) => {
+      fragment.appendChild(node.cloneNode(true));
+    });
+    linkElement.parentNode.replaceChild(fragment, linkElement);
+  } else {
+    // Create the <a> tag with href set to the selected text
+    const linkElement = document.createElement('a');
+    let hrefValue = selectedText.trim();
+    // Prepend "https://" if the selected text doesn't start with a protocol
+    if (!hrefValue.startsWith('http://') && !hrefValue.startsWith('https://')) {
+      hrefValue = 'https://' + hrefValue;
+    }
+    linkElement.href = hrefValue;
+    linkElement.target = '_blank'; // Open in new tab
+    linkElement.rel = 'noopener noreferrer'; // Security best practice
+
+    // Extract the selected content and preserve nested formatting
+    const contents = range.extractContents();
+    let contentToWrap = contents;
+
+    // Reapply existing formatting inside the <a> tag
+    if (isSpoiler) {
+      const spoilerElement = document.createElement('span');
+      spoilerElement.className = 'spoiler';
+      spoilerElement.appendChild(contentToWrap);
+      contentToWrap = spoilerElement;
+    }
+    if (isStrikethrough) {
+      const sElement = document.createElement('s');
+      sElement.appendChild(contentToWrap);
+      contentToWrap = sElement;
+    }
+    if (isItalic) {
+      const emElement = document.createElement('em');
+      emElement.appendChild(contentToWrap);
+      contentToWrap = emElement;
+    }
+    if (isBold) {
+      const strongElement = document.createElement('strong');
+      strongElement.appendChild(contentToWrap);
+      contentToWrap = strongElement;
+    }
+
+    linkElement.appendChild(contentToWrap);
+    range.insertNode(linkElement);
+
+    // Add a double-click event listener to edit the href
+    linkElement.addEventListener('dblclick', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const newUrl = prompt(
+        'Enter the URL for this link (e.g., https://example.com):',
+        linkElement.href
+      );
+      if (newUrl) {
+        let validUrl = newUrl.trim();
+        if (
+          !validUrl.startsWith('http://') &&
+          !validUrl.startsWith('https://')
+        ) {
+          validUrl = 'https://' + validUrl; // Default to HTTPS if no protocol is specified
+        }
+        linkElement.href = validUrl;
+      }
+    });
+  }
+
+  // Restore the selection to the original range
+  const newRange = document.createRange();
+  newRange.setStart(range.startContainer, range.startOffset);
+  newRange.setEnd(range.endContainer, range.endOffset);
+  selection.removeAllRanges();
+  selection.addRange(newRange);
+
+  // Ensure the editor remains focused
+  editor.focus();
+}
+// Function to toggle spoiler on selected text in a content-editable editor
+function toggleSpoiler(editor) {
+  const selection = window.getSelection();
+  if (!selection.rangeCount) return; // No selection
+
+  const range = selection.getRangeAt(0);
+  const selectedText = range.toString();
+
+  if (!selectedText) return; // No text selected
+
+  // Get the common ancestor and check for existing formatting
+  let parent = range.commonAncestorContainer;
+  if (parent.nodeType === 3) {
+    // Text node
+    parent = parent.parentNode;
+  }
+
+  const isAlreadySpoiler = parent.closest('span.spoiler') !== null;
+  const isBold = parent.closest('strong') !== null;
+  const isItalic = parent.closest('em') !== null;
+  const isStrikethrough = parent.closest('s') !== null;
+  const isLink = parent.closest('a') !== null;
+
+  if (isAlreadySpoiler) {
+    // If already a spoiler, unwrap the <span class="spoiler"> tag while preserving other formatting
+    const spoilerElement = parent.closest('span.spoiler');
+    const fragment = document.createDocumentFragment();
+    Array.from(spoilerElement.childNodes).forEach((node) => {
+      if (
+        node.nodeType === Node.ELEMENT_NODE &&
+        (node.nodeName === 'STRONG' ||
+          node.nodeName === 'EM' ||
+          node.nodeName === 'S' ||
+          node.nodeName === 'A')
+      ) {
+        fragment.appendChild(node.cloneNode(true));
+      } else {
+        fragment.appendChild(node.cloneNode(true));
+      }
+    });
+    spoilerElement.parentNode.replaceChild(fragment, spoilerElement);
+  } else {
+    // If not a spoiler, wrap the selection in a <span class="spoiler"> tag while preserving other formatting
+    const spoilerElement = document.createElement('span');
+    spoilerElement.className = 'spoiler';
+    const contents = range.extractContents();
+    // Reapply existing formatting
+    let contentToWrap = contents;
+    if (isLink) {
+      const aElement = document.createElement('a');
+      aElement.href = parent.closest('a').href;
+      aElement.target = '_blank';
+      aElement.rel = 'noopener noreferrer';
+      aElement.appendChild(contentToWrap);
+      contentToWrap = aElement;
+    }
+    if (isStrikethrough) {
+      const sElement = document.createElement('s');
+      sElement.appendChild(contentToWrap);
+      contentToWrap = sElement;
+    }
+    if (isItalic) {
+      const emElement = document.createElement('em');
+      emElement.appendChild(contentToWrap);
+      contentToWrap = emElement;
+    }
+    if (isBold) {
+      const strongElement = document.createElement('strong');
+      strongElement.appendChild(contentToWrap);
+      contentToWrap = strongElement;
+    }
+    spoilerElement.appendChild(contentToWrap);
+    range.insertNode(spoilerElement);
+  }
+
+  // Restore the selection
+  const newRange = document.createRange();
+  newRange.setStart(range.startContainer, range.startOffset);
+  newRange.setEnd(range.endContainer, range.endOffset);
+  selection.removeAllRanges();
+  selection.addRange(newRange);
+
+  // Ensure the editor remains focused
+  editor.focus();
+}
+
 const form = document.getElementById('comment-form');
 const fileInput = document.getElementById('media-upload');
 const uploadButton = document.getElementById('comment-image');
@@ -171,7 +619,8 @@ const mediaItems = []; // Array to store { file, type, fileName, container }
 // Track media items for each reply form using a Map
 const replyMediaItemsMap = new Map(); // Map<commentId, Array<{ file, type, fileName, container }>>
 // Track media items for each edit form using a Map
-const editMediaItemsMap = new Map(); // Map<commentId, Array<{ file, type, fileName, container, isExisting, existingValue }>>
+const editMediaItemsMap = new Map(); // Map<commentId, Array<{ file, type, fileName, container, isExisting, existingValue, source }>>
+
 // Object to store cleanup functions for GIF pickers
 const gifPickerCleanups = {
   main: null, // For gif-picker-main
@@ -378,6 +827,70 @@ uploadButton.addEventListener('click', () => {
   fileInput.click();
 });
 
+// Handle bold button click for the main comment form
+const boldButton = document.getElementById('comment-bold');
+boldButton.addEventListener('click', (e) => {
+  e.preventDefault(); // Prevent any default button behavior
+  const selection = window.getSelection();
+  const isBold =
+    selection.rangeCount > 0 &&
+    selection
+      .getRangeAt(0)
+      .commonAncestorContainer.parentNode.closest('strong');
+  boldButton.classList.toggle('active', !!isBold);
+  toggleBold(editor);
+});
+
+// Handle italics button click for the main comment form
+const italicsButton = document.getElementById('comment-italics');
+italicsButton.addEventListener('click', (e) => {
+  e.preventDefault(); // Prevent any default button behavior
+  const selection = window.getSelection();
+  const isItalic =
+    selection.rangeCount > 0 &&
+    selection.getRangeAt(0).commonAncestorContainer.parentNode.closest('em');
+  italicsButton.classList.toggle('active', !!isItalic);
+  toggleItalics(editor);
+});
+
+// Handle strikethrough button click for the main comment form
+const strikethroughButton = document.getElementById('comment-strikethrough');
+strikethroughButton.addEventListener('click', (e) => {
+  e.preventDefault(); // Prevent any default button behavior
+  const selection = window.getSelection();
+  const isStrikethrough =
+    selection.rangeCount > 0 &&
+    selection.getRangeAt(0).commonAncestorContainer.parentNode.closest('s');
+  strikethroughButton.classList.toggle('active', !!isStrikethrough);
+  toggleStrikethrough(editor);
+});
+
+// Handle link button click for the main comment form
+const linkButton = document.getElementById('comment-link');
+linkButton.addEventListener('click', (e) => {
+  e.preventDefault(); // Prevent any default button behavior
+  const selection = window.getSelection();
+  const isLink =
+    selection.rangeCount > 0 &&
+    selection.getRangeAt(0).commonAncestorContainer.parentNode.closest('a');
+  linkButton.classList.toggle('active', !!isLink);
+  toggleLink(editor);
+});
+
+// Handle spoiler button click for the main comment form
+const spoilerButton = document.getElementById('comment-spoiler');
+spoilerButton.addEventListener('click', (e) => {
+  e.preventDefault(); // Prevent any default button behavior
+  const selection = window.getSelection();
+  const isSpoiler =
+    selection.rangeCount > 0 &&
+    selection
+      .getRangeAt(0)
+      .commonAncestorContainer.parentNode.closest('span.spoiler');
+  spoilerButton.classList.toggle('active', !!isSpoiler);
+  toggleSpoiler(editor);
+});
+
 // Handle GIF button click for the main comment form
 const gifButton = document.getElementById('comment-gif');
 gifButton.addEventListener('click', () => {
@@ -505,6 +1018,7 @@ editor.addEventListener('click', () => {
 });
 
 // Recursive function to process nodes and their children
+// Recursive function to process nodes and their children
 function processNode(
   node,
   elements,
@@ -565,19 +1079,17 @@ function processNode(
         );
         if (matchingMedia) {
           console.log('Matching media found:', matchingMedia);
-          // For edit form, include existingValue for existing media to preserve the server-side path
           elements.push({
             type: matchingMedia.type,
             value: matchingMedia.isExisting
               ? matchingMedia.existingValue
               : matchingMedia.fileName,
-            file: matchingMedia.file, // Will be null for existing media or URL-based GIFs
+            file: matchingMedia.file,
             order: elements.length,
             isExisting: matchingMedia.isExisting || false,
-            source: matchingMedia.source || 'upload', // Include source (url or upload)
+            source: matchingMedia.source || 'upload',
           });
         } else {
-          // If no matching media item is found, treat it as a URL-based GIF (e.g., from the GIF picker)
           const img = node.querySelector('img.media-preview');
           if (img && img.src) {
             console.log(
@@ -585,11 +1097,11 @@ function processNode(
             );
             elements.push({
               type: 'gif',
-              value: img.src, // Use the GIF URL directly
-              file: null, // No file object since it's a URL
+              value: img.src,
+              file: null,
               order: elements.length,
               isExisting: false,
-              source: 'url', // Indicate this is a URL-based GIF
+              source: 'url',
             });
           } else {
             console.warn(
@@ -600,6 +1112,65 @@ function processNode(
       } else {
         console.error('No fileName found in media-container');
       }
+    } else if (
+      node.nodeName === 'STRONG' ||
+      node.nodeName === 'EM' ||
+      node.nodeName === 'S' ||
+      node.nodeName === 'A' ||
+      (node.nodeName === 'SPAN' && node.classList.contains('spoiler'))
+    ) {
+      // If there's accumulated text before this formatting tag, push it
+      if (currentText.trim()) {
+        elements.push({
+          type: 'text',
+          value: currentText.trim(),
+          order: elements.length,
+        });
+        currentText = '';
+      }
+
+      // Process children recursively and build the nested tag structure
+      const childElements = [];
+      let childText = '';
+      const children = Array.from(node.childNodes);
+      children.forEach((child) => {
+        const childState = processNode(
+          child,
+          childElements,
+          mediaItems,
+          { text: childText },
+          commentId,
+          isEditForm
+        );
+        childText += childState.text;
+      });
+
+      // Combine child elements and text
+      let formattedText = childText.trim();
+      if (childElements.length > 0) {
+        // If child elements exist (nested tags), use their values
+        formattedText = childElements.map((el) => el.value).join('');
+      }
+
+      if (formattedText) {
+        const tagName = node.nodeName.toLowerCase();
+        if (tagName === 'a') {
+          const href = node.getAttribute('href') || '#';
+          formattedText = `<a href="${href}" target="_blank" rel="noopener noreferrer">${formattedText}</a>`;
+        } else if (tagName === 'span' && node.classList.contains('spoiler')) {
+          formattedText = `<span class="spoiler">${formattedText}</span>`;
+        } else {
+          formattedText = `<${tagName}>${formattedText}</${tagName}>`;
+        }
+        elements.push({
+          type: 'text',
+          value: formattedText,
+          order: elements.length,
+        });
+      }
+
+      // Since we've processed the children and wrapped them, do not accumulate their text again
+      return { text: currentText };
     } else {
       // If the node has children, treat accumulated text as a separate element
       if (currentText.trim()) {
@@ -738,6 +1309,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const uploadButton = form.querySelector(
       `#reply-comment-image-${commentId}`
     );
+    const boldButton = form.querySelector(`#reply-comment-bold-${commentId}`);
+    const italicsButton = form.querySelector(
+      `#reply-comment-italics-${commentId}`
+    );
+    const strikethroughButton = form.querySelector(
+      `#reply-comment-strikethrough-${commentId}`
+    );
+    const linkButton = form.querySelector(`#reply-comment-link-${commentId}`);
+    const spoilerButton = form.querySelector(
+      `#reply-comment-spoiler-${commentId}`
+    );
     const gifButton = form.querySelector(`#reply-comment-gif-${commentId}`);
 
     // Initialize media items for this reply form
@@ -748,6 +1330,67 @@ document.addEventListener('DOMContentLoaded', () => {
     // Handle media upload button click
     uploadButton.addEventListener('click', () => {
       fileInput.click();
+    });
+
+    // Handle bold button click for reply form
+    boldButton.addEventListener('click', (e) => {
+      e.preventDefault(); // Prevent any default button behavior
+      const selection = window.getSelection();
+      const isBold =
+        selection.rangeCount > 0 &&
+        selection
+          .getRangeAt(0)
+          .commonAncestorContainer.parentNode.closest('strong');
+      boldButton.classList.toggle('active', !!isBold);
+      toggleBold(replyEditor);
+    });
+
+    // Handle italics button click for reply form
+    italicsButton.addEventListener('click', (e) => {
+      e.preventDefault(); // Prevent any default button behavior
+      const selection = window.getSelection();
+      const isItalic =
+        selection.rangeCount > 0 &&
+        selection
+          .getRangeAt(0)
+          .commonAncestorContainer.parentNode.closest('em');
+      italicsButton.classList.toggle('active', !!isItalic);
+      toggleItalics(replyEditor);
+    });
+
+    // Handle strikethrough button click for reply form
+    strikethroughButton.addEventListener('click', (e) => {
+      e.preventDefault(); // Prevent any default button behavior
+      const selection = window.getSelection();
+      const isStrikethrough =
+        selection.rangeCount > 0 &&
+        selection.getRangeAt(0).commonAncestorContainer.parentNode.closest('s');
+      strikethroughButton.classList.toggle('active', !!isStrikethrough);
+      toggleStrikethrough(replyEditor);
+    });
+
+    // Handle link button click for reply form
+    linkButton.addEventListener('click', (e) => {
+      e.preventDefault(); // Prevent any default button behavior
+      const selection = window.getSelection();
+      const isLink =
+        selection.rangeCount > 0 &&
+        selection.getRangeAt(0).commonAncestorContainer.parentNode.closest('a');
+      linkButton.classList.toggle('active', !!isLink);
+      toggleLink(replyEditor);
+    });
+
+    // Handle spoiler button click for reply form
+    spoilerButton.addEventListener('click', (e) => {
+      e.preventDefault(); // Prevent any default button behavior
+      const selection = window.getSelection();
+      const isSpoiler =
+        selection.rangeCount > 0 &&
+        selection
+          .getRangeAt(0)
+          .commonAncestorContainer.parentNode.closest('span.spoiler');
+      spoilerButton.classList.toggle('active', !!isSpoiler);
+      toggleSpoiler(replyEditor);
     });
 
     // Handle GIF button click for reply form
@@ -972,7 +1615,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const commentId = button.dataset.commentId;
       const editSection = document.getElementById(`edit-section-${commentId}`);
       if (editSection) {
+        // Toggle the visibility of the edit form
         editSection.classList.toggle('hidden');
+
         // If the form is being hidden, clear the editMediaItemsMap for this comment
         if (editSection.classList.contains('hidden')) {
           editMediaItemsMap.set(commentId, []);
@@ -991,6 +1636,7 @@ document.addEventListener('DOMContentLoaded', () => {
           }
           return; // Exit early since we're closing the form
         }
+
         const editEditor = editSection.querySelector(
           `#edit-comment-editor-${commentId}`
         );
@@ -998,10 +1644,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Clear the editor before populating
         editEditor.innerHTML = '';
 
+        // Reset media items for this edit form to avoid duplicates
         // Initialize media items for this edit form
         if (!editMediaItemsMap.has(commentId)) {
           editMediaItemsMap.set(commentId, []);
         }
+        console.log(`Reset editMediaItemsMap[${commentId}] before populating`);
 
         // Get the comment elements from the DOM
         const commentElement = document.getElementById(`comment-${commentId}`);
@@ -1010,9 +1658,69 @@ document.addEventListener('DOMContentLoaded', () => {
         // Populate the editor with the comment's elements
         elements.forEach((element) => {
           if (element.type === 'text') {
-            // Add text element
-            const textNode = document.createTextNode(element.value);
-            editEditor.appendChild(textNode);
+            // Parse the HTML content to preserve nested tags
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = element.value;
+
+            // Recursively append the parsed nodes to the editor
+            const appendNodes = (nodes, target) => {
+              nodes.forEach((node) => {
+                if (node.nodeType === Node.TEXT_NODE) {
+                  target.appendChild(document.createTextNode(node.textContent));
+                } else if (node.nodeType === Node.ELEMENT_NODE) {
+                  if (node.nodeName === 'STRONG') {
+                    const strongElement = document.createElement('strong');
+                    appendNodes(Array.from(node.childNodes), strongElement);
+                    target.appendChild(strongElement);
+                  } else if (node.nodeName === 'EM') {
+                    const emElement = document.createElement('em');
+                    appendNodes(Array.from(node.childNodes), emElement);
+                    target.appendChild(emElement);
+                  } else if (node.nodeName === 'S') {
+                    const sElement = document.createElement('s');
+                    appendNodes(Array.from(node.childNodes), sElement);
+                    target.appendChild(sElement);
+                  } else if (node.nodeName === 'A') {
+                    const aElement = document.createElement('a');
+                    aElement.href = node.getAttribute('href') || '#';
+                    aElement.target = '_blank';
+                    aElement.rel = 'noopener noreferrer';
+                    appendNodes(Array.from(node.childNodes), aElement);
+                    target.appendChild(aElement);
+                    // Add double-click event listener for editing href in the editor
+                    aElement.addEventListener('dblclick', (e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      const newUrl = prompt(
+                        'Enter the URL for this link (e.g., https://example.com):',
+                        aElement.href
+                      );
+                      if (newUrl) {
+                        let validUrl = newUrl.trim();
+                        if (
+                          !validUrl.startsWith('http://') &&
+                          !validUrl.startsWith('https://')
+                        ) {
+                          validUrl = 'https://' + validUrl;
+                        }
+                        aElement.href = validUrl;
+                      }
+                    });
+                  } else if (
+                    node.nodeName === 'SPAN' &&
+                    node.classList.contains('spoiler')
+                  ) {
+                    const spoilerElement = document.createElement('span');
+                    spoilerElement.className = 'spoiler';
+                    appendNodes(Array.from(node.childNodes), spoilerElement);
+                    target.appendChild(spoilerElement);
+                  }
+                }
+              });
+            };
+
+            appendNodes(Array.from(tempDiv.childNodes), editEditor);
+
             const br = document.createElement('br');
             editEditor.appendChild(br);
           } else if (
@@ -1059,7 +1767,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 container,
                 isExisting: true, // Flag to indicate this is from the original comment
                 existingValue: element.value, // Store the full server-side path
-                source: 'upload', // Existing media is assumed to be an upload unless specified
+                source: element.source || 'upload', // Preserve the source if available
               });
             } else if (element.type === 'excel') {
               const pre = document.createElement('pre');
@@ -1074,7 +1782,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 container,
                 isExisting: true,
                 existingValue: element.value,
-                source: 'upload', // Existing media is assumed to be an upload
+                source: element.source || 'upload', // Preserve the source if available
               });
             }
             insertNewlineAfter(container);
@@ -1098,12 +1806,88 @@ document.addEventListener('DOMContentLoaded', () => {
     const editUploadButton = form.querySelector(
       `#edit-comment-image-${commentId}`
     );
+    const editBoldButton = form.querySelector(
+      `#edit-comment-bold-${commentId}`
+    );
+    const editItalicsButton = form.querySelector(
+      `#edit-comment-italics-${commentId}`
+    );
+    const editStrikethroughButton = form.querySelector(
+      `#edit-comment-strikethrough-${commentId}`
+    );
+    const editLinkButton = form.querySelector(
+      `#edit-comment-link-${commentId}`
+    );
+    const editSpoilerButton = form.querySelector(
+      `#edit-comment-spoiler-${commentId}`
+    );
     const editGifButton = form.querySelector(`#edit-comment-gif-${commentId}`);
 
     // Handle media upload button click
     editUploadButton.addEventListener('click', () => {
       console.log('clicked image button');
       editFileInput.click();
+    });
+
+    // Handle bold button click for edit form
+    editBoldButton.addEventListener('click', (e) => {
+      e.preventDefault(); // Prevent any default button behavior
+      const selection = window.getSelection();
+      const isBold =
+        selection.rangeCount > 0 &&
+        selection
+          .getRangeAt(0)
+          .commonAncestorContainer.parentNode.closest('strong');
+      editBoldButton.classList.toggle('active', !!isBold);
+      toggleBold(editEditor);
+    });
+
+    // Handle italics button click for edit form
+    editItalicsButton.addEventListener('click', (e) => {
+      e.preventDefault(); // Prevent any default button behavior
+      const selection = window.getSelection();
+      const isItalic =
+        selection.rangeCount > 0 &&
+        selection
+          .getRangeAt(0)
+          .commonAncestorContainer.parentNode.closest('em');
+      editItalicsButton.classList.toggle('active', !!isItalic);
+      toggleItalics(editEditor);
+    });
+
+    // Handle strikethrough button click for edit form
+    editStrikethroughButton.addEventListener('click', (e) => {
+      e.preventDefault(); // Prevent any default button behavior
+      const selection = window.getSelection();
+      const isStrikethrough =
+        selection.rangeCount > 0 &&
+        selection.getRangeAt(0).commonAncestorContainer.parentNode.closest('s');
+      editStrikethroughButton.classList.toggle('active', !!isStrikethrough);
+      toggleStrikethrough(editEditor);
+    });
+
+    // Handle link button click for edit form
+    editLinkButton.addEventListener('click', (e) => {
+      e.preventDefault(); // Prevent any default button behavior
+      const selection = window.getSelection();
+      const isLink =
+        selection.rangeCount > 0 &&
+        selection.getRangeAt(0).commonAncestorContainer.parentNode.closest('a');
+      editLinkButton.classList.toggle('active', !!isLink);
+      toggleLink(editEditor);
+    });
+
+    // Handle spoiler button click for reply form
+    editSpoilerButton.addEventListener('click', (e) => {
+      e.preventDefault(); // Prevent any default button behavior
+      const selection = window.getSelection();
+      const isSpoiler =
+        selection.rangeCount > 0 &&
+        selection
+          .getRangeAt(0)
+          .commonAncestorContainer.parentNode.closest('span.spoiler');
+      editSpoilerButton.classList.toggle('active', !!isSpoiler);
+      toggleSpoiler(editEditor);
     });
 
     // Handle GIF button click for edit form
@@ -1340,15 +2124,63 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Handle click on comment media to open modal and comment-editor clicks
+  // Handle click on comment media to open modal, comment-editor clicks, spoiler reveal, and media download
   document.addEventListener('click', (e) => {
+    // Skip if the click is on an <a> tag to allow default navigation
+    if (e.target.closest('a')) {
+      return; // Let the browser handle the link navigation
+    }
+
+    // Handle spoiler reveal
+    const spoiler = e.target.closest('span.spoiler');
+    if (spoiler) {
+      spoiler.classList.toggle('revealed');
+      return; // Prevent other handlers from firing
+    }
+
     const media = e.target.closest('.comment-media');
     if (media) {
       const modal = document.getElementById('comment-media-modal');
       const modalImage = document.getElementById('comment-media-modal-image');
       const overlay = document.getElementById('comment-media-modal-overlay');
+      const modalAvatar = document.querySelector('.modal-commentor-avatar');
+      const modalTime = document.querySelector('.modal-commentor-time');
+      const modalUsername = document.querySelector('.modal-commentor-username'); // Add this if you want to display the username
 
+      if (!modalAvatar || !modalTime) {
+        console.error('Modal elements not found:', { modalAvatar, modalTime });
+        return;
+      }
+
+      // Populate the modal with the media
       modalImage.src = media.src;
+
+      // Populate commentor info
+      const avatarUrl =
+        media.dataset.commentorAvatar || '/img/default-avatar.jpg'; // Fallback if avatar is missing
+      modalAvatar.src = avatarUrl;
+
+      const username = media.dataset.commentorUsername || 'Unknown User';
+      if (modalUsername) {
+        modalUsername.textContent = username;
+      }
+
+      const sentTime = media.dataset.commentSentTime;
+      if (sentTime) {
+        const date = new Date(sentTime);
+        modalTime.textContent = date.toLocaleString('en-US', {
+          month: 'long',
+          day: 'numeric',
+          year: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+          hour12: true,
+        }); // e.g., "May 3, 2025, 2:30 PM"
+      } else {
+        modalTime.textContent = 'Unknown time';
+      }
+
+      // Show the modal
       modal.classList.remove('hidden');
       overlay.classList.remove('hidden');
     }
@@ -1365,6 +2197,35 @@ document.addEventListener('DOMContentLoaded', () => {
       modalImage.src = '';
     }
 
+    // Handle media download
+    const downloadButton = e.target.closest(
+      '#comment-media-modal-download-btn'
+    );
+    if (downloadButton) {
+      const modalImage = document.getElementById('comment-media-modal-image');
+      const imageUrl = modalImage.src;
+
+      // Fetch the image as a blob
+      fetch(imageUrl)
+        .then((response) => response.blob())
+        .then((blob) => {
+          // Create a temporary URL for the blob
+          const url = window.URL.createObjectURL(blob);
+          // Create a temporary link element to trigger the download
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = imageUrl.split('/').pop() || 'media'; // Use the filename from the URL or a default name
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url); // Clean up
+        })
+        .catch((err) => {
+          console.error('Error downloading media:', err);
+          showAlert('error', 'Failed to download media. Please try again.');
+        });
+    }
+
     // Handle comment bar clicks
     const commentEditor = e.target.closest('.comment-editor');
     if (commentEditor) {
@@ -1372,7 +2233,6 @@ document.addEventListener('DOMContentLoaded', () => {
       commentEditor.style.minHeight = '200px';
     }
   });
-
   // Upvote and Downvote Functionality
   const likeButtons = document.querySelectorAll('.comment-like-button');
   likeButtons.forEach((button) => {
