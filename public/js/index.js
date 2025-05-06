@@ -11,7 +11,7 @@ import { signup } from './back/signup';
 import { updateSettings } from './back/updateSettings';
 import { submit_art } from './back/uploadArt';
 import { update_art } from './back/updateArt';
-// import comments from './back/comments.js';
+import comments from './back/comments.js';
 import { delete_art } from './back/deleteUpload';
 import { showAlert } from './front/alerts';
 import { handleFavorite } from './back/favorite.js';

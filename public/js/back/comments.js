@@ -822,202 +822,215 @@ function insertGifIntoEditor(editor, gifUrl, mediaItemsMap, commentId = null) {
   editor.focus();
 }
 
-// Trigger file input click when custom button is clicked
-uploadButton.addEventListener('click', () => {
-  fileInput.click();
-});
-
+if (uploadButton) {
+  // Trigger file input click when custom button is clicked
+  uploadButton.addEventListener('click', () => {
+    fileInput.click();
+  });
+}
 // Handle bold button click for the main comment form
 const boldButton = document.getElementById('comment-bold');
-boldButton.addEventListener('click', (e) => {
-  e.preventDefault(); // Prevent any default button behavior
-  const selection = window.getSelection();
-  const isBold =
-    selection.rangeCount > 0 &&
-    selection
-      .getRangeAt(0)
-      .commonAncestorContainer.parentNode.closest('strong');
-  boldButton.classList.toggle('active', !!isBold);
-  toggleBold(editor);
-});
+
+if (boldButton) {
+  boldButton.addEventListener('click', (e) => {
+    e.preventDefault(); // Prevent any default button behavior
+    const selection = window.getSelection();
+    const isBold =
+      selection.rangeCount > 0 &&
+      selection
+        .getRangeAt(0)
+        .commonAncestorContainer.parentNode.closest('strong');
+    boldButton.classList.toggle('active', !!isBold);
+    toggleBold(editor);
+  });
+}
 
 // Handle italics button click for the main comment form
 const italicsButton = document.getElementById('comment-italics');
-italicsButton.addEventListener('click', (e) => {
-  e.preventDefault(); // Prevent any default button behavior
-  const selection = window.getSelection();
-  const isItalic =
-    selection.rangeCount > 0 &&
-    selection.getRangeAt(0).commonAncestorContainer.parentNode.closest('em');
-  italicsButton.classList.toggle('active', !!isItalic);
-  toggleItalics(editor);
-});
-
+if (italicsButton) {
+  italicsButton.addEventListener('click', (e) => {
+    e.preventDefault(); // Prevent any default button behavior
+    const selection = window.getSelection();
+    const isItalic =
+      selection.rangeCount > 0 &&
+      selection.getRangeAt(0).commonAncestorContainer.parentNode.closest('em');
+    italicsButton.classList.toggle('active', !!isItalic);
+    toggleItalics(editor);
+  });
+}
 // Handle strikethrough button click for the main comment form
 const strikethroughButton = document.getElementById('comment-strikethrough');
-strikethroughButton.addEventListener('click', (e) => {
-  e.preventDefault(); // Prevent any default button behavior
-  const selection = window.getSelection();
-  const isStrikethrough =
-    selection.rangeCount > 0 &&
-    selection.getRangeAt(0).commonAncestorContainer.parentNode.closest('s');
-  strikethroughButton.classList.toggle('active', !!isStrikethrough);
-  toggleStrikethrough(editor);
-});
-
+if (strikethroughButton) {
+  strikethroughButton.addEventListener('click', (e) => {
+    e.preventDefault(); // Prevent any default button behavior
+    const selection = window.getSelection();
+    const isStrikethrough =
+      selection.rangeCount > 0 &&
+      selection.getRangeAt(0).commonAncestorContainer.parentNode.closest('s');
+    strikethroughButton.classList.toggle('active', !!isStrikethrough);
+    toggleStrikethrough(editor);
+  });
+}
 // Handle link button click for the main comment form
 const linkButton = document.getElementById('comment-link');
-linkButton.addEventListener('click', (e) => {
-  e.preventDefault(); // Prevent any default button behavior
-  const selection = window.getSelection();
-  const isLink =
-    selection.rangeCount > 0 &&
-    selection.getRangeAt(0).commonAncestorContainer.parentNode.closest('a');
-  linkButton.classList.toggle('active', !!isLink);
-  toggleLink(editor);
-});
-
+if (linkButton) {
+  linkButton.addEventListener('click', (e) => {
+    e.preventDefault(); // Prevent any default button behavior
+    const selection = window.getSelection();
+    const isLink =
+      selection.rangeCount > 0 &&
+      selection.getRangeAt(0).commonAncestorContainer.parentNode.closest('a');
+    linkButton.classList.toggle('active', !!isLink);
+    toggleLink(editor);
+  });
+}
 // Handle spoiler button click for the main comment form
 const spoilerButton = document.getElementById('comment-spoiler');
-spoilerButton.addEventListener('click', (e) => {
-  e.preventDefault(); // Prevent any default button behavior
-  const selection = window.getSelection();
-  const isSpoiler =
-    selection.rangeCount > 0 &&
-    selection
-      .getRangeAt(0)
-      .commonAncestorContainer.parentNode.closest('span.spoiler');
-  spoilerButton.classList.toggle('active', !!isSpoiler);
-  toggleSpoiler(editor);
-});
-
+if (spoilerButton) {
+  spoilerButton.addEventListener('click', (e) => {
+    e.preventDefault(); // Prevent any default button behavior
+    const selection = window.getSelection();
+    const isSpoiler =
+      selection.rangeCount > 0 &&
+      selection
+        .getRangeAt(0)
+        .commonAncestorContainer.parentNode.closest('span.spoiler');
+    spoilerButton.classList.toggle('active', !!isSpoiler);
+    toggleSpoiler(editor);
+  });
+}
 // Handle GIF button click for the main comment form
 const gifButton = document.getElementById('comment-gif');
-gifButton.addEventListener('click', () => {
-  const containerId = 'gif-picker-main';
-  const container = document.getElementById(containerId);
-  const tenorApiKey = form.dataset.tenorApiKey;
-  const clientKey = 'pixeum'; // Custom client key for Pixeum
-  if (!tenorApiKey) {
-    console.error('Tenor API key is missing for main comment form');
-    alert('Unable to load GIF picker: API key is missing.');
-    return;
-  }
-
-  // Toggle the visibility of the GIF picker
-  const isVisible = container.style.display === 'block';
-  if (isVisible) {
-    // If the GIF picker is visible, hide it and clean up
-    container.style.display = 'none';
-    if (gifPickerCleanups.main) {
-      gifPickerCleanups.main(); // Unmount the GIF picker
-      gifPickerCleanups.main = null; // Clear the cleanup function
+if (gifButton) {
+  gifButton.addEventListener('click', () => {
+    const containerId = 'gif-picker-main';
+    const container = document.getElementById(containerId);
+    const tenorApiKey = form.dataset.tenorApiKey;
+    const clientKey = 'pixeum'; // Custom client key for Pixeum
+    if (!tenorApiKey) {
+      console.error('Tenor API key is missing for main comment form');
+      alert('Unable to load GIF picker: API key is missing.');
+      return;
     }
-  } else {
-    // If the GIF picker is not visible, show it and render the picker
-    container.style.display = 'block';
-    const cleanup = openGifPicker(
-      containerId,
-      tenorApiKey,
-      clientKey,
-      (gifUrl) => {
-        insertGifIntoEditor(editor, gifUrl, null);
-        container.style.display = 'none'; // Hide the container after selection
-        gifPickerCleanups.main = null; // Clear the cleanup function after selection
+
+    // Toggle the visibility of the GIF picker
+    const isVisible = container.style.display === 'block';
+    if (isVisible) {
+      // If the GIF picker is visible, hide it and clean up
+      container.style.display = 'none';
+      if (gifPickerCleanups.main) {
+        gifPickerCleanups.main(); // Unmount the GIF picker
+        gifPickerCleanups.main = null; // Clear the cleanup function
       }
-    );
-    gifPickerCleanups.main = cleanup; // Store the cleanup function
-  }
-});
+    } else {
+      // If the GIF picker is not visible, show it and render the picker
+      container.style.display = 'block';
+      const cleanup = openGifPicker(
+        containerId,
+        tenorApiKey,
+        clientKey,
+        (gifUrl) => {
+          insertGifIntoEditor(editor, gifUrl, null);
+          container.style.display = 'none'; // Hide the container after selection
+          gifPickerCleanups.main = null; // Clear the cleanup function after selection
+        }
+      );
+      gifPickerCleanups.main = cleanup; // Store the cleanup function
+    }
+  });
+}
 
-// Handle file selection and embed in editor
-fileInput.addEventListener('change', () => {
-  const files = fileInput.files;
+if (fileInput) {
+  // Handle file selection and embed in editor
+  fileInput.addEventListener('change', () => {
+    const files = fileInput.files;
 
-  for (const file of files) {
-    // Create a container div for each media item
-    const container = document.createElement('div');
-    container.className = 'media-container';
-    container.contentEditable = 'false'; // Prevent typing inside the media container
+    for (const file of files) {
+      // Create a container div for each media item
+      const container = document.createElement('div');
+      container.className = 'media-container';
+      container.contentEditable = 'false'; // Prevent typing inside the media container
 
-    // Add trash button
-    const trashButton = createTrashButton(container);
-    container.appendChild(trashButton);
+      // Add trash button
+      const trashButton = createTrashButton(container);
+      container.appendChild(trashButton);
 
-    // Show trash button on container click
-    container.addEventListener('click', (e) => {
-      e.stopPropagation();
-      hideAllTrashButtons(editor);
-      trashButton.classList.add('active');
-      activeTrashButton = trashButton;
-      // Position cursor after the container (after the <br>)
-      const nextSibling = container.nextSibling;
-      if (nextSibling && nextSibling.tagName === 'BR') {
-        positionCursorAfter(nextSibling);
-      } else {
-        insertNewlineAfter(container);
+      // Show trash button on container click
+      container.addEventListener('click', (e) => {
+        e.stopPropagation();
+        hideAllTrashButtons(editor);
+        trashButton.classList.add('active');
+        activeTrashButton = trashButton;
+        // Position cursor after the container (after the <br>)
+        const nextSibling = container.nextSibling;
+        if (nextSibling && nextSibling.tagName === 'BR') {
+          positionCursorAfter(nextSibling);
+        } else {
+          insertNewlineAfter(container);
+        }
+      });
+
+      // Handle Excel files
+      if (file.name.endsWith('.xlsx')) {
+        gk_isXlsx = true;
+        gk_xlsxFileLookup[file.name] = true;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          gk_fileData[file.name] = event.target.result.split(',')[1];
+          const csv = loadFileData(file.name);
+          const pre = document.createElement('pre');
+          pre.textContent = csv || 'Error processing Excel file';
+          pre.dataset.fileName = file.name; // Store file name for matching
+          container.appendChild(pre);
+          editor.appendChild(container);
+          mediaItems.push({
+            file,
+            type: 'excel',
+            fileName: file.name,
+            container,
+            source: 'upload', // Indicate this is a file upload
+          });
+          console.log(`Added Excel to mediaItems:`, mediaItems);
+          insertNewlineAfter(container);
+        };
+        reader.readAsDataURL(file);
       }
-    });
-
-    // Handle Excel files
-    if (file.name.endsWith('.xlsx')) {
-      gk_isXlsx = true;
-      gk_xlsxFileLookup[file.name] = true;
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        gk_fileData[file.name] = event.target.result.split(',')[1];
-        const csv = loadFileData(file.name);
-        const pre = document.createElement('pre');
-        pre.textContent = csv || 'Error processing Excel file';
-        pre.dataset.fileName = file.name; // Store file name for matching
-        container.appendChild(pre);
+      // Handle images and GIFs
+      else if (file.type.startsWith('image/') || file.type === 'image/gif') {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        img.alt = file.name;
+        img.dataset.fileName = file.name;
+        img.classList.add('media-preview');
+        container.appendChild(img);
         editor.appendChild(container);
         mediaItems.push({
           file,
-          type: 'excel',
+          type: file.type.includes('gif') ? 'gif' : 'image',
           fileName: file.name,
           container,
           source: 'upload', // Indicate this is a file upload
         });
-        console.log(`Added Excel to mediaItems:`, mediaItems);
+        console.log(`Added image/GIF to mediaItems:`, mediaItems);
         insertNewlineAfter(container);
-      };
-      reader.readAsDataURL(file);
+      } else {
+        alert('Please upload only images, GIFs, or Excel (.xlsx) files.');
+      }
     }
-    // Handle images and GIFs
-    else if (file.type.startsWith('image/') || file.type === 'image/gif') {
-      const img = document.createElement('img');
-      img.src = URL.createObjectURL(file);
-      img.alt = file.name;
-      img.dataset.fileName = file.name;
-      img.classList.add('media-preview');
-      container.appendChild(img);
-      editor.appendChild(container);
-      mediaItems.push({
-        file,
-        type: file.type.includes('gif') ? 'gif' : 'image',
-        fileName: file.name,
-        container,
-        source: 'upload', // Indicate this is a file upload
-      });
-      console.log(`Added image/GIF to mediaItems:`, mediaItems);
-      insertNewlineAfter(container);
-    } else {
-      alert('Please upload only images, GIFs, or Excel (.xlsx) files.');
-    }
-  }
 
-  // Clear file input
-  fileInput.value = '';
-});
+    // Clear file input
+    fileInput.value = '';
+  });
+}
 
-// Hide trash button when clicking outside media
-editor.addEventListener('click', () => {
-  hideAllTrashButtons(editor);
-  editor.focus();
-});
+if (editor) {
+  // Hide trash button when clicking outside media
+  editor.addEventListener('click', () => {
+    hideAllTrashButtons(editor);
+    editor.focus();
+  });
+}
 
-// Recursive function to process nodes and their children
 // Recursive function to process nodes and their children
 function processNode(
   node,
@@ -1200,87 +1213,90 @@ function processNode(
   return { text: currentText };
 }
 
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
+if (form) {
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-  // Build the elements array by parsing editor.innerHTML
-  const elements = [];
-  let currentText = '';
+    // Build the elements array by parsing editor.innerHTML
+    const elements = [];
+    let currentText = '';
 
-  // Parse the innerHTML into a DOM structure
-  const parser = new DOMParser();
-  const doc = parser.parseFromString(
-    `<div>${editor.innerHTML}</div>`,
-    'text/html'
-  );
-  const parsedChildren = Array.from(doc.body.firstChild.childNodes);
+    // Parse the innerHTML into a DOM structure
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(
+      `<div>${editor.innerHTML}</div>`,
+      'text/html'
+    );
+    const parsedChildren = Array.from(doc.body.firstChild.childNodes);
 
-  console.log('Parsed innerHTML:', editor.innerHTML);
-  console.log('Parsed children:', parsedChildren);
+    console.log('Parsed innerHTML:', editor.innerHTML);
+    console.log('Parsed children:', parsedChildren);
 
-  // Process each parsed child recursively
-  for (let i = 0; i < parsedChildren.length; i++) {
-    const state = processNode(parsedChildren[i], elements, mediaItems, {
-      text: currentText,
-    });
-    currentText = state.text;
-  }
-
-  // Add any remaining text
-  if (currentText.trim()) {
-    elements.push({
-      type: 'text',
-      value: currentText.trim(),
-      order: elements.length,
-    });
-  }
-
-  // Log the ordered elements before sending
-  console.log('Ordered Elements Before Sending:', elements);
-
-  // Prepare FormData for Axios request with a separate mediaIndex
-  const formData = new FormData();
-  formData.append('elements', JSON.stringify(elements));
-  let mediaIndex = 0; // Separate counter for media elements
-  elements.forEach((element) => {
-    if (
-      (element.type === 'image' ||
-        element.type === 'gif' ||
-        element.type === 'excel') &&
-      element.source === 'upload'
-    ) {
-      if (element.file) {
-        formData.append(`media-${mediaIndex}`, element.file);
-        mediaIndex++;
-      }
+    // Process each parsed child recursively
+    for (let i = 0; i < parsedChildren.length; i++) {
+      const state = processNode(parsedChildren[i], elements, mediaItems, {
+        text: currentText,
+      });
+      currentText = state.text;
     }
+
+    // Add any remaining text
+    if (currentText.trim()) {
+      elements.push({
+        type: 'text',
+        value: currentText.trim(),
+        order: elements.length,
+      });
+    }
+
+    // Log the ordered elements before sending
+    console.log('Ordered Elements Before Sending:', elements);
+
+    // Prepare FormData for Axios request with a separate mediaIndex
+    const formData = new FormData();
+    formData.append('elements', JSON.stringify(elements));
+    let mediaIndex = 0; // Separate counter for media elements
+    elements.forEach((element) => {
+      if (
+        (element.type === 'image' ||
+          element.type === 'gif' ||
+          element.type === 'excel') &&
+        element.source === 'upload'
+      ) {
+        if (element.file) {
+          formData.append(`media-${mediaIndex}`, element.file);
+          mediaIndex++;
+        }
+      }
+    });
+
+    // Get username and slug from URL
+    const urlParts = window.location.pathname.split('/');
+    const username = urlParts[1];
+    const slug = urlParts[2];
+    const parentComment = form.dataset.parentId || '';
+
+    // Append parentComment to formData
+    if (parentComment) {
+      formData.append('parentComment', parentComment);
+    }
+
+    // Post Comment to backend
+    await postComment(formData, username, slug, parentComment);
+
+    // Reset editor
+    editor.innerHTML = '';
+    mediaItems.length = 0; // Clear media items
+    form.dataset.parentId = ''; // Reset parent ID
   });
+}
 
-  // Get username and slug from URL
-  const urlParts = window.location.pathname.split('/');
-  const username = urlParts[1];
-  const slug = urlParts[2];
-  const parentComment = form.dataset.parentId || '';
-
-  // Append parentComment to formData
-  if (parentComment) {
-    formData.append('parentComment', parentComment);
-  }
-
-  // Post Comment to backend
-  await postComment(formData, username, slug, parentComment);
-
-  // Reset editor
-  editor.innerHTML = '';
-  mediaItems.length = 0; // Clear media items
-  form.dataset.parentId = ''; // Reset parent ID
-});
-
-// Maintain cursor focus after inserting content
-editor.addEventListener('click', () => {
-  editor.focus();
-});
-
+if (editor) {
+  // Maintain cursor focus after inserting content
+  editor.addEventListener('click', () => {
+    editor.focus();
+  });
+}
 document.addEventListener('DOMContentLoaded', () => {
   const urlParts = window.location.pathname.split('/');
   const username = urlParts[1];
@@ -1327,11 +1343,12 @@ document.addEventListener('DOMContentLoaded', () => {
       replyMediaItemsMap.set(commentId, []);
     }
 
-    // Handle media upload button click
-    uploadButton.addEventListener('click', () => {
-      fileInput.click();
-    });
-
+    if (uploadButton) {
+      // Handle media upload button click
+      uploadButton.addEventListener('click', () => {
+        fileInput.click();
+      });
+    }
     // Handle bold button click for reply form
     boldButton.addEventListener('click', (e) => {
       e.preventDefault(); // Prevent any default button behavior
