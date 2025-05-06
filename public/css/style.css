@@ -2548,9 +2548,28 @@ input[type='file'][id*='media-upload'] {
   border: 2px solid beige;
 }
 
-.comments-header {
+.comments-section-header {
+  display: flex;
+  flex-direction: row;
   width: 100%;
+  justify-content: space-between;
   background-color: red;
+}
+
+.cshh {
+  text-align: center;
+  padding: 15px 0px 10px 10px;
+}
+
+.comments-notification-button {
+  background: none !important;
+  border: none;
+  padding: 10px;
+}
+
+.cnsz {
+  filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(87deg)
+    brightness(119%) contrast(119%) grayscale(100%) brightness(300%);
 }
 
 .comments-body {
@@ -2762,6 +2781,15 @@ span.spoiler.revealed a {
   height: 20px;
 }
 
+.cnsz {
+  width: 40px;
+  height: 40px;
+}
+
+.csfh {
+  padding: 10px;
+}
+
 .comment-gif-button {
   margin-left: 10px;
 }
@@ -2785,6 +2813,12 @@ span.spoiler.revealed a {
   flex-direction: row;
   margin-top: 20px;
   align-content: space-between;
+}
+
+.comments-section-footer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 /*======================END UPLOAD PAGE CSS=========================*/
 

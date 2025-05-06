@@ -258,8 +258,10 @@ block content
                                     span IMAGE SIZE:  
                                     p.image-details=`${upload.width} x ${upload.height}px ${upload.size}`
                                 .comments-container
-                                    .comments-header
-                                        h2(class='text-xl font-bold mb-4') Comments
+                                    .comments-section-header
+                                        h2(class='cshh') Comments
+                                        button(type="button" id="comments-notifications" class="comments-notification-button")
+                                            img.cnsz(src='/img/svg/chat-bubble.svg' alt='Comment Notifications')
                                     .comments-body
                                         .comments-post-section
                                             img.comment-user-icon(src=`/img/stock/${upload.media}`)
@@ -299,6 +301,8 @@ block content
                                                         +renderComment(comment)
                                             else
                                                 p.comment-befirst-cotent='Be the first to comment'
+                                    .comments-section-footer
+                                        h1(class="csfh")='Yak'
             .side-container
                 .side__container-header
                     .side__header
