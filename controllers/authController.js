@@ -56,6 +56,7 @@ exports.deserializeUser = async (id, done) => {
 
 exports.googleCallback = async (accessToken, refreshToken, profile, done) => {
   try {
+    console.log('inside google callback');
     // Check if user already exists with Google ID
     let user = await User.findOne({ googleId: profile.id });
     if (user) {
@@ -93,7 +94,7 @@ exports.googleCallbackHandler = (req, res) => {
 };
 
 exports.googleCallbackPost = catchAsync(async (req, res, next) => {
-  console.log('Received request to /api/v1/users/auth/google/callback');
+  console.log('Received request to /users/auth/google/callback');
   console.log('Request body:', req.body);
 
   const { credential } = req.body;

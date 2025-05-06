@@ -91,9 +91,10 @@ export const googleSignIn = () => {
 // Handle Google Sign-In response
 const handleCredentialResponse = async (response) => {
   try {
+    console.log('inside handle credential response');
     const res = await axios({
       method: 'POST',
-      url: '/api/v1/users/auth/google/callback',
+      url: '/auth/google/callback',
       data: { credential: response.credential },
     });
 
@@ -115,24 +116,3 @@ const handleCredentialResponse = async (response) => {
     showAlert('error', 'Google Sign-In failed. Please try again.');
   }
 };
-
-// // Initialize Google Sign-In on page load
-// document.addEventListener('DOMContentLoaded', () => {
-//   // Only initialize if on the login page
-//   if (!document.querySelector('.login')) return;
-
-//   const gisScript = document.getElementById('gis-script');
-//   if (gisScript) {
-//     gisScript.addEventListener('load', () => {
-//       googleSignIn();
-//     });
-//     gisScript.addEventListener('error', () => {
-//       showAlert(
-//         'error',
-//         'Failed to load Google Sign-In. Please try again later.'
-//       );
-//     });
-//   } else {
-//     showAlert('error', 'Google Sign-In script not found.');
-//   }
-// });

@@ -18,6 +18,7 @@ const userRouter = require('./routes/userRoutes');
 const commentRouter = require('./routes/commentRoutes');
 const viewRouter = require('./routes/viewRoutes');
 const stockRouter = require('./routes/stockRoutes');
+const googleAuthRouter = require('./routes/googleAuthRoutes');
 
 const authController = require('./controllers/authController');
 
@@ -136,7 +137,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: process.env.CALLBACK_URL,
+      callbackURL: process.env.GOOGLE_CALLBACK_URL,
     },
     authController.googleCallback
   )
@@ -170,6 +171,7 @@ app.use((req, res, next) => {
 });
 
 // MOUNTER ROUTER
+app.use('/auth/google', googleAuthRouter);
 app.use('/api/v1/uploads', uploadRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/comments', commentRouter);
