@@ -90,6 +90,7 @@ exports.getUserProfile = catchAsync(async (req, res, next) => {
 exports.getLoginForm = (req, res, next) => {
   res.status(200).render('login', {
     title: 'Log into your account',
+    googleClientId: process.env.GOOGLE_CLIENT_ID, // Pass GOOGLE_CLIENT_ID to the template
   });
 };
 

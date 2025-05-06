@@ -42,12 +42,6 @@ exports.getMe = (req, res, next) => {
   next();
 };
 
-// Handlers for user documents
-exports.getAllUsers = Handler.getAllDocs(User);
-exports.createUser = Handler.createDoc(User);
-exports.getUser = Handler.getDoc(User);
-exports.deleteUser = Handler.deleteDoc(User);
-
 // Middleware to update the current user's profile
 exports.updateMe = catchAsync(async (req, res, next) => {
   if (req.body.password || req.body.passwordConfirm) {
@@ -112,5 +106,8 @@ exports.deleteMyAccount = catchAsync(async (req, res, next) => {
   });
 });
 
-// Middleware a Users account
+// Handlers for user documents
+exports.getAllUsers = Handler.getAllDocs(User);
+exports.createUser = Handler.createDoc(User);
+exports.getUser = Handler.getDoc(User);
 exports.deleteUser = Handler.deleteDoc(User);

@@ -1,6 +1,8 @@
 const path = require('path'); // built-in Node module for working with file and directory paths
 const express = require('express'); // popular Node framework for building web applications
 const session = require('express-session');
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const morgan = require('morgan'); // middleware for logging HTTP requests
 const rateLimit = require('express-rate-limit'); // middleware for limiting the number of requests to an API
 const helmet = require('helmet'); // middleware for setting HTTP headers to improve security
@@ -16,6 +18,8 @@ const userRouter = require('./routes/userRoutes');
 const commentRouter = require('./routes/commentRoutes');
 const viewRouter = require('./routes/viewRoutes');
 const stockRouter = require('./routes/stockRoutes');
+
+const authController = require('./controllers/authController');
 
 const app = express();
 
@@ -33,6 +37,7 @@ const defaultSources = [
   "'unsafe-eval'",
   "'unsafe-inline'",
   'blob:',
+  'https://accounts.google.com/gsi/',
 ];
 
 const scriptSources = [
@@ -44,6 +49,7 @@ const scriptSources = [
   'cdnjs.cloudflare.com',
   'unpkg.com',
   'code.jquery.com',
+  'https://accounts.google.com/gsi/client',
 ];
 const styleSources = [
   "'self'",
@@ -51,6 +57,7 @@ const styleSources = [
   'ajax.googleapis.com',
   'fonts.googleapis.com',
   'cdnjs.cloudflare.com',
+  'https://accounts.google.com/gsi/style',
 ];
 const connectSources = [
   "'self'",
@@ -59,7 +66,11 @@ const connectSources = [
   'data:',
   'https://tenor.googleapis.com',
   'https://media.tenor.com',
+  'https://accounts.google.com/gsi/',
+  'https://*.googleapis.com',
 ];
+
+const frameSources = ['https://accounts.google.com/gsi/'];
 const fontSources = ["'self'", 'fonts.gstatic.com'];
 const workerSources = ["'self'", 'unsafe-inline', 'blob:'];
 const imageSources = ["'self'", 'data:', 'blob:', 'https://media.tenor.com'];
@@ -75,6 +86,7 @@ app.use(
         fontSrc: fontSources,
         workerSrc: workerSources,
         imgSrc: imageSources,
+        frameSrc: frameSources,
       },
     },
     frameguard: {
@@ -106,6 +118,28 @@ app.use(
     resave: false,
     saveUninitialized: false,
   })
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Passport serialization
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser(authController.deserializeUser);
+
+// Google OAuth Strategy
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: process.env.CALLBACK_URL,
+    },
+    authController.googleCallback
+  )
 );
 
 //Data sanitization against nosql query injection

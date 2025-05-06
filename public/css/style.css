@@ -159,6 +159,22 @@ input[data-autocompleted] {
   overflow: auto;
 }
 
+.g_id_signin {
+  display: inline-block;
+  margin: 0 auto;
+}
+
+/* Adjust the button container to match your form layout */
+.form__group .g_id_signin {
+  width: 280px; /* Match your other buttons */
+  height: 40px; /* Adjust height as needed */
+}
+
+/* Optional: Add hover effects similar to your other buttons */
+.form__group .g_id_signin:hover {
+  background-color: #f0f0f0; /* Match .btn--grey hover effect */
+}
+
 .btn-return__home,
 .btn-update-file {
   position: absolute;

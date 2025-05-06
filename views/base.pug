@@ -12,6 +12,8 @@ html(lang='en')
             link(rel='preconnect' href='https://fonts.googleapis.com')
             link(rel='preconnect' href='https://fonts.gstatic.com' crossorigin)
             link(href='https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap' rel='stylesheet')
+            script#gis-script(src='https://accounts.google.com/gsi/client' async defer)
+            script(type='module' src='/js/bundled/index.js')
             title Pixeum || #{title}
 
     body(data-alert=`${alert ? alert: ''}`)
@@ -26,7 +28,3 @@ html(lang='en')
 
         // FOOTER
         include _footer
-
-  
-        script(type='module' src='/js/bundled/index.js')
-        //- script(type='module' src='/js/front/black.js')

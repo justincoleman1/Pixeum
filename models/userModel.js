@@ -25,6 +25,16 @@ const userSchema = new mongoose.Schema(
       lowercase: true,
       validate: [validator.isEmail, 'Please provide a valid email!'],
     },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true, // Allows multiple users with null googleId
+    },
+    authType: {
+      type: String,
+      enum: ['password', 'google'],
+      default: 'password',
+    },
     gender: {
       type: String,
       lowercase: true,

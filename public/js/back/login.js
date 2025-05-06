@@ -48,3 +48,91 @@ export const logout = async () => {
     showAlert('error', 'Error logging out! Try again.');
   }
 };
+
+// Initialize Google Sign-In
+export const googleSignIn = () => {
+  try {
+    // Get the client ID from the data attribute
+    const googleButton = document.querySelector('.g_id_signin');
+    const clientId = googleButton ? googleButton.dataset.clientId : null;
+
+    if (!clientId) {
+      console.error('Google Client ID not found in data-client-id attribute');
+      showAlert(
+        'error',
+        'Failed to initialize Google Sign-In: Client ID missing.'
+      );
+      return;
+    }
+    google.accounts.id.initialize({
+      client_id: clientId,
+      callback: handleCredentialResponse,
+    });
+
+    // Render the Google Sign-In button
+    if (googleButton) {
+      google.accounts.id.renderButton(googleButton, {
+        theme: 'outline',
+        size: 'large',
+        width: 280, // Match your other buttons
+      });
+      console.log('gis button is rendered');
+    }
+    console.log('google sign in successful');
+  } catch (err) {
+    console.error('Error initializing Google Sign-In:', err);
+    showAlert(
+      'error',
+      'Failed to initialize Google Sign-In. Please try again later.'
+    );
+  }
+};
+
+// Handle Google Sign-In response
+const handleCredentialResponse = async (response) => {
+  try {
+    const res = await axios({
+      method: 'POST',
+      url: '/api/v1/users/auth/google/callback',
+      data: { credential: response.credential },
+    });
+
+    if (res.data.status === 'success') {
+      showAlert('success', 'Logged in with Google successfully!');
+      const redirect = new URLSearchParams(window.location.search).get(
+        'redirect'
+      );
+      if (redirect) {
+        window.location.href = redirect;
+      } else {
+        window.setTimeout(() => {
+          location.assign('/');
+        }, 1500);
+      }
+    }
+  } catch (err) {
+    console.error('Error during Google Sign-In:', err);
+    showAlert('error', 'Google Sign-In failed. Please try again.');
+  }
+};
+
+// // Initialize Google Sign-In on page load
+// document.addEventListener('DOMContentLoaded', () => {
+//   // Only initialize if on the login page
+//   if (!document.querySelector('.login')) return;
+
+//   const gisScript = document.getElementById('gis-script');
+//   if (gisScript) {
+//     gisScript.addEventListener('load', () => {
+//       googleSignIn();
+//     });
+//     gisScript.addEventListener('error', () => {
+//       showAlert(
+//         'error',
+//         'Failed to load Google Sign-In. Please try again later.'
+//       );
+//     });
+//   } else {
+//     showAlert('error', 'Google Sign-In script not found.');
+//   }
+// });

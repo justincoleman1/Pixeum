@@ -2,12 +2,12 @@
 // import '@babel/polyfill';
 import Cropper from 'cropperjs';
 
-import { login, logout } from './back/login';
+import { login, logout, googleSignIn } from './back/login';
 import { signup } from './back/signup';
 import { updateSettings } from './back/updateSettings';
 import { submit_art } from './back/uploadArt';
 import { update_art } from './back/updateArt';
-import comments from './back/comments.js';
+// import comments from './back/comments.js';
 import { delete_art } from './back/deleteUpload';
 import { showAlert } from './front/alerts';
 import { handleFavorite } from './back/favorite.js';
@@ -67,6 +67,8 @@ const searchClearBtn = document.getElementById('search-clear');
 const searchRevert = document.getElementById('search-revert');
 
 const loginForm = document.getElementById('login-form');
+const googleButton = document.getElementById('google-login-btn');
+
 const signupForm = document.getElementById('signup-form');
 
 const passShowBtn = document.getElementById('pass-show');
@@ -162,17 +164,60 @@ window.addEventListener('resize', (e) => {
   windowSize792Changes();
 });
 
-//DOCUMENT LISTENERS
-// document.addEventListener(w, (e) => {
-//   h(e);
-// });
-// document.addEventListener(g, () => {
-//   s();
-// });
+// Initialize Google Sign-In on page load with fallback polling
+document.addEventListener('DOMContentLoaded', () => {
+  // Only initialize if on the login page
+  if (!document.querySelector('.login')) return;
 
-// window.addEventListener(sh, (e) => {
-//   p(e);
-// });
+  const gisScript = document.getElementById('gis-script');
+  if (!gisScript) {
+    showAlert('error', 'Google Sign-In script not found.');
+    return;
+  }
+
+  // Flag to track if the button has been rendered
+  let isRendered = false;
+
+  // Function to attempt rendering the button
+  const attemptRender = () => {
+    if (isRendered) return; // Prevent multiple renders
+    if (window.google && window.google.accounts && window.google.accounts.id) {
+      googleSignIn();
+      isRendered = true;
+    }
+  };
+
+  // Listen for the script load event
+  gisScript.addEventListener('load', () => {
+    attemptRender();
+  });
+
+  // Fallback polling in case the load event doesn't fire
+  const maxAttempts = 100; // Poll for up to 10 seconds (100 * 100ms)
+  let attempts = 0;
+  const pollInterval = setInterval(() => {
+    attempts++;
+    attemptRender();
+    if (isRendered || attempts >= maxAttempts) {
+      clearInterval(pollInterval);
+      if (!isRendered) {
+        showAlert(
+          'error',
+          'Failed to load Google Sign-In. Please try again later.'
+        );
+      }
+    }
+  }, 100);
+
+  // Handle script load errors
+  gisScript.addEventListener('error', () => {
+    clearInterval(pollInterval);
+    showAlert(
+      'error',
+      'Failed to load Google Sign-In. Please try again later.'
+    );
+  });
+});
 
 // DELEGATION
 if (sideNavBtn) {
@@ -257,9 +302,17 @@ if (signupForm) {
   });
 }
 
+if (googleButton) {
+  googleButton.addEventListener('click', (e) => {
+    e.preventDefault();
+    console.log('google button clicked');
+  });
+}
+
 if (loginForm) {
   asideDisappear();
   navDisappear();
+
   loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
     console.log('submit');

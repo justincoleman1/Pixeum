@@ -1,6 +1,8 @@
 const crypto = require('crypto');
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
+const passport = require('passport');
+
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
@@ -42,6 +44,129 @@ const createSendToken = (user, statusCode, res) => {
     },
   });
 };
+
+exports.deserializeUser = async (id, done) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (err) {
+    done(err, null);
+  }
+};
+
+exports.googleCallback = async (accessToken, refreshToken, profile, done) => {
+  try {
+    // Check if user already exists with Google ID
+    let user = await User.findOne({ googleId: profile.id });
+    if (user) {
+      return done(null, user);
+    }
+
+    // Check if email already exists (to prevent duplicate accounts)
+    user = await User.findOne({ email: profile.emails[0].value });
+    if (user) {
+      // Link Google account to existing user
+      user.googleId = profile.id;
+      user.authType = 'google';
+      await user.save({ validateBeforeSave: false });
+      return done(null, user);
+    }
+
+    // Create new user
+    user = new User({
+      name: profile.displayName,
+      email: profile.emails[0].value,
+      photo: profile.photos[0].value || 'default.jpg',
+      googleId: profile.id,
+      authType: 'google',
+    });
+    await user.save({ validateBeforeSave: false });
+    done(null, user);
+  } catch (err) {
+    done(err, null);
+  }
+};
+
+exports.googleCallbackHandler = (req, res) => {
+  // Successful authentication, redirect to homepage
+  res.redirect('/');
+};
+
+exports.googleCallbackPost = catchAsync(async (req, res, next) => {
+  console.log('Received request to /api/v1/users/auth/google/callback');
+  console.log('Request body:', req.body);
+
+  const { credential } = req.body;
+  if (!credential) {
+    console.error('Missing credential in request body');
+    return res
+      .status(400)
+      .json({ status: 'error', message: 'Missing credential' });
+  }
+
+  // Verify the ID token
+  const { OAuth2Client } = require('google-auth-library');
+  const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+  console.log(
+    'Verifying ID token with client ID:',
+    process.env.GOOGLE_CLIENT_ID
+  );
+  const ticket = await client.verifyIdToken({
+    idToken: credential,
+    audience: process.env.GOOGLE_CLIENT_ID,
+  });
+  const payload = ticket.getPayload();
+  console.log('ID token payload:', payload);
+
+  // Check if user exists with Google ID
+  let user = await User.findOne({ googleId: payload.sub });
+  if (user) {
+    console.log('Existing user found with Google ID:', user.email);
+    return req.login(user, (err) => {
+      if (err) {
+        console.error('Error logging in existing user:', err);
+        return next(new AppError('Login failed', 500));
+      }
+      return res.json({ status: 'success' });
+    });
+  }
+
+  // Check if email exists
+  user = await User.findOne({ email: payload.email });
+  if (user) {
+    console.log('Existing user found with email:', user.email);
+    user.googleId = payload.sub;
+    user.authType = 'google';
+    await user.save({ validateBeforeSave: false });
+    return req.login(user, (err) => {
+      if (err) {
+        console.error('Error logging in user with email:', err);
+        return next(new AppError('Login failed', 500));
+      }
+      return res.json({ status: 'success' });
+    });
+  }
+
+  // Create new user
+  console.log('Creating new user with email:', payload.email);
+  user = new User({
+    name: payload.name,
+    email: payload.email,
+    photo: payload.picture || 'default.jpg',
+    googleId: payload.sub,
+    authType: 'google',
+  });
+  await user.save({ validateBeforeSave: false });
+
+  req.login(user, (err) => {
+    if (err) {
+      console.error('Error logging in new user:', err);
+      return next(new AppError('Login failed', 500));
+    }
+    console.log('New user logged in successfully:', user.email);
+    return res.json({ status: 'success' });
+  });
+});
 
 exports.signup = catchAsync(async (req, res, next) => {
   console.log('creating user');
