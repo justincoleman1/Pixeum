@@ -258,10 +258,46 @@ block content
                                     span IMAGE SIZE:  
                                     p.image-details=`${upload.width} x ${upload.height}px ${upload.size}`
                                 .comments-container
+                                    .comments-section-reactions
+                                        h1.csrh='What do you think?'
+                                        p.csrp='count responses'
+                                        .comments-reactions
+                                            ul.comment-reactions-list
+                                                li.comment-reaction
+                                                    img.crsz(src='/img/svg/thumbs-up-emoji-1.svg' alt='Upload Upvote')
+                                                    h4.cshn='15'
+                                                    h4.cshn='Upvote'
+                                                li.comment-reaction
+                                                    img.crsz(src='/img/svg/rofl.svg' alt='Funny')
+                                                    h4.cshn='20'
+                                                    h4.cshn='Funny'
+                                                li.comment-reaction
+                                                    img.crsz(src='/img/svg/love.svg' alt='Love')
+                                                    h4.cshn='15'
+                                                    h4.cshn='Love'
+                                                li.comment-reaction
+                                                    img.crsz(src='/img/svg/surprised.svg' alt='Surprised')
+                                                    h4.cshn='295'
+                                                    h4.cshn='Surprised'
+                                                li.comment-reaction
+                                                    img.crsz(src='/img/svg/triumph.svg' alt='Angry')
+                                                    h4.cshn='5'
+                                                    h4.cshn='Angry'
+                                                li.comment-reaction
+                                                    img.crsz(src='/img/svg/cry.svg' alt='Sad')
+                                                    h4.cshn='0'
+                                                    h4.cshn='Sad'
                                     .comments-section-header
-                                        h2(class='cshh') Comments
-                                        button(type="button" id="comments-notifications" class="comments-notification-button")
-                                            img.cnsz(src='/img/svg/chat-bubble.svg' alt='Comment Notifications')
+                                        h4.cshh=`${upload.comment_count} Comments`
+                                        if user
+                                            button(type="button" id="comments-notifications" class="comments-notification-button")
+                                                img.cnsz(src='/img/svg/chat-bubble.svg' alt='Comment Notifications')
+                                                h4.cshn=`${user.username}`
+                                        else
+                                            button(type="button" id="comments-notifications" class="comments-notification-button")
+                                                img.cnsz(src='/img/svg/chat-bubble.svg' alt='Comment Notifications')
+                                                h4.cshn='Login'
+
                                     .comments-body
                                         .comments-post-section
                                             img.comment-user-icon(src=`/img/stock/${upload.media}`)

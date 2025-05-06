@@ -2548,6 +2548,36 @@ input[type='file'][id*='media-upload'] {
   border: 2px solid beige;
 }
 
+.comments-section-reactions {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.comment-reactions-list {
+  margin: 25px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.comment-reaction {
+  display: flex;
+  flex-direction: column;
+}
+
+.crsz {
+  width: 50px;
+  height: 50px;
+  align-self: center;
+}
+
+.csrh,
+.csrp {
+  text-align: center;
+  margin: 10px;
+}
+
 .comments-section-header {
   display: flex;
   flex-direction: row;
@@ -2558,18 +2588,23 @@ input[type='file'][id*='media-upload'] {
 
 .cshh {
   text-align: center;
-  padding: 15px 0px 10px 10px;
+  padding: 17.5px 0px 10px 10px;
+}
+
+.cshn {
+  padding: 10px;
+  font-size: 16px;
+  font: bold;
+  text-align: center;
 }
 
 .comments-notification-button {
   background: none !important;
   border: none;
-  padding: 10px;
-}
-
-.cnsz {
-  filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(87deg)
-    brightness(119%) contrast(119%) grayscale(100%) brightness(300%);
+  margin: 10px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 }
 
 .comments-body {
@@ -2782,8 +2817,11 @@ span.spoiler.revealed a {
 }
 
 .cnsz {
-  width: 40px;
-  height: 40px;
+  width: 24px;
+  height: 24px;
+  filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(87deg)
+    brightness(119%) contrast(119%) grayscale(100%) brightness(300%);
+  align-self: center;
 }
 
 .csfh {
