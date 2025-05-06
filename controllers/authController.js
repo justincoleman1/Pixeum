@@ -19,7 +19,7 @@ const signToken = (id) =>
     }
   );
 
-const createSendToken = (user, statusCode, res) => {
+const createSendToken = (user, statusCode, req, res) => {
   const token = signToken(user._id);
   const cookieOptions = {
     expires: new Date(
@@ -27,9 +27,9 @@ const createSendToken = (user, statusCode, res) => {
     ),
     secure: true,
     httpOnly: true,
+    path: '/',
   };
 
-  console.log('HERE');
   if (process.env.NODE_ENV === 'development') cookieOptions.secure = false;
 
   res.cookie('jwt', token, cookieOptions);
@@ -45,6 +45,95 @@ const createSendToken = (user, statusCode, res) => {
   });
 };
 
+const createSendTokenWithRedirect = (
+  user,
+  statusCode,
+  req,
+  res,
+  redirectUrl
+) => {
+  const token = signToken(user._id);
+  const cookieOptions = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    ),
+    secure: true,
+    httpOnly: true,
+    path: '/',
+  };
+
+  if (process.env.NODE_ENV === 'development') cookieOptions.secure = false;
+
+  res.cookie('jwt', token, cookieOptions);
+
+  user.password = undefined;
+
+  res.status(statusCode).redirect(redirectUrl);
+};
+
+// Utility function to generate a unique username
+const generateUniqueUsername = async (baseUsername) => {
+  // Sanitize the base username: remove special characters, spaces, and convert to lowercase
+  let username = baseUsername
+    .toLowerCase()
+    .replace(/[^a-z0-9]/g, '') // Remove non-alphanumeric characters
+    .slice(0, 20); // Limit to 20 characters
+
+  // If the username is empty or too short, use a default prefix
+  if (!username || username.length < 3) {
+    username = 'user' + Math.floor(Math.random() * 10000);
+  }
+
+  let finalUsername = username;
+  let counter = 1;
+
+  // Check if the username already exists, append a number if necessary
+  while (await User.findOne({ username: finalUsername })) {
+    finalUsername = `${username}${counter}`;
+    counter++;
+  }
+
+  return finalUsername;
+};
+
+// Utility function to find or create a Google user
+const findOrCreateGoogleUser = async (googleId, email, name, photo) => {
+  // Check if user already exists with Google ID
+  let user = await User.findOne({ googleId });
+  if (user) {
+    console.log('Existing user found with Google ID:', user.email);
+    return user;
+  }
+
+  // Check if email already exists (to prevent duplicate accounts)
+  user = await User.findOne({ email });
+  if (user) {
+    console.log('Existing user found with email:', user.email);
+    // Link Google account to existing user
+    user.googleId = googleId;
+    user.authType = 'google';
+    await user.save({ validateBeforeSave: false });
+    return user;
+  }
+
+  // Generate a unique username based on the name or email
+  const baseUsername = name || email.split('@')[0]; // Use name if available, otherwise use email prefix
+  const username = await generateUniqueUsername(baseUsername);
+
+  // Create new user
+  console.log('Creating new user with email:', email);
+  user = new User({
+    name,
+    email,
+    username, // Set the generated username
+    photo: photo || 'default.jpg',
+    googleId,
+    authType: 'google',
+  });
+  await user.save({ validateBeforeSave: false });
+  return user;
+};
+
 exports.deserializeUser = async (id, done) => {
   try {
     const user = await User.findById(id);
@@ -57,31 +146,12 @@ exports.deserializeUser = async (id, done) => {
 exports.googleCallback = async (accessToken, refreshToken, profile, done) => {
   try {
     console.log('inside google callback');
-    // Check if user already exists with Google ID
-    let user = await User.findOne({ googleId: profile.id });
-    if (user) {
-      return done(null, user);
-    }
-
-    // Check if email already exists (to prevent duplicate accounts)
-    user = await User.findOne({ email: profile.emails[0].value });
-    if (user) {
-      // Link Google account to existing user
-      user.googleId = profile.id;
-      user.authType = 'google';
-      await user.save({ validateBeforeSave: false });
-      return done(null, user);
-    }
-
-    // Create new user
-    user = new User({
-      name: profile.displayName,
-      email: profile.emails[0].value,
-      photo: profile.photos[0].value || 'default.jpg',
-      googleId: profile.id,
-      authType: 'google',
-    });
-    await user.save({ validateBeforeSave: false });
+    const user = await findOrCreateGoogleUser(
+      profile.id,
+      profile.emails[0].value,
+      profile.displayName,
+      profile.photos[0].value
+    );
     done(null, user);
   } catch (err) {
     done(err, null);
@@ -89,12 +159,12 @@ exports.googleCallback = async (accessToken, refreshToken, profile, done) => {
 };
 
 exports.googleCallbackHandler = (req, res) => {
-  // Successful authentication, redirect to homepage
-  res.redirect('/');
+  // Successful authentication, set JWT token and redirect to homepage
+  createSendTokenWithRedirect(req.user, 200, req, res, '/');
 };
 
 exports.googleCallbackPost = catchAsync(async (req, res, next) => {
-  console.log('Received request to /users/auth/google/callback');
+  console.log('Received request to /auth/google/callback');
   console.log('Request body:', req.body);
 
   const { credential } = req.body;
@@ -112,61 +182,31 @@ exports.googleCallbackPost = catchAsync(async (req, res, next) => {
     'Verifying ID token with client ID:',
     process.env.GOOGLE_CLIENT_ID
   );
-  const ticket = await client.verifyIdToken({
-    idToken: credential,
-    audience: process.env.GOOGLE_CLIENT_ID,
-  });
+  let ticket;
+  try {
+    ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+  } catch (err) {
+    console.error('Error verifying ID token:', err);
+    return res
+      .status(400)
+      .json({ status: 'error', message: 'Invalid ID token' });
+  }
   const payload = ticket.getPayload();
   console.log('ID token payload:', payload);
 
-  // Check if user exists with Google ID
-  let user = await User.findOne({ googleId: payload.sub });
-  if (user) {
-    console.log('Existing user found with Google ID:', user.email);
-    return req.login(user, (err) => {
-      if (err) {
-        console.error('Error logging in existing user:', err);
-        return next(new AppError('Login failed', 500));
-      }
-      return res.json({ status: 'success' });
-    });
-  }
+  // Use the utility function to find or create the user
+  const user = await findOrCreateGoogleUser(
+    payload.sub,
+    payload.email,
+    payload.name,
+    payload.picture
+  );
 
-  // Check if email exists
-  user = await User.findOne({ email: payload.email });
-  if (user) {
-    console.log('Existing user found with email:', user.email);
-    user.googleId = payload.sub;
-    user.authType = 'google';
-    await user.save({ validateBeforeSave: false });
-    return req.login(user, (err) => {
-      if (err) {
-        console.error('Error logging in user with email:', err);
-        return next(new AppError('Login failed', 500));
-      }
-      return res.json({ status: 'success' });
-    });
-  }
-
-  // Create new user
-  console.log('Creating new user with email:', payload.email);
-  user = new User({
-    name: payload.name,
-    email: payload.email,
-    photo: payload.picture || 'default.jpg',
-    googleId: payload.sub,
-    authType: 'google',
-  });
-  await user.save({ validateBeforeSave: false });
-
-  req.login(user, (err) => {
-    if (err) {
-      console.error('Error logging in new user:', err);
-      return next(new AppError('Login failed', 500));
-    }
-    console.log('New user logged in successfully:', user.email);
-    return res.json({ status: 'success' });
-  });
+  // Send token to client
+  createSendToken(user, user.googleId ? 200 : 201, req, res);
 });
 
 exports.signup = catchAsync(async (req, res, next) => {

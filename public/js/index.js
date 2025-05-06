@@ -3,6 +3,10 @@
 import Cropper from 'cropperjs';
 
 import { login, logout, googleSignIn } from './back/login';
+import {
+  initializeGoogleSignIn,
+  renderGoogleButton,
+} from './back/googleLogin.js';
 import { signup } from './back/signup';
 import { updateSettings } from './back/updateSettings';
 import { submit_art } from './back/uploadArt';
@@ -182,13 +186,24 @@ document.addEventListener('DOMContentLoaded', () => {
   const attemptRender = () => {
     if (isRendered) return; // Prevent multiple renders
     if (window.google && window.google.accounts && window.google.accounts.id) {
-      googleSignIn();
-      isRendered = true;
+      // First, initialize Google Sign-In
+      const initialized = initializeGoogleSignIn();
+      if (initialized) {
+        // Small delay to ensure initialization is complete
+        setTimeout(() => {
+          // Then, render the button
+          const rendered = renderGoogleButton();
+          if (rendered) {
+            isRendered = true;
+          }
+        }, 100);
+      }
     }
   };
 
   // Listen for the script load event
   gisScript.addEventListener('load', () => {
+    console.log('GIS script loaded');
     attemptRender();
   });
 

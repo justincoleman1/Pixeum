@@ -24,6 +24,11 @@ const authController = require('./controllers/authController');
 
 const app = express();
 
+app.use((req, res, next) => {
+  console.log(`Incoming request: ${req.method} ${req.url}`);
+  next();
+});
+
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -65,13 +70,12 @@ const connectSources = [
   'unpkg.com',
   'blob:',
   'data:',
+  'https://accounts.google.com/gsi/',
   'https://tenor.googleapis.com',
   'https://media.tenor.com',
-  'https://accounts.google.com/gsi/',
-  'https://*.googleapis.com',
 ];
 
-const frameSources = ['https://accounts.google.com/gsi/'];
+const frameSources = ["'self'", 'https://accounts.google.com'];
 const fontSources = ["'self'", 'fonts.gstatic.com'];
 const workerSources = ["'self'", 'unsafe-inline', 'blob:'];
 const imageSources = ["'self'", 'data:', 'blob:', 'https://media.tenor.com'];
@@ -88,12 +92,14 @@ app.use(
         workerSrc: workerSources,
         imgSrc: imageSources,
         frameSrc: frameSources,
+        scriptSrcAttr: ["'none'"], // Ensure inline script attributes are disabled
       },
     },
     frameguard: {
       action: 'SAMEORIGIN',
     },
     crossOriginEmbedderPolicy: false,
+    crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
   })
 );
 
