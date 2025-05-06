@@ -2,6 +2,7 @@ const crypto = require('crypto');
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
+const userController = require('./userController'); // Import userController for photo processing
 
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
@@ -117,16 +118,23 @@ const findOrCreateGoogleUser = async (googleId, email, name, photo) => {
   }
 
   // Generate a unique username based on the name or email
-  const baseUsername = name || email.split('@')[0]; // Use name if available, otherwise use email prefix
+  const baseUsername = name || email.split('@')[0];
   const username = await generateUniqueUsername(baseUsername);
 
+  // Process the Google profile photo
+  const photoFilename = await userController.processGoogleProfilePhoto(
+    photo,
+    googleId
+  );
+
+  console.log(photoFilename);
   // Create new user
   console.log('Creating new user with email:', email);
   user = new User({
     name,
     email,
-    username, // Set the generated username
-    photo: photo || 'default.jpg',
+    username,
+    photo: photoFilename, // Use the processed photo filename
     googleId,
     authType: 'google',
   });

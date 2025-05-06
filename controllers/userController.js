@@ -5,6 +5,7 @@ const { upload } = require('./multerController');
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const axios = require('axios');
 
 // Middleware to upload a user photo
 exports.uploadUserPhoto = upload.single('photo');
@@ -25,6 +26,45 @@ exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
 
   next();
 });
+
+// Utility function to download and resize a Google profile photo
+exports.processGoogleProfilePhoto = async (photoUrl, userId) => {
+  if (!photoUrl) {
+    console.log('No photo URL provided, using default.jpg');
+    return 'default.jpg'; // Fallback to default if no photo URL
+  }
+
+  try {
+    console.log('Downloading Google profile photo from:', photoUrl);
+    // Download the image from the Google profile photo URL
+    const response = await axios({
+      url: photoUrl,
+      method: 'GET',
+      responseType: 'arraybuffer', // Get the image as a binary buffer
+    });
+
+    const buffer = Buffer.from(response.data, 'binary');
+
+    // Generate a unique filename for the resized photo
+    const filename = `user-${userId}-${Date.now()}.jpeg`;
+    console.log('Saving resized photo as:', filename);
+
+    // Resize the photo and save it to the public folder
+    await sharp(buffer)
+      .resize(500, 500)
+      .toFormat('jpeg')
+      .jpeg({ quality: 100 })
+      .toFile(`public/img/users/${filename}`);
+
+    console.log('Successfully processed Google profile photo:', filename);
+    return filename;
+  } catch (err) {
+    console.error('Error processing Google profile photo:', err.message);
+    console.error('Error details:', err);
+    console.log('Falling back to default.jpg due to error');
+    return 'default.jpg'; // Fallback to default on error
+  }
+};
 
 // Function to filter an object based on allowed fields
 const filterObj = (obj, ...allowedFields) => {
