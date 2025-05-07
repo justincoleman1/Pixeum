@@ -821,6 +821,56 @@ exports.addReaction = catchAsync(async (req, res, next) => {
   }
 });
 
+// Handler to get the user's reaction state for an upload
+exports.getUserReactionState = catchAsync(async (req, res, next) => {
+  const { username, slug } = req.params;
+  const userId = req.user._id;
+
+  console.log('Fetching reaction state:', { username, slug, userId });
+
+  // Find the upload by slug and verify the username matches
+  const upload = await Upload.findOne({ slug }).populate('user');
+  if (!upload) {
+    return next(new AppError('Upload not found', 404));
+  }
+
+  // Verify the username matches the upload's user
+  if (upload.user.username !== username) {
+    return next(new AppError('Upload not found for this user', 404));
+  }
+
+  // Check which reaction types the user has reacted to
+  const reactionState = {};
+  const reactionTypes = [
+    'upvote',
+    'funny',
+    'love',
+    'surprised',
+    'angry',
+    'sad',
+  ];
+  let hasReacted = false;
+
+  reactionTypes.forEach((type) => {
+    const hasReactedToType =
+      upload.reactions &&
+      upload.reactions[type] &&
+      upload.reactions[type].includes(userId);
+    reactionState[type] = hasReactedToType;
+    if (hasReactedToType) {
+      hasReacted = true;
+    }
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      hasReacted, // Boolean indicating if the user has reacted to any type
+      reactionState, // Object indicating which types the user has reacted to
+    },
+  });
+});
+
 exports.getAllUploads = Handler.getAllDocs(Upload);
 exports.updateUpload = Handler.updateDoc(Upload);
 exports.deleteUpload = Handler.deleteDoc(Upload);

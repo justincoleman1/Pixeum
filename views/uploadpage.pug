@@ -266,32 +266,32 @@ block content
                                                 li.comment-reaction
                                                     button#comment-upvote-reaction-btn.comments-reaction-button(type='button' data-reaction='upvote')
                                                         img.crsz(src='/img/svg/thumbs-up-emoji-1.svg' alt='Upload Upvote')
-                                                    h4#comment-upvote-count.cshn(data-count=upload.upvoteCount)= upload.upvoteCount
+                                                    h4#comment-upvote-count.cshn.hidden-count(data-count=upload.upvoteCount)= upload.upvoteCount
                                                     h4.cshn Upvote
                                                 li.comment-reaction
                                                     button#comment-funny-reaction-btn.comments-reaction-button(type='button' data-reaction='funny')
                                                         img.crsz(src='/img/svg/rofl.svg' alt='Funny')
-                                                    h4#comment-funny-count.cshn(data-count=upload.funnyCount)= upload.funnyCount
+                                                    h4#comment-funny-count.cshn.hidden-count(data-count=upload.funnyCount)= upload.funnyCount
                                                     h4.cshn Funny
                                                 li.comment-reaction
                                                     button#comment-love-reaction-btn.comments-reaction-button(type='button' data-reaction='love')
                                                         img.crsz(src='/img/svg/love.svg' alt='Love')
-                                                    h4#comment-love-count.cshn(data-count=upload.loveCount)= upload.loveCount
+                                                    h4#comment-love-count.cshn.hidden-count(data-count=upload.loveCount)= upload.loveCount
                                                     h4.cshn Love
                                                 li.comment-reaction
                                                     button#comment-surprised-reaction-btn.comments-reaction-button(type='button' data-reaction='surprised')
                                                         img.crsz(src='/img/svg/surprised.svg' alt='Surprised')
-                                                    h4#comment-surprised-count.cshn(data-count=upload.surprisedCount)= upload.surprisedCount
+                                                    h4#comment-surprised-count.cshn.hidden-count(data-count=upload.surprisedCount)= upload.surprisedCount
                                                     h4.cshn Surprised
                                                 li.comment-reaction
                                                     button#comment-angry-reaction-btn.comments-reaction-button(type='button' data-reaction='angry')
                                                         img.crsz(src='/img/svg/triumph.svg' alt='Angry')
-                                                    h4#comment-angry-count.cshn(data-count=upload.angryCount)= upload.angryCount
+                                                    h4#comment-angry-count.cshn.hidden-count(data-count=upload.angryCount)= upload.angryCount
                                                     h4.cshn Angry
                                                 li.comment-reaction
                                                     button#comment-sad-reaction-btn.comments-reaction-button(type='button' data-reaction='sad')
                                                         img.crsz(src='/img/svg/cry.svg' alt='Sad')
-                                                    h4#comment-sad-count.cshn(data-count=upload.sadCount)= upload.sadCount
+                                                    h4#comment-sad-count.cshn.hidden-count(data-count=upload.sadCount)= upload.sadCount
                                                     h4.cshn Sad
                                     .comments-section-header
                                         h4.cshh=`${upload.comment_count} Comments`

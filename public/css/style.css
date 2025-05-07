@@ -2608,11 +2608,40 @@ input[type='file'][id*='media-upload'] {
 }
 
 .comments-reaction-button {
+  position: relative;
   background: none !important;
   border: none;
   display: flex;
   flex-direction: row;
   justify-content: center;
+}
+
+/* Hide reaction counts initially */
+.hidden-count {
+  display: none;
+}
+
+/* Style for the animated reaction image */
+.animated-reaction {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 48px; /* Match the size of the original emoji image */
+  height: 48px;
+  animation: enlargeFade 0.8s ease-in-out forwards;
+}
+
+/* Animation keyframes for enlarging and fading */
+@keyframes enlargeFade {
+  0% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
+  }
 }
 
 .comments-body {

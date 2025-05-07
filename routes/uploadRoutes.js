@@ -39,6 +39,13 @@ router
     favoriteController.toggleFavorite
   );
 
+// Route to get the user's reaction state for an upload (requires authentication)
+router.get(
+  '/:username/:slug/reaction-state',
+  authController.protect,
+  uploadController.getUserReactionState
+);
+
 // Route to handle reactions (requires authentication)
 router.post(
   '/:username/:slug/reactions',
