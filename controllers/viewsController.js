@@ -105,3 +105,13 @@ exports.getAccount = (req, res) => {
     title: 'Your account',
   });
 };
+
+// Handler to render the mycomments page
+exports.getMyCommentsPage = (req, res) => {
+  res.status(200).render('mycomments', {
+    title: 'My Comments',
+    comments: req.comments,
+    timeAgo: timeAgo2,
+    tenorApiKey: process.env.TENOR_API_KEY,
+  });
+};

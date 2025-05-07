@@ -80,42 +80,30 @@ const uploadSchema = new mongoose.Schema(
       default: 0,
     },
     reactions: {
-      upvote: [
-        {
-          type: mongoose.Schema.ObjectId,
-          ref: 'User',
-        },
-      ],
-      funny: [
-        {
-          type: mongoose.Schema.ObjectId,
-          ref: 'User',
-        },
-      ],
-      love: [
-        {
-          type: mongoose.Schema.ObjectId,
-          ref: 'User',
-        },
-      ],
-      surprised: [
-        {
-          type: mongoose.Schema.ObjectId,
-          ref: 'User',
-        },
-      ],
-      angry: [
-        {
-          type: mongoose.Schema.ObjectId,
-          ref: 'User',
-        },
-      ],
-      sad: [
-        {
-          type: mongoose.Schema.ObjectId,
-          ref: 'User',
-        },
-      ],
+      upvote: {
+        users: [{ type: mongoose.Schema.ObjectId, ref: 'User' }], // Authenticated users
+        guests: [{ type: String }], // Unauthenticated users (session IDs)
+      },
+      funny: {
+        users: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
+        guests: [{ type: String }],
+      },
+      love: {
+        users: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
+        guests: [{ type: String }],
+      },
+      surprised: {
+        users: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
+        guests: [{ type: String }],
+      },
+      angry: {
+        users: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
+        guests: [{ type: String }],
+      },
+      sad: {
+        users: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
+        guests: [{ type: String }],
+      },
     },
     // slug: String,
     access: {

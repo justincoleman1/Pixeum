@@ -4,6 +4,7 @@ const authController = require('../controllers/authController');
 const favoriteController = require('../controllers/favoriteController');
 const trackingController = require('../controllers/trackingController');
 const uploadController = require('../controllers/uploadController');
+const commentController = require('../controllers/commentController');
 
 const router = express.Router();
 
@@ -19,6 +20,13 @@ router.get('/login', viewController.getLoginForm);
 router.get('/signup', viewController.getSignUpForm);
 
 router.get('/me', authController.protect, viewController.getAccount);
+// Route for mycomments page (requires authentication)
+router.get(
+  '/mycomments',
+  authController.protect,
+  commentController.getMyComments,
+  viewController.getMyCommentsPage
+);
 
 router.get('/submission', authController.protect, viewController.getUploadForm);
 

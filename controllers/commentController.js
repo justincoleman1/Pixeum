@@ -419,6 +419,104 @@ exports.updateComment = catchAsync(async (req, res, next) => {
   }
 });
 
+// Handler to get all comments made by the logged-in user
+exports.getMyComments = catchAsync(async (req, res, next) => {
+  const userId = req.user._id;
+
+  // Fetch all comments made by the user, populating likes, replies, and uploads
+  const comments = await Comment.find({ user: userId })
+    .populate({
+      path: 'user',
+      select: 'username photo',
+    })
+    .populate({
+      path: 'upload',
+      select: 'slug user',
+      populate: {
+        path: 'user',
+        select: 'username',
+      },
+    })
+    .populate({
+      path: 'parentComment',
+      select:
+        'elements user like_count dislike_count reply_count createdAt updatedAt parentComment isEdited deleted deletedAt',
+      populate: { path: 'user', select: 'username photo' },
+    })
+    .populate({
+      path: 'comments',
+      select:
+        'elements user like_count dislike_count reply_count createdAt updatedAt parentComment isEdited deleted deletedAt',
+      populate: [
+        {
+          path: 'upload',
+          select: 'slug user',
+          populate: {
+            path: 'user',
+            select: 'username photo',
+          },
+        },
+        { path: 'user', select: 'username photo' },
+        {
+          path: 'parentComment',
+          select:
+            'elements user like_count dislike_count reply_count createdAt updatedAt parentComment isEdited deleted deletedAt',
+          populate: { path: 'user', select: 'username photo' },
+        },
+        {
+          path: 'comments', // Populate replies
+          select:
+            'elements user like_count dislike_count reply_count createdAt updatedAt parentComment isEdited deleted deletedAt',
+          populate: [
+            {
+              path: 'upload',
+              select: 'slug user',
+              populate: {
+                path: 'user',
+                select: 'username photo',
+              },
+            },
+            { path: 'user', select: 'username photo' },
+            {
+              path: 'parentComment',
+              select:
+                'elements user like_count dislike_count reply_count createdAt updatedAt parentComment isEdited deleted deletedAt',
+              populate: { path: 'user', select: 'username photo' },
+            },
+            {
+              path: 'comments',
+              select:
+                'elements user like_count dislike_count reply_count createdAt updatedAt parentComment isEdited deleted deletedAt',
+              populate: [
+                {
+                  path: 'upload',
+                  select: 'slug user',
+                  populate: {
+                    path: 'user',
+                    select: 'username photo',
+                  },
+                },
+                { path: 'user', select: 'username photo' },
+                {
+                  path: 'parentComment',
+                  select:
+                    'elements user like_count dislike_count reply_count createdAt updatedAt parentComment isEdited deleted deletedAt',
+                  populate: { path: 'user', select: 'username photo' },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+
+  // Filter out deleted comments (optional, depending on your requirements)
+  const filteredComments = comments.filter((comment) => !comment.deleted);
+
+  req.comments = filteredComments;
+  next();
+});
+
 exports.deleteMyComment = catchAsync(async (req, res, next) => {
   const comment = await Comment.findById(req.params.id).populate('user');
   if (!comment) {

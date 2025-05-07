@@ -12,6 +12,7 @@ const { upload } = require('./multerController');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 const { formatBytes } = require('../utils/formatBytes');
+const { v4: uuidv4 } = require('uuid');
 // Middleware to set the user ID for a new upload
 exports.setUploadUserIds = (req, res, next) => {
   // Allow nested routes
@@ -694,13 +695,91 @@ exports.getUpload = catchAsync(async (req, res, next) => {
   next();
 });
 
+// Utility to get or generate a guest ID for unauthenticated users
+const getGuestId = (req, res) => {
+  let guestId = req.cookies.guestId;
+  if (!guestId) {
+    guestId = uuidv4();
+    res.cookie('guestId', guestId, {
+      httpOnly: true,
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    });
+  }
+  return guestId;
+};
+
+// Handler to get the user's reaction state for an upload
+exports.getUserReactionState = catchAsync(async (req, res, next) => {
+  const { username, slug } = req.params;
+  const userId = req.user ? req.user._id : null;
+  const guestId = userId ? null : getGuestId(req, res);
+
+  console.log('Fetching reaction state:', { username, slug, userId, guestId });
+
+  // Find the upload by slug and verify the username matches
+  const upload = await Upload.findOne({ slug }).populate('user');
+  if (!upload) {
+    return next(new AppError('Upload not found', 404));
+  }
+
+  // Verify the username matches the upload's user
+  if (upload.user.username !== username) {
+    return next(new AppError('Upload not found for this user', 404));
+  }
+
+  // Check which reaction types the user/guest has reacted to
+  const reactionState = {};
+  const reactionTypes = [
+    'upvote',
+    'funny',
+    'love',
+    'surprised',
+    'angry',
+    'sad',
+  ];
+  let hasReacted = false;
+
+  reactionTypes.forEach((type) => {
+    let hasReactedToType = false;
+    if (userId && upload.reactions[type] && upload.reactions[type].users) {
+      hasReactedToType = upload.reactions[type].users.includes(userId);
+    } else if (
+      guestId &&
+      upload.reactions[type] &&
+      upload.reactions[type].guests
+    ) {
+      hasReactedToType = upload.reactions[type].guests.includes(guestId);
+    }
+    reactionState[type] = hasReactedToType;
+    if (hasReactedToType) {
+      hasReacted = true;
+    }
+  });
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      hasReacted, // Boolean indicating if the user/guest has reacted to any type
+      reactionState, // Object indicating which types the user/guest has reacted to
+    },
+  });
+});
+
 // Handler to add or remove a reaction to an upload
 exports.addReaction = catchAsync(async (req, res, next) => {
   const { username, slug } = req.params;
-  const { reactionType } = req.body; // Expected: 'upvote', 'funny', 'love', 'surprised', 'angry', 'sad'
-  const userId = req.user._id;
+  const { reactionType } = req.body;
+  const userId = req.user ? req.user._id : null;
+  const guestId = userId ? null : getGuestId(req, res);
+  const identifier = userId || guestId;
 
-  console.log('Toggling reaction:', { username, slug, reactionType, userId });
+  console.log('Toggling reaction:', {
+    username,
+    slug,
+    reactionType,
+    userId,
+    guestId,
+  });
 
   // Validate reaction type
   const validReactions = [
@@ -726,13 +805,17 @@ exports.addReaction = catchAsync(async (req, res, next) => {
     return next(new AppError('Upload not found for this user', 404));
   }
 
-  // Check if the user has already reacted with this reaction type
-  const reactionField = `reactions.${reactionType}`;
+  // Check if the user/guest has already reacted with this reaction type
+  const reactionFieldUsers = `reactions.${reactionType}.users`;
+  const reactionFieldGuests = `reactions.${reactionType}.guests`;
   console.log('Current reactions field:', upload.reactions);
-  const hasReacted =
-    upload.reactions &&
-    upload.reactions[reactionType] &&
-    upload.reactions[reactionType].includes(userId);
+  const hasReacted = userId
+    ? upload.reactions[reactionType] &&
+      upload.reactions[reactionType].users &&
+      upload.reactions[reactionType].users.includes(userId)
+    : upload.reactions[reactionType] &&
+      upload.reactions[reactionType].guests &&
+      upload.reactions[reactionType].guests.includes(guestId);
 
   const countField = `${reactionType}Count`;
   console.log(
@@ -743,14 +826,16 @@ exports.addReaction = catchAsync(async (req, res, next) => {
   );
 
   if (hasReacted) {
-    // User has already reacted, so remove the reaction
+    // User/guest has already reacted, so remove the reaction
     const updateResult = await Upload.updateOne(
       {
         _id: upload._id,
-        [`${reactionField}`]: userId, // Ensure user has reacted
+        [userId ? reactionFieldUsers : reactionFieldGuests]: identifier, // Ensure user/guest has reacted
       },
       {
-        $pull: { [reactionField]: userId }, // Remove user from the reaction array
+        $pull: {
+          [userId ? reactionFieldUsers : reactionFieldGuests]: identifier,
+        }, // Remove user/guest from the reaction array
         $inc: {
           [countField]: -1, // Decrement the reaction count
           totalReactions: -1, // Decrement the total reactions
@@ -780,14 +865,18 @@ exports.addReaction = catchAsync(async (req, res, next) => {
       },
     });
   } else {
-    // User hasn't reacted, so add the reaction
+    // User/guest hasn't reacted, so add the reaction
     const updateResult = await Upload.updateOne(
       {
         _id: upload._id,
-        [`${reactionField}`]: { $ne: userId }, // Ensure user hasn't already reacted
+        [userId ? reactionFieldUsers : reactionFieldGuests]: {
+          $ne: identifier,
+        }, // Ensure user/guest hasn't already reacted
       },
       {
-        $push: { [reactionField]: userId }, // Add user to the reaction array
+        $push: {
+          [userId ? reactionFieldUsers : reactionFieldGuests]: identifier,
+        }, // Add user/guest to the reaction array
         $inc: {
           [countField]: 1, // Increment the reaction count
           totalReactions: 1, // Increment the total reactions
@@ -819,56 +908,6 @@ exports.addReaction = catchAsync(async (req, res, next) => {
       },
     });
   }
-});
-
-// Handler to get the user's reaction state for an upload
-exports.getUserReactionState = catchAsync(async (req, res, next) => {
-  const { username, slug } = req.params;
-  const userId = req.user._id;
-
-  console.log('Fetching reaction state:', { username, slug, userId });
-
-  // Find the upload by slug and verify the username matches
-  const upload = await Upload.findOne({ slug }).populate('user');
-  if (!upload) {
-    return next(new AppError('Upload not found', 404));
-  }
-
-  // Verify the username matches the upload's user
-  if (upload.user.username !== username) {
-    return next(new AppError('Upload not found for this user', 404));
-  }
-
-  // Check which reaction types the user has reacted to
-  const reactionState = {};
-  const reactionTypes = [
-    'upvote',
-    'funny',
-    'love',
-    'surprised',
-    'angry',
-    'sad',
-  ];
-  let hasReacted = false;
-
-  reactionTypes.forEach((type) => {
-    const hasReactedToType =
-      upload.reactions &&
-      upload.reactions[type] &&
-      upload.reactions[type].includes(userId);
-    reactionState[type] = hasReactedToType;
-    if (hasReactedToType) {
-      hasReacted = true;
-    }
-  });
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      hasReacted, // Boolean indicating if the user has reacted to any type
-      reactionState, // Object indicating which types the user has reacted to
-    },
-  });
 });
 
 exports.getAllUploads = Handler.getAllDocs(Upload);

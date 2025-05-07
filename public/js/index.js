@@ -21,9 +21,11 @@ import {
   collapseSideNav,
   overlayActive,
   mainCollapsed,
-  sideNavExpanded,
   asideDisappear,
+  showAside,
+  sideNavExpanded,
   uploadMainCollapsed,
+  asideAppear,
 } from './front/side-nav';
 import { windowSize792Changes, ws792 } from './front/window';
 import { h, s, w, g, sh, p } from './front/brick';
@@ -171,6 +173,11 @@ window.addEventListener('resize', (e) => {
 
 // Initialize Google Sign-In on page load with fallback polling
 document.addEventListener('DOMContentLoaded', () => {
+  // Reset side nav state on page load
+  if (ws792()) {
+    showAside(); // Ensure side nav is visible on larger screens
+  }
+
   // Only initialize if on the login page
   if (!document.querySelector('.login')) return;
 
@@ -180,19 +187,14 @@ document.addEventListener('DOMContentLoaded', () => {
     return;
   }
 
-  // Flag to track if the button has been rendered
   let isRendered = false;
 
-  // Function to attempt rendering the button
   const attemptRender = () => {
-    if (isRendered) return; // Prevent multiple renders
+    if (isRendered) return;
     if (window.google && window.google.accounts && window.google.accounts.id) {
-      // First, initialize Google Sign-In
       const initialized = initializeGoogleSignIn();
       if (initialized) {
-        // Small delay to ensure initialization is complete
         setTimeout(() => {
-          // Then, render the button
           const rendered = renderGoogleButton();
           if (rendered) {
             isRendered = true;
@@ -202,14 +204,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // Listen for the script load event
   gisScript.addEventListener('load', () => {
     console.log('GIS script loaded');
     attemptRender();
   });
 
-  // Fallback polling in case the load event doesn't fire
-  const maxAttempts = 100; // Poll for up to 10 seconds (100 * 100ms)
+  const maxAttempts = 100;
   let attempts = 0;
   const pollInterval = setInterval(() => {
     attempts++;
@@ -225,7 +225,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }, 100);
 
-  // Handle script load errors
   gisScript.addEventListener('error', () => {
     clearInterval(pollInterval);
     showAlert(
@@ -239,18 +238,24 @@ document.addEventListener('DOMContentLoaded', () => {
 if (sideNavBtn) {
   sideNavBtn.addEventListener('click', (e) => {
     e.preventDefault();
-    if (mainCollapsed() || uploadMainCollapsed()) collapseSideNav();
-    else expandSideNav();
+    if (mainCollapsed() || uploadMainCollapsed()) {
+      if (uploadForm || updateUploadForm) asideDisappear();
+      collapseSideNav();
+    } else {
+      if (uploadForm || updateUploadForm) asideAppear();
+      expandSideNav();
+    }
   });
 }
 
-if (overlay)
+if (overlay) {
   overlay.addEventListener('click', (e) => {
     e.preventDefault();
     if (overlayActive()) collapseSideNav();
   });
+}
 
-if (searchBtn)
+if (searchBtn) {
   searchBtn.addEventListener('click', (e) => {
     e.preventDefault();
     if (!ws792()) {
@@ -261,8 +266,9 @@ if (searchBtn)
       smallSearchButton();
     }
   });
+}
 
-if (searchRevert)
+if (searchRevert) {
   searchRevert.addEventListener('click', (e) => {
     e.preventDefault();
     if (!ws792()) {
@@ -274,6 +280,7 @@ if (searchRevert)
       largeSearchButton();
     }
   });
+}
 
 if (searchInput) {
   searchInput.addEventListener('click', (e) => {
@@ -289,21 +296,24 @@ if (searchInput) {
   });
 }
 
-if (passShowBtn)
+if (passShowBtn) {
   passShowBtn.addEventListener('click', (e) => {
     togglePasswordVisibillity();
     passShowBtn.classList.add('hidden');
     passHideBtn.classList.remove('hidden');
   });
+}
 
-if (passHideBtn)
+if (passHideBtn) {
   passHideBtn.addEventListener('click', (e) => {
     togglePasswordVisibillity();
     passHideBtn.classList.add('hidden');
     passShowBtn.classList.remove('hidden');
   });
+}
 
 if (signupForm) {
+  // Removed asideDisappear() and navDisappear()
   asideDisappear();
   navDisappear();
   signupForm.addEventListener('submit', (e) => {
@@ -318,17 +328,10 @@ if (signupForm) {
   });
 }
 
-if (googleButton) {
-  googleButton.addEventListener('click', (e) => {
-    e.preventDefault();
-    console.log('google button clicked');
-  });
-}
-
 if (loginForm) {
+  // Removed asideDisappear() and navDisappear()
   asideDisappear();
   navDisappear();
-
   loginForm.addEventListener('submit', (e) => {
     e.preventDefault();
     console.log('submit');
@@ -341,6 +344,7 @@ if (loginForm) {
 if (logOutBtn) logOutBtn.addEventListener('click', logout);
 
 if (updateUploadForm) {
+  // Removed asideDisappear()
   asideDisappear();
   updateUploadForm.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -375,7 +379,9 @@ if (updateUploadForm) {
 }
 
 if (uploadForm) {
+  // Removed asideDisappear()
   asideDisappear();
+
   uploadForm.addEventListener('submit', async (event) => {
     event.preventDefault();
     const media = uploadInput.files[0];
@@ -391,7 +397,6 @@ if (uploadForm) {
         : null;
     const title = document.getElementById('title').value;
     const description = document.getElementById('description').value;
-
     const tags = Array.from(document.querySelectorAll('.tag')).map((tag) =>
       tag.textContent.slice(0, -1)
     );

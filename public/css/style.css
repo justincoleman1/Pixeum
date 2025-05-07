@@ -2717,6 +2717,17 @@ input[type='file'][id*='media-upload'] {
   display: flex;
   flex-direction: row;
 }
+
+.mb-16 {
+  margin-bottom: 1rem;
+}
+.comment-card {
+  background-color: #2e2d2d;
+  border-radius: 0.5em;
+  padding: 1rem;
+  border: 1px solid #3e3d3d;
+}
+
 .comment {
   padding: 5px;
   background-color: #39f;
@@ -2785,6 +2796,9 @@ input[type='file'][id*='media-upload'] {
   justify-content: center;
 }
 
+.comments-none {
+  margin: 250px auto;
+}
 .comment-befirst-cotent {
   text-align: center;
 }

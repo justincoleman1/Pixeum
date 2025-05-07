@@ -1,7 +1,7 @@
 /* eslint-disable */
 import { addHidden, removeHidden } from './hidden';
+import { ws792 } from './window'; // Import ws792 from window.js
 
-const ws791 = window.matchMedia('(max-width: 791px)');
 const overlay = document.querySelector('.overlay');
 const el = document.getElementById('main');
 const el1 = document.getElementById('aside');
@@ -22,6 +22,10 @@ export const mainDisappear = () => {
 
 export const hideAside = () => {
   el1.classList.add('hidden');
+};
+
+export const showAside = () => {
+  el1.classList.remove('hidden');
 };
 
 export const sideNavHidden = () => {
@@ -52,7 +56,8 @@ export const turnOffOverlay = () => {
 };
 
 export const turnOnOverlay = () => {
-  if (ws791.matches) {
+  if (!ws792()) {
+    // Use ws792 instead of ws791
     if (!overlayActive()) overlay.classList.add('active');
     if (el2) overlay.style.marginTop = '5em';
   }
@@ -69,22 +74,19 @@ const expandSideNavChildren = () => {
 const collapseSideNavChildren = () => {
   if (el2) el2.classList.remove('shrink-main');
   else el.classList.remove('shrink-main');
-
   el1.classList.remove('expand-aside');
   el3.classList.add('hidden');
   el4.classList.add('hidden');
 };
 
 export const expandSideNav = () => {
-  if (el2) asideAppear();
   expandSideNavChildren();
   turnOnOverlay();
   removeHidden(el1);
 };
 
 export const collapseSideNav = () => {
-  if (el2) asideDisappear();
   collapseSideNavChildren();
   turnOffOverlay();
-  addHidden(el1);
+  if (!ws792()) addHidden(el1); // Only hide on smaller screens
 };

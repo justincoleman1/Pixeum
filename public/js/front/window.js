@@ -1,5 +1,4 @@
 /*eslint-disable*/
-
 import { addHidden, removeHidden } from './hidden';
 import {
   showSearchBar,
@@ -25,6 +24,7 @@ import {
   overlayActive,
   sideNavHidden,
   sideNavExpanded,
+  showAside,
 } from './side-nav';
 
 const aside = document.getElementById('aside');
@@ -34,32 +34,35 @@ export const ws792 = () => {
 };
 
 export const windowSize792Changes = () => {
-  //if screen equal or greater than threshold size
+  // If screen is equal to or greater than threshold size (≥ 792px)
   if (ws792()) {
     lrgSearchButtonMargin();
-    //if the overlay is active: turn off overlay
+    // Turn off overlay
     if (overlayActive()) turnOffOverlay();
-    //if sidenav is hidden: remove hidden
-    if (sideNavHidden()) removeHidden(aside);
+    // Ensure side nav is visible
+    showAside();
+    // Show search bar if hidden
     if (searchBarHidden()) {
       showSearchBar();
     }
+    // Reset search state if no text
     if (!searchHasText()) {
       makeSearchInActive();
     }
+    // Show nav options
     if (navOptionsHidden()) showNavOptions();
     hideRevertBtn();
   } else {
     smSearchButtonMargin();
-    //screen is less than target threshold
-    //If sidenav is active: turn on overlay
+    // Screen is less than target threshold (< 792px)
+    // If side nav is expanded, show it and turn on overlay
     if (sideNavExpanded()) {
       turnOnOverlay();
       removeHidden(aside);
     } else {
       addHidden(aside);
     }
-    //If search input has text
+    // If search input has text or search is active
     if (searchHasText() || searchIsActive()) {
       smallSearchButton();
       showSearchBar();

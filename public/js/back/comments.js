@@ -65,10 +65,10 @@ const deleteComment = async (commentId, username, slug) => {
   }
 };
 
-const likeComment = async (commentId, uploadPath) => {
+const likeComment = async (commentId, username, slug) => {
   try {
     const res = await fetch(
-      `/api/v1${uploadPath}/comments/${commentId}/likeComment`,
+      `/api/v1/${username}/${slug}/comments/${commentId}/likeComment`,
       {
         method: 'POST',
         headers: {
@@ -92,10 +92,10 @@ const likeComment = async (commentId, uploadPath) => {
   }
 };
 
-const dislikeComment = async (commentId, uploadPath) => {
+const dislikeComment = async (commentId, username, slug) => {
   try {
     const res = await fetch(
-      `/api/v1${uploadPath}/comments/${commentId}/dislikeComment`,
+      `/api/v1/${username}/${slug}/comments/${commentId}/dislikeComment`,
       {
         method: 'POST',
         headers: {
@@ -1616,7 +1616,12 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('parentComment', commentId);
       }
 
-      await postComment(formData, username, slug, commentId);
+      await postComment(
+        formData,
+        username === 'mycomments' ? form.dataset.uploadUsername : username,
+        slug ? slug : form.dataset.uploadSlug,
+        commentId
+      );
 
       // Reset reply editor
       replyEditor.innerHTML = '';
@@ -2256,8 +2261,11 @@ document.addEventListener('DOMContentLoaded', () => {
     button.addEventListener('click', async (e) => {
       console.log('Like Button Clicked');
       const commentId = e.target.closest('button').dataset.commentId;
-      const uploadPath = window.location.pathname;
-      await likeComment(commentId, uploadPath);
+      await likeComment(
+        commentId,
+        username ? username : button.dataset.uploadUsername,
+        slug ? slug : button.dataset.uploadSlug
+      );
     });
   });
 
@@ -2265,8 +2273,11 @@ document.addEventListener('DOMContentLoaded', () => {
   dislikeButtons.forEach((button) => {
     button.addEventListener('click', async (e) => {
       const commentId = e.target.closest('button').dataset.commentId;
-      const uploadPath = window.location.pathname;
-      await dislikeComment(commentId, uploadPath);
+      await dislikeComment(
+        commentId,
+        username ? username : button.dataset.uploadUsername,
+        slug ? slug : button.dataset.uploadSlug
+      );
     });
   });
 });

@@ -22,8 +22,18 @@ export const getReactionState = async (username, slug) => {
     }
   } catch (err) {
     console.error('Error fetching reaction state:', err);
-    showAlert('error', err.message);
-    throw err;
+    // Don't show an alert for unauthenticated users; just return a default state
+    return {
+      hasReacted: false,
+      reactionState: {
+        upvote: false,
+        funny: false,
+        love: false,
+        surprised: false,
+        angry: false,
+        sad: false,
+      },
+    };
   }
 };
 
