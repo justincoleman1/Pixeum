@@ -2607,6 +2607,14 @@ input[type='file'][id*='media-upload'] {
   justify-content: center;
 }
 
+.comments-reaction-button {
+  background: none !important;
+  border: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
 .comments-body {
   width: 100%;
   display: flex;

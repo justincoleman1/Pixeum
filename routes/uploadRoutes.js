@@ -39,6 +39,14 @@ router
     favoriteController.toggleFavorite
   );
 
+// Route to handle reactions (requires authentication)
+router.post(
+  '/:username/:slug/reactions',
+  authController.protect,
+  authController.restrictTo('user'),
+  uploadController.addReaction
+);
+
 router.delete(
   '/:username/:slug',
   authController.protect,

@@ -694,6 +694,133 @@ exports.getUpload = catchAsync(async (req, res, next) => {
   next();
 });
 
+// Handler to add or remove a reaction to an upload
+exports.addReaction = catchAsync(async (req, res, next) => {
+  const { username, slug } = req.params;
+  const { reactionType } = req.body; // Expected: 'upvote', 'funny', 'love', 'surprised', 'angry', 'sad'
+  const userId = req.user._id;
+
+  console.log('Toggling reaction:', { username, slug, reactionType, userId });
+
+  // Validate reaction type
+  const validReactions = [
+    'upvote',
+    'funny',
+    'love',
+    'surprised',
+    'angry',
+    'sad',
+  ];
+  if (!validReactions.includes(reactionType)) {
+    return next(new AppError('Invalid reaction type', 400));
+  }
+
+  // Find the upload by slug and verify the username matches
+  const upload = await Upload.findOne({ slug }).populate('user');
+  if (!upload) {
+    return next(new AppError('Upload not found', 404));
+  }
+
+  // Verify the username matches the upload's user
+  if (upload.user.username !== username) {
+    return next(new AppError('Upload not found for this user', 404));
+  }
+
+  // Check if the user has already reacted with this reaction type
+  const reactionField = `reactions.${reactionType}`;
+  console.log('Current reactions field:', upload.reactions);
+  const hasReacted =
+    upload.reactions &&
+    upload.reactions[reactionType] &&
+    upload.reactions[reactionType].includes(userId);
+
+  const countField = `${reactionType}Count`;
+  console.log(
+    `Before update - ${countField}:`,
+    upload[countField],
+    'totalReactions:',
+    upload.totalReactions
+  );
+
+  if (hasReacted) {
+    // User has already reacted, so remove the reaction
+    const updateResult = await Upload.updateOne(
+      {
+        _id: upload._id,
+        [`${reactionField}`]: userId, // Ensure user has reacted
+      },
+      {
+        $pull: { [reactionField]: userId }, // Remove user from the reaction array
+        $inc: {
+          [countField]: -1, // Decrement the reaction count
+          totalReactions: -1, // Decrement the total reactions
+        },
+      }
+    );
+
+    if (updateResult.matchedCount === 0) {
+      return next(new AppError('Reaction not found to remove', 400));
+    }
+
+    // Fetch the updated upload to get the new counts
+    const updatedUpload = await Upload.findOne({ slug });
+    console.log(
+      `After remove - ${countField}:`,
+      updatedUpload[countField],
+      'totalReactions:',
+      updatedUpload.totalReactions
+    );
+
+    res.status(200).json({
+      status: 'success',
+      action: 'removed',
+      data: {
+        [countField]: updatedUpload[countField],
+        totalReactions: updatedUpload.totalReactions,
+      },
+    });
+  } else {
+    // User hasn't reacted, so add the reaction
+    const updateResult = await Upload.updateOne(
+      {
+        _id: upload._id,
+        [`${reactionField}`]: { $ne: userId }, // Ensure user hasn't already reacted
+      },
+      {
+        $push: { [reactionField]: userId }, // Add user to the reaction array
+        $inc: {
+          [countField]: 1, // Increment the reaction count
+          totalReactions: 1, // Increment the total reactions
+        },
+      }
+    );
+
+    if (updateResult.matchedCount === 0) {
+      return next(
+        new AppError(`You have already reacted with ${reactionType}`, 400)
+      );
+    }
+
+    // Fetch the updated upload to get the new counts
+    const updatedUpload = await Upload.findOne({ slug });
+    console.log(
+      `After add - ${countField}:`,
+      updatedUpload[countField],
+      'totalReactions:',
+      updatedUpload.totalReactions
+    );
+
+    res.status(200).json({
+      status: 'success',
+      action: 'added',
+      data: {
+        [countField]: updatedUpload[countField],
+        totalReactions: updatedUpload.totalReactions,
+      },
+    });
+  }
+});
+
 exports.getAllUploads = Handler.getAllDocs(Upload);
 exports.updateUpload = Handler.updateDoc(Upload);
 exports.deleteUpload = Handler.deleteDoc(Upload);

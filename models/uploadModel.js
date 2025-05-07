@@ -51,7 +51,72 @@ const uploadSchema = new mongoose.Schema(
         'ideologically sensitive',
       ],
     },
-
+    upvoteCount: {
+      type: Number,
+      default: 0,
+    },
+    funnyCount: {
+      type: Number,
+      default: 0,
+    },
+    loveCount: {
+      type: Number,
+      default: 0,
+    },
+    surprisedCount: {
+      type: Number,
+      default: 0,
+    },
+    angryCount: {
+      type: Number,
+      default: 0,
+    },
+    sadCount: {
+      type: Number,
+      default: 0,
+    },
+    totalReactions: {
+      type: Number,
+      default: 0,
+    },
+    reactions: {
+      upvote: [
+        {
+          type: mongoose.Schema.ObjectId,
+          ref: 'User',
+        },
+      ],
+      funny: [
+        {
+          type: mongoose.Schema.ObjectId,
+          ref: 'User',
+        },
+      ],
+      love: [
+        {
+          type: mongoose.Schema.ObjectId,
+          ref: 'User',
+        },
+      ],
+      surprised: [
+        {
+          type: mongoose.Schema.ObjectId,
+          ref: 'User',
+        },
+      ],
+      angry: [
+        {
+          type: mongoose.Schema.ObjectId,
+          ref: 'User',
+        },
+      ],
+      sad: [
+        {
+          type: mongoose.Schema.ObjectId,
+          ref: 'User',
+        },
+      ],
+    },
     // slug: String,
     access: {
       type: String,
