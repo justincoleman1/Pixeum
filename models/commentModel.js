@@ -111,26 +111,31 @@ commentSchema.pre('save', async function (next) {
   if (!this.isNew && this.isModified('elements')) {
     this.isEdited = true;
   }
+
+  this.wasNew = this.isNew || false;
   next();
 });
 
 commentSchema.post('save', async function (doc, next) {
   try {
-    console.log(
-      'Saving comment:',
-      doc._id,
-      'Parent:',
-      doc.parentComment,
-      'Upload:',
-      doc.upload
-    );
-    await Upload.findByIdAndUpdate(doc.upload, {
-      $inc: { comment_count: 1 },
-    });
-    if (doc.parentComment) {
-      await this.model('Comment').findByIdAndUpdate(doc.parentComment, {
-        $inc: { reply_count: 1 },
+    if (doc.wasNew) {
+      console.log('DOCCCC: ', doc.wasNew);
+      console.log(
+        'Saving comment:',
+        doc._id,
+        'Parent:',
+        doc.parentComment,
+        'Upload:',
+        doc.upload
+      );
+      await Upload.findByIdAndUpdate(doc.upload, {
+        $inc: { comment_count: 1 },
       });
+      if (doc.parentComment) {
+        await this.model('Comment').findByIdAndUpdate(doc.parentComment, {
+          $inc: { reply_count: 1 },
+        });
+      }
     }
     next();
   } catch (err) {
