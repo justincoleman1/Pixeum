@@ -75,14 +75,20 @@ const userSchema = new mongoose.Schema(
       default: true,
       select: false,
     },
-    subscriber_count: {
-      type: Number,
-      default: 0,
-    },
-    follower_count: {
-      type: Number,
-      default: 0,
-    },
+    subscribers: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+        default: [],
+      },
+    ],
+    subscriptions: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+        default: [],
+      },
+    ],
     moderators: [{ type: mongoose.Schema.ObjectId, ref: 'User' }],
   },
   {

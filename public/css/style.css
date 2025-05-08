@@ -625,6 +625,17 @@ button.nav-btn.loggedin-nav-btn {
   border: 1px solid #47b1f5;
 }
 /*-----------------------ProfileButtonCSS---------------------------*/
+.notification-count {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #ff4d4f;
+  color: white;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-weight: bold;
+}
 
 #drop_down_with_links,
 #drop_down_with_notifications {
@@ -736,6 +747,79 @@ a.nav-btn__upload {
   display: flex;
   justify-content: content;
   /* align-items: center; */
+}
+
+.notifications-list-item {
+  padding: 10px;
+  border-bottom: 1px solid #444;
+}
+
+.notifications-list-item h4 {
+  margin: 0;
+  font-size: 16px;
+  color: #fff;
+}
+
+.notifications-item-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.notification-item {
+  padding: 10px;
+  border-bottom: 1px solid #333;
+}
+
+.notification-item.unseen {
+  background-color: #2a3a3c;
+}
+
+.notification-item.seen {
+  background-color: #1c2526;
+}
+
+.notification-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #fff;
+  margin-top: 1rem;
+}
+
+.notification-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.notification-text {
+  flex: 1;
+  margin-top: 10px;
+}
+
+.notification-text p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.notification-text small {
+  color: #aaa;
+  font-size: 12px;
+}
+
+.btn-small {
+  padding: 5px 10px;
+  font-size: 12px;
+  background-color: #444;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+}
+
+.btn-small:hover {
+  background-color: #555;
 }
 
 .profile-menu__user-img {
@@ -1613,6 +1697,8 @@ input.form__upload {
   stroke-width: 1.5;
   height: 30px;
   width: 30px;
+  filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(87deg)
+    brightness(119%) contrast(119%) grayscale(100%) brightness(300%);
 }
 
 .side-nav-link-icon.color {
@@ -2542,10 +2628,11 @@ input[type='file'][id*='media-upload'] {
 }
 
 .comments-container {
+  margin-top: 4rem;
   width: 100%;
   display: flex;
   flex-direction: column;
-  border: 2px solid beige;
+  border: 2px solid #ffffff;
 }
 
 .comments-section-reactions {
@@ -2583,7 +2670,7 @@ input[type='file'][id*='media-upload'] {
   flex-direction: row;
   width: 100%;
   justify-content: space-between;
-  background-color: red;
+  border-bottom: 2px solid #ffffff;
 }
 
 .cshh {
@@ -2602,6 +2689,11 @@ input[type='file'][id*='media-upload'] {
   background: none !important;
   border: none;
   margin: 10px;
+}
+
+.comments-notification-button > a {
+  background: none !important;
+  border: none;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -2649,20 +2741,20 @@ input[type='file'][id*='media-upload'] {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background-color: #20bf6b;
+  /* background-color: #20bf6b; */
 }
 
 .comments-post-section,
 .comments-reply-section,
 .comments-edit-section {
   margin: 10px 0px;
-  background-color: purple;
+  /* background-color: purple; */
   display: flex;
   flex-direction: row;
 }
 
 .comments-post {
-  background-color: orange;
+  /* background-color: orange; */
   border: 2px solid #fff;
   border-radius: 10px;
   display: flex;
@@ -2710,7 +2802,7 @@ input[type='file'][id*='media-upload'] {
 
 .comments-list {
   margin: 10px 0px;
-  background-color: palevioletred;
+  /* background-color: palevioletred; */
 }
 
 .comment-item {
@@ -2731,6 +2823,14 @@ input[type='file'][id*='media-upload'] {
   justify-content: space-between;
 }
 
+.comment-card-comments {
+  background-color: #2e2d2d;
+  border-radius: 0.5em;
+  padding: 1rem;
+  border: 1px solid #3e3d3d;
+  display: flex;
+  flex-direction: column;
+}
 .comment-card-upload {
   background-color: #2e2d2d;
   border-radius: 0.5em;
@@ -2753,7 +2853,7 @@ input[type='file'][id*='media-upload'] {
 
 .comment {
   padding: 5px;
-  background-color: #39f;
+  /* background-color: #39f; */
   width: 100%;
 }
 
@@ -2902,6 +3002,11 @@ span.spoiler.revealed a {
   padding: 10px;
 }
 
+.cpbtn {
+  background: none;
+  border: none;
+}
+
 .comment-gif-button {
   margin-left: 10px;
 }
@@ -2931,6 +3036,7 @@ span.spoiler.revealed a {
   width: 100%;
   display: flex;
   justify-content: center;
+  border-top: 2px solid #ffffff;
 }
 /*======================END UPLOAD PAGE CSS=========================*/
 

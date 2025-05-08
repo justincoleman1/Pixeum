@@ -7,6 +7,9 @@ const factory = require('./handlerFactory');
 const multerController = require('./multerCommentController');
 const sharp = require('sharp');
 const fs = require('fs').promises;
+const mongoose = require('mongoose');
+
+const Notification = require('../models/notificationModel');
 
 exports.setCommentUserIds = catchAsync(async (req, res, next) => {
   console.log(
@@ -107,6 +110,29 @@ exports.resizeCommentImage = catchAsync(async (req, res, next) => {
   console.log('Ending Resize Comment Image Middleware');
   next();
 });
+
+// Helper function to extract mentions from comment elements
+const extractMentions = async (elements) => {
+  const mentions = [];
+  const userModel = mongoose.model('User');
+
+  for (const element of elements) {
+    if (element.type === 'text') {
+      const mentionMatches = element.value.match(/@(\w+)/g);
+      if (mentionMatches) {
+        for (const match of mentionMatches) {
+          const username = match.substring(1); // Remove the '@'
+          const user = await userModel.findOne({ username });
+          if (user) {
+            mentions.push(user._id);
+          }
+        }
+      }
+    }
+  }
+
+  return mentions;
+};
 
 exports.giveComment = catchAsync(async (req, res, next) => {
   try {
@@ -214,6 +240,63 @@ exports.giveComment = catchAsync(async (req, res, next) => {
 
     const comment = await Comment.create(commentData);
 
+    // Generate notifications
+    if (parentComment) {
+      const parent = await Comment.findById(parentComment).populate(
+        'user upload'
+      );
+      if (parent && parent.user._id.toString() !== req.body.user) {
+        // Notify the parent comment author of the reply
+        await Notification.create({
+          user: parent.user._id,
+          type: 'reply',
+          fromUser: req.user.id,
+          comment: comment._id,
+          upload: req.uploadId,
+        });
+
+        // Notify users who replied to the same parent comment (thread reply)
+        const siblingComments = await Comment.find({
+          parentComment,
+          user: { $ne: req.user.id },
+        }).populate('user');
+        const usersToNotify = new Set();
+        siblingComments.forEach((sibling) => {
+          if (
+            sibling.user &&
+            sibling.user._id.toString() !== req.body.user &&
+            sibling.user._id.toString() !== parent.user._id.toString()
+          ) {
+            usersToNotify.add(sibling.user._id.toString());
+          }
+        });
+
+        for (const userToNotify of usersToNotify) {
+          await Notification.create({
+            user: userToNotify,
+            type: 'thread_reply',
+            fromUser: req.user.id,
+            comment: comment._id,
+            upload: req.uploadId,
+          });
+        }
+      }
+    }
+
+    // Notify mentioned users
+    const mentions = await extractMentions(elements);
+    for (const mentionedUser of mentions) {
+      if (mentionedUser.toString() !== req.body.user) {
+        await Notification.create({
+          user: mentionedUser,
+          type: 'mention',
+          fromUser: req.user.id,
+          comment: comment._id,
+          upload: req.uploadId,
+        });
+      }
+    }
+
     res.status(201).json({
       status: 'success',
       data: {
@@ -247,6 +330,16 @@ exports.likeComment = catchAsync(async (req, res, next) => {
       );
       comment.dislike_count = Math.max(comment.dislike_count - 1, 0);
     }
+  }
+
+  if (comment.user._id.toString() !== userId.toString()) {
+    await Notification.create({
+      user: comment.user._id,
+      type: 'like',
+      fromUser: userId,
+      comment: comment._id,
+      upload: comment.upload._id,
+    });
   }
 
   await comment.save({ validateBeforeSave: false });

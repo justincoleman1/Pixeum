@@ -38,46 +38,46 @@ mixin renderComment(comment, depth=0)
                                     pre= element.value
                 .comment-footer
                     if !comment.deleted
-                        button.comment-like-button(data-comment-id=comment._id)
+                        button.comment-like-button.cpbtn(data-comment-id=comment._id)
                             img.comment-vote-icon(src='/img/svg/thumbs-up.svg', alt='Thumbs Up Icon')
                             p.comment-vote-count(id=`comment-like_count-${comment._id}`)=`${comment.like_count}`
-                        button.comment-dislike-button(data-comment-id=comment._id)
+                        button.comment-dislike-button.cpbtn(data-comment-id=comment._id)
                             img.comment-vote-icon(src='/img/svg/thumbs-down.svg', alt='Thumbs Down Icon')
                             p.comment-vote-count(id=`comment-dislike_count-${comment._id}`)=`${comment.dislike_count}`
                         if depth < 3                                                     
-                            button.comment-reply-button(data-comment-id=comment._id) Reply
-                        button.comment-share-button Share
+                            button.comment-reply-button.cpbtn(data-comment-id=comment._id) Reply
+                        button.comment-share-button.cpbtn Share
                         if user && user.id === comment.user._id.toString()
-                            button.comment-edit-button(data-comment-id=comment._id) Edit
-                            button.comment-delete-button(data-comment-id=comment._id) Delete
+                            button.comment-edit-button.cpbtn(data-comment-id=comment._id) Edit
+                            button.comment-delete-button.cpbtn(data-comment-id=comment._id) Delete
                 if !comment.deleted
                     .comments-edit-section.hidden(data-comment-id=comment._id, id=`edit-section-${comment._id}`)
                         form(data-comment-id=comment._id, id=`edit-form-${comment._id}` enctype='multipart/form-data' class='edit-comment-form comments-post' data-tenor-api-key=process.env.TENOR_API_KEY)
                             div(id=`edit-comment-editor-${comment._id}` contenteditable="true" placeholder="Join the discussion..." class="comment-editor mt-1 block w-full")
                             hr
                             .comments-buttons
-                                button(type="button" id=`edit-comment-gif-${comment._id}` class='comment-gif-button m10')
+                                button(type="button" id=`edit-comment-gif-${comment._id}` class='comment-gif-button m10 cpbtn')
                                     img.cbsz(src='/img/svg/gif.svg' alt='Gif')
                                 div(id=`gif-picker-edit-${comment._id}` style='display: none;')
                                 input(type="file" id=`edit-media-upload-${comment._id}` class='media-upload' name="media" accept="image/*,.gif,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                                button(type="button" id=`edit-comment-image-${comment._id}` class="comment-image-button m5")
+                                button(type="button" id=`edit-comment-image-${comment._id}` class="comment-image-button m5 cpbtn")
                                     img.cbsz(src='/img/svg/image-landscape.svg' alt='Image')
                                 .v1.m5
-                                button(type="button" id=`edit-comment-bold-${comment._id}` class='comment-bold-button m5')
+                                button(type="button" id=`edit-comment-bold-${comment._id}` class='comment-bold-button m5 cpbtn')
                                     img.cbsz(src='/img/svg/bold.svg' alt='Bold')
-                                button(type="button" id=`edit-comment-italics-${comment._id}` class='comment-bold-button m5')
+                                button(type="button" id=`edit-comment-italics-${comment._id}` class='comment-bold-button m5 cpbtn')
                                     img.cbsz(src='/img/svg/italic.svg' alt='Italics')
-                                button(type="button" id=`edit-comment-strikethrough-${comment._id}` class='comment-bold-button m5')
+                                button(type="button" id=`edit-comment-strikethrough-${comment._id}` class='comment-bold-button m5 cpbtn')
                                     img.cbsz(src='/img/svg/strikethrough.svg' alt='Strikethrough')
-                                button(type="button" id=`edit-comment-link-${comment._id}` class='comment-bold-button m5')
+                                button(type="button" id=`edit-comment-link-${comment._id}` class='comment-bold-button m5 cpbtn')
                                     img.cbsz(src='/img/svg/link.svg' alt='Link')
-                                button(type="button" id=`edit-comment-spoiler-${comment._id}` class='comment-bold-button m5')
+                                button(type="button" id=`edit-comment-spoiler-${comment._id}` class='comment-bold-button m5 cpbtn')
                                     img.cbsz(src='/img/svg/eye-invisible.svg' alt='Spoiler') 
-                                button(type="button" id=`edit-comment-code-${comment._id}` class='comment-bold-button m5')
+                                button(type="button" id=`edit-comment-code-${comment._id}` class='comment-bold-button m5 cpbtn')
                                     img.cbsz(src='/img/svg/code.svg' alt='Code')
-                                button(type="button" id=`edit-comment-quotes-${comment._id}` class='comment-bold-button m5')
+                                button(type="button" id=`edit-comment-quotes-${comment._id}` class='comment-bold-button m5 cpbtn')
                                     img.cbsz.m10(src='/img/svg/quotes.svg' alt='Quotes')
-                                button(type="button" id=`edit-comment-mention-${comment._id}` class='comment-bold-button m5')
+                                button(type="button" id=`edit-comment-mention-${comment._id}` class='comment-bold-button m5 cpbtn')
                                     img.cbsz(src='/img/svg/Mention.svg' alt='Mention')
                                 .comment-submit
                                     button.edit-submit-button(type='submit') Save
@@ -87,28 +87,28 @@ mixin renderComment(comment, depth=0)
                             div(id=`reply-comment-editor-${comment._id}` contenteditable="true" placeholder="Join the discussion..." class="comment-editor mt-1 block w-full")
                             hr
                             .comments-buttons
-                                button(type="button" id=`reply-comment-gif-${comment._id}` class='comment-gif-button m10')
+                                button(type="button" id=`reply-comment-gif-${comment._id}` class='comment-gif-button m10 cpbtn')
                                     img.cbsz(src='/img/svg/gif.svg' alt='Gif')
                                 div(id=`gif-picker-reply-${comment._id}` style='display: none;')
                                 input(type="file" id=`reply-media-upload-${comment._id}` class='media-upload' name="media" accept="image/*,.gif,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                                button(type="button" id=`reply-comment-image-${comment._id}` class="comment-image-button m5")
+                                button(type="button" id=`reply-comment-image-${comment._id}` class="comment-image-button m5 cpbtn")
                                     img.cbsz(src='/img/svg/image-landscape.svg' alt='Image')
                                 .v1.m5
-                                button(type="button" id=`reply-comment-bold-${comment._id}` class="comment-image-button m5")
+                                button(type="button" id=`reply-comment-bold-${comment._id}` class="comment-image-button m5 cpbtn")
                                     img.cbsz(src='/img/svg/bold.svg' alt='Bold')
-                                button(type="button" id=`reply-comment-italics-${comment._id}` class="comment-image-button m5")
+                                button(type="button" id=`reply-comment-italics-${comment._id}` class="comment-image-button m5 cpbtn")
                                     img.cbsz(src='/img/svg/italic.svg' alt='Italics')
-                                button(type="button" id=`reply-comment-strikethrough-${comment._id}` class="comment-image-button m5")
+                                button(type="button" id=`reply-comment-strikethrough-${comment._id}` class="comment-image-button m5 cpbtn")
                                     img.cbsz(src='/img/svg/strikethrough.svg' alt='Strikethrough')
-                                button(type="button" id=`reply-comment-link-${comment._id}` class="comment-image-button m5")
+                                button(type="button" id=`reply-comment-link-${comment._id}` class="comment-image-button m5 cpbtn")
                                     img.cbsz(src='/img/svg/link.svg' alt='Link')
-                                button(type="button" id=`reply-comment-spoiler-${comment._id}` class="comment-image-button m5")
+                                button(type="button" id=`reply-comment-spoiler-${comment._id}` class="comment-image-button m5 cpbtn")
                                     img.cbsz(src='/img/svg/eye-invisible.svg' alt='Spoiler') 
-                                button(type="button" id=`reply-code-image-${comment._id}` class="comment-image-button m5")
+                                button(type="button" id=`reply-code-image-${comment._id}` class="comment-image-button m5 cpbtn")
                                     img.cbsz(src='/img/svg/code.svg' alt='Code')
-                                button(type="button" id=`reply-comment-quotes-${comment._id}` class="comment-image-button m5")
+                                button(type="button" id=`reply-comment-quotes-${comment._id}` class="comment-image-button m5 cpbtn")
                                     img.cbsz.m10(src='/img/svg/quotes.svg' alt='Quotes')
-                                button(type="button" id=`reply-comment-mention-${comment._id}` class="comment-image-button m5")
+                                button(type="button" id=`reply-comment-mention-${comment._id}` class="comment-image-button m5 cpbtn")
                                     img.cbsz(src='/img/svg/Mention.svg' alt='Mention')
                                 .comment-submit
                                     button.reply-submit-button(type='submit') Submit Reply
@@ -297,12 +297,16 @@ block content
                                         h4.cshh=`${upload.comment_count} Comments`
                                         if user
                                             button(type="button" id="comments-notifications" class="comments-notification-button")
-                                                img.cnsz(src='/img/svg/chat-bubble.svg' alt='Comment Notifications')
-                                                h4.cshn=`${user.username}`
+                                                a(href="/mycomments")
+                                                    img.cnsz(src='/img/svg/chat-bubble.svg' alt='Comment Notifications')
+                                                    span#notification-count.notification-count.hidden 0                                                
+                                                    h4.cshn=`${user.username}`
                                         else
                                             button(type="button" id="comments-notifications" class="comments-notification-button")
-                                                img.cnsz(src='/img/svg/chat-bubble.svg' alt='Comment Notifications')
-                                                h4.cshn='Login'
+                                                a(href="/login")
+                                                    img.cnsz(src='/img/svg/chat-bubble.svg' alt='Comment Notifications')
+
+                                                    h4.cshn='Login'
 
                                     .comments-body
                                         .comments-post-section
@@ -311,28 +315,28 @@ block content
                                                 div(id='comment-editor' contenteditable="true" placeholder="Join the discussion..." class="comment-editor mt-1 block w-full")
                                                 hr
                                                 .comments-buttons
-                                                    button(type="button" id="comment-gif" class="comment-gif-button m10")
+                                                    button(type="button" id="comment-gif" class="comment-gif-button m10 cpbtn")
                                                         img.cbsz(src='/img/svg/gif.svg' alt='Gif')
                                                     div#gif-picker-main(style='display: none;')
                                                     input(type="file" id="media-upload" class='media-upload' name="media" accept="image/*,.gif,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-                                                    button(type="button" id="comment-image" class="comment-image-button m5")
+                                                    button(type="button" id="comment-image" class="comment-image-button m5 cpbtn")
                                                         img.cbsz(src='/img/svg/image-landscape.svg' alt='Image')
                                                     .v1.m5
-                                                    button(type="button" id="comment-bold" class="comment-bold-button m5")
+                                                    button(type="button" id="comment-bold" class="comment-bold-button m5 cpbtn")
                                                         img.cbsz(src='/img/svg/bold.svg' alt='Bold')
-                                                    button(type="button" id="comment-italics" class="comment-italics-button m5")
+                                                    button(type="button" id="comment-italics" class="comment-italics-button m5 cpbtn")
                                                         img.cbsz(src='/img/svg/italic.svg' alt='Italics')
-                                                    button(type="button" id="comment-strikethrough" class="comment-strikethrough-button m5")
+                                                    button(type="button" id="comment-strikethrough" class="comment-strikethrough-button m5 cpbtn")
                                                         img.cbsz(src='/img/svg/strikethrough.svg' alt='Strikethrough')
-                                                    button(type="button" id="comment-link" class="comment-link-button m5")
+                                                    button(type="button" id="comment-link" class="comment-link-button m5 cpbtn")
                                                         img.cbsz(src='/img/svg/link.svg' alt='Link')
-                                                    button(type="button" id="comment-spoiler" class="comment-spoiler-button m5")
+                                                    button(type="button" id="comment-spoiler" class="comment-spoiler-button m5 cpbtn")
                                                         img.cbsz(src='/img/svg/eye-invisible.svg' alt='Spoiler') 
-                                                    button(type="button" id="comment-code" class="comment-code-button m5")
+                                                    button(type="button" id="comment-code" class="comment-code-button m5 cpbtn")
                                                         img.cbsz(src='/img/svg/code.svg' alt='Code')
-                                                    button(type="button" id="comment-quotes" class="comment-quotes-button m5")
+                                                    button(type="button" id="comment-quotes" class="comment-quotes-button m5 cpbtn")
                                                         img.cbsz.m10(src='/img/svg/quotes.svg' alt='Quotes')
-                                                    button(type="button" id="comment-mention" class="comment-mention-button m5")
+                                                    button(type="button" id="comment-mention" class="comment-mention-button m5 cpbtn")
                                                         img.cbsz(src='/img/svg/Mention.svg' alt='Mention')
                                                     .comment-submit
                                                         button#post-comment-btn.comments-submit-button(type='submit') Comment
@@ -351,8 +355,11 @@ block content
                         img.side__avatar-img(src=`/img/users/${upload.user.photo}`)
                         h4=`${upload.user.username}`
                     .side__sub-btn
-                        button.btn.btn-subscribe Subscribe
-
+                        if user
+                            button.btn.btn-subscribe(data-user-id=upload.user._id data-action=user.subscriptions && user.subscriptions.includes(upload.user._id) ? 'unsubscribe' : 'subscribe') #{user.subscriptions && user.subscriptions.includes(upload.user._id) ? 'Unsubscribe' : 'Subscribe'}
+                        else
+                            a(href="/login")
+                                button.btn.btn-subscribe Subscribe
                 .side__container-body
                     .side__container-item
                         if recents

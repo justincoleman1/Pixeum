@@ -1309,7 +1309,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const replyForm = document.getElementById(`reply-section-${commentId}`);
       if (replyForm) {
         replyForm.classList.toggle('hidden');
-        form.dataset.parentId = commentId;
+        replyForm.dataset.parentId = commentId;
         document.getElementById(`reply-comment-editor-${commentId}`).focus();
       }
     });

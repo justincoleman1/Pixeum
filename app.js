@@ -16,11 +16,14 @@ const globalErrorHandler = require('./controllers/errorController'); // middlewa
 const uploadRouter = require('./routes/uploadRoutes');
 const userRouter = require('./routes/userRoutes');
 const commentRouter = require('./routes/commentRoutes');
+const notificationRouter = require('./routes/notificationRoutes');
+const subscriptionRouter = require('./routes/subscriptionRoutes');
 const viewRouter = require('./routes/viewRoutes');
 const stockRouter = require('./routes/stockRoutes');
 const googleAuthRouter = require('./routes/googleAuthRoutes');
 
 const authController = require('./controllers/authController');
+const userController = require('./controllers/userController');
 
 const app = express();
 
@@ -28,7 +31,10 @@ app.use((req, res, next) => {
   console.log(`Incoming request: ${req.method} ${req.url}`);
   next();
 });
-
+// In app.js
+app.locals.log = (message) => {
+  console.log('[Pug Debug]:', message);
+};
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -176,11 +182,16 @@ app.use((req, res, next) => {
   next();
 });
 
+// // Attach user and notifications to res.locals for all routes
+// app.use(userController.attachUser);
+
 // MOUNTER ROUTER
 app.use('/auth/google', googleAuthRouter);
 app.use('/api/v1/uploads', uploadRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/comments', commentRouter);
+app.use('/api/v1/notifications', notificationRouter);
+app.use('/api/v1/subscriptions', subscriptionRouter);
 app.use('/api/v1/:username/:slug/comments', commentRouter);
 app.use('/api/v1/stock', stockRouter);
 app.use('/', viewRouter);

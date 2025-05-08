@@ -6,6 +6,7 @@ const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const axios = require('axios');
+const Notification = require('../models/notificationModel');
 
 // Middleware to upload a user photo
 exports.uploadUserPhoto = upload.single('photo');
@@ -118,6 +119,27 @@ exports.updateMe = catchAsync(async (req, res, next) => {
       user: updatedUser,
     },
   });
+});
+
+exports.attachUser = catchAsync(async (req, res, next) => {
+  if (req.user) {
+    console.log('USER EXIST');
+    const user = await User.findById(req.user._id);
+    console.log('attachUser - User ID:', req.user._id);
+    const notifications = await Notification.find({ user: req.user._id })
+      .sort('-createdAt')
+      .limit(10);
+    console.log('attachUser - Notifications:', notifications);
+    res.locals.user = user;
+    res.locals.user.notifications = notifications;
+    console.log(
+      'attachUser - res.locals.user.notifications:',
+      res.locals.user.notifications
+    );
+  } else {
+    console.log('attachUser - No user logged in');
+  }
+  next();
 });
 
 // Middleware to delete the current user's account
