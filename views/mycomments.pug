@@ -145,7 +145,15 @@ block content
                             ul#messages.comments-list
                                 each comment in comments
                                     .comment-card.mb-16
-                                        +renderComment(comment)
+                                        .comment-card-comments
+                                            +renderComment(comment)
+                                        .comment-card-upload
+                                            button(type=button)
+                                                a(href=`/${comment.upload.user.username}/${comment.upload.slug}`)
+                                                    img.comment-card-img(src=`/img/stock/${comment.upload.media}`, alt=`${comment.upload.title}`)
+                                            h4.ccut=comment.upload.title
+                                            if comment.upload.description
+                                                p.ccud=`Description: ${comment.upload.description}`
                         else
                             .comments-none
                                 p.comment-befirst-cotent='You have no comments'

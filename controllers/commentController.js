@@ -431,7 +431,7 @@ exports.getMyComments = catchAsync(async (req, res, next) => {
     })
     .populate({
       path: 'upload',
-      select: 'slug user',
+      select: 'slug user title description media',
       populate: {
         path: 'user',
         select: 'username',
@@ -450,7 +450,7 @@ exports.getMyComments = catchAsync(async (req, res, next) => {
       populate: [
         {
           path: 'upload',
-          select: 'slug user',
+          select: 'slug user title description media',
           populate: {
             path: 'user',
             select: 'username photo',
@@ -470,7 +470,7 @@ exports.getMyComments = catchAsync(async (req, res, next) => {
           populate: [
             {
               path: 'upload',
-              select: 'slug user',
+              select: 'slug user title description media',
               populate: {
                 path: 'user',
                 select: 'username photo',
@@ -490,7 +490,7 @@ exports.getMyComments = catchAsync(async (req, res, next) => {
               populate: [
                 {
                   path: 'upload',
-                  select: 'slug user',
+                  select: 'slug user title description media',
                   populate: {
                     path: 'user',
                     select: 'username photo',

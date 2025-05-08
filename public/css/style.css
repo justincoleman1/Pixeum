@@ -2726,6 +2726,29 @@ input[type='file'][id*='media-upload'] {
   border-radius: 0.5em;
   padding: 1rem;
   border: 1px solid #3e3d3d;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.comment-card-upload {
+  background-color: #2e2d2d;
+  border-radius: 0.5em;
+  padding: 1rem;
+  border: 1px solid #3e3d3d;
+  display: flex;
+  flex-direction: column;
+}
+
+.comment-card-img {
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+}
+
+.ccut {
+  margin-top: 1rem;
+  align-self: center;
 }
 
 .comment {
