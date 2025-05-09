@@ -19,9 +19,7 @@ const signToken = (id) =>
     }
   );
 
-const createSendToken = (user, statusCode, req, res) => {
-  console.log('createSendToken - res defined:', !!res);
-  console.log('createSendToken - req defined:', !!req);
+const createSendToken = (user, statusCode, res) => {
   const token = signToken(user._id);
   const cookieOptions = {
     expires: new Date(
@@ -29,14 +27,12 @@ const createSendToken = (user, statusCode, req, res) => {
     ),
     secure: true,
     httpOnly: true,
-    path: '/',
   };
 
+  console.log('HERE');
   if (process.env.NODE_ENV === 'development') cookieOptions.secure = false;
 
-  console.log('%____________________________%');
   res.cookie('jwt', token, cookieOptions);
-  console.log('%______________RIP______________%');
 
   user.password = undefined;
 
