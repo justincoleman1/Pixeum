@@ -23,7 +23,7 @@ const stockRouter = require('./routes/stockRoutes');
 const googleAuthRouter = require('./routes/googleAuthRoutes');
 
 const authController = require('./controllers/authController');
-const userController = require('./controllers/userController');
+// const userController = require('./controllers/userController');
 
 const app = express();
 
@@ -31,10 +31,7 @@ app.use((req, res, next) => {
   console.log(`Incoming request: ${req.method} ${req.url}`);
   next();
 });
-// In app.js
-app.locals.log = (message) => {
-  console.log('[Pug Debug]:', message);
-};
+
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
@@ -182,7 +179,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// // Attach user and notifications to res.locals for all routes
+// Attach user and notifications to res.locals for all routes
 // app.use(userController.attachUser);
 
 // MOUNTER ROUTER

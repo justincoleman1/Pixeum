@@ -2988,6 +2988,8 @@ span.spoiler.revealed a {
 .cbsz {
   width: 20px;
   height: 20px;
+  filter: invert(42%) sepia(93%) saturate(1352%) hue-rotate(87deg)
+    brightness(119%) contrast(119%) grayscale(100%) brightness(300%);
 }
 
 .cnsz {

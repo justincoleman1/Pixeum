@@ -1,7 +1,6 @@
 const crypto = require('crypto');
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
-const passport = require('passport');
 const userController = require('./userController'); // Import userController for photo processing
 
 const User = require('../models/userModel');
@@ -21,6 +20,8 @@ const signToken = (id) =>
   );
 
 const createSendToken = (user, statusCode, req, res) => {
+  console.log('createSendToken - res defined:', !!res);
+  console.log('createSendToken - req defined:', !!req);
   const token = signToken(user._id);
   const cookieOptions = {
     expires: new Date(
@@ -33,7 +34,9 @@ const createSendToken = (user, statusCode, req, res) => {
 
   if (process.env.NODE_ENV === 'development') cookieOptions.secure = false;
 
+  console.log('%____________________________%');
   res.cookie('jwt', token, cookieOptions);
+  console.log('%______________RIP______________%');
 
   user.password = undefined;
 
