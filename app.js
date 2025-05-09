@@ -23,7 +23,7 @@ const stockRouter = require('./routes/stockRoutes');
 const googleAuthRouter = require('./routes/googleAuthRoutes');
 
 const authController = require('./controllers/authController');
-// const userController = require('./controllers/userController');
+const userController = require('./controllers/userController');
 
 const app = express();
 
@@ -180,7 +180,7 @@ app.use((req, res, next) => {
 });
 
 // Attach user and notifications to res.locals for all routes
-// app.use(userController.attachUser);
+app.use(userController.attachUser);
 
 // MOUNTER ROUTER
 app.use('/auth/google', googleAuthRouter);
